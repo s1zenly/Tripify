@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models;
+package com.tripify.hotels.parser.models.hotel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

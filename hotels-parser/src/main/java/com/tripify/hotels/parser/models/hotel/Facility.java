@@ -1,17 +1,15 @@
-package com.tripify.hotels.parser.models;
+package com.tripify.hotels.parser.models.hotel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NearbyPlaces {
-    private List<Place> food;
-    private List<Place> beaches;
+public class Facility {
+    private String type;
+    private boolean isFree;
 }

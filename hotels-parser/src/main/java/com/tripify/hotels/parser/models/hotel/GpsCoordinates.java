@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models;
+package com.tripify.hotels.parser.models.hotel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Photo {
-    private String link;
+public class GpsCoordinates {
+    private double latitude;
+    private double longitude;
 }
-

@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models;
+package com.tripify.hotels.parser.models.hotel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CashInfo {
-    private boolean isCash;
-    private List<String> currency;
+public class RefundRule {
+    private boolean refundPrepayment;
+    private List<Condition> conditions;
 }
