@@ -1,0 +1,13 @@
+package com.tripify.hotels.parser;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HotelsParserApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(HotelsParserApplication.class, args);
+	}
+
+}
