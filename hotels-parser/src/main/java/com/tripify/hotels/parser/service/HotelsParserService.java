@@ -21,10 +21,15 @@ import java.util.stream.Stream;
 public class HotelsParserService {
 
     private final Map<Provider, HotelsProvider> providersByType;
+    private final Map<Provider, ProviderExecutionContext> providersExecutors;
 
-    public HotelsParserService(List<HotelsProvider> providers) {
+    public HotelsParserService(
+            List<HotelsProvider> providers,
+            Map<Provider, ProviderExecutionContext> providersExecutors
+    ) {
         this.providersByType = providers.stream()
                 .collect(Collectors.toMap(HotelsProvider::getProvider, Function.identity()));
+        this.providersExecutors = providersExecutors;
     }
 
     /**
@@ -36,7 +41,8 @@ public class HotelsParserService {
     public List<HotelsResponseDto> parseByCountry(Country country) {
         List<CompletableFuture<HotelsResponseDto>> futures = Stream.of(Provider.values())
                 .filter(providersByType::containsKey)
-                .map(provider -> CompletableFuture.supplyAsync(
+                .filter(providersExecutors::containsKey)
+                .map(provider -> providersExecutors.get(provider).submit( // Нужно добавить тут будет логику насыщения задач до размера очереди, сейчас по одной
                         () -> providersByType.get(provider).supplyHotels(country)
                 ))
                 .toList();
