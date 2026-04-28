@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models.hotel;
+package com.tripify.hotels.parser.models.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Place {
-    private String title;
-    private double distance;
-    private String unit;
+public class Photo {
+    private String link;
 }
+

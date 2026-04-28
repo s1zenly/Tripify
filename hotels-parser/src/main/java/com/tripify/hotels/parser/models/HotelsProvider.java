@@ -1,8 +1,6 @@
-package com.tripify.hotels.parser.models.provider;
+package com.tripify.hotels.parser.models;
 
 import com.tripify.hotels.parser.dto.HotelsResponseDto;
-import com.tripify.hotels.parser.models.Country;
-import com.tripify.hotels.parser.models.Provider;
 
 public interface HotelsProvider {
 

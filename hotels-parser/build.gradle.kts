@@ -22,6 +22,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("com.google.guava:guava:33.2.1-jre")
 
 	implementation("org.springframework.boot:spring-boot-starter-kafka")
 	implementation("org.apache.kafka:kafka-clients:3.9.1") {

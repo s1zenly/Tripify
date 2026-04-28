@@ -1,6 +1,4 @@
-package com.tripify.hotels.parser.models.provider;
-
-import com.tripify.hotels.parser.models.Country;
+package com.tripify.hotels.parser.models;
 
 import java.util.List;
 

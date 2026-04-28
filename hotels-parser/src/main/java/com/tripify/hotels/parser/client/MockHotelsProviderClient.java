@@ -1,7 +1,7 @@
 package com.tripify.hotels.parser.client;
 
 import com.tripify.hotels.parser.models.Country;
-import com.tripify.hotels.parser.models.provider.HotelsProviderClient;
+import com.tripify.hotels.parser.models.HotelsProviderClient;
 import com.tripify.hotels.parser.models.provider.mock.MockComment;
 import com.tripify.hotels.parser.models.provider.mock.MockFacility;
 import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;

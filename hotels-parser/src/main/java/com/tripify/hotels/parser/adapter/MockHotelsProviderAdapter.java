@@ -2,12 +2,13 @@ package com.tripify.hotels.parser.adapter;
 
 import com.tripify.hotels.parser.dto.HotelsResponseDto;
 import com.tripify.hotels.parser.models.Provider;
-import com.tripify.hotels.parser.models.hotel.*;
-import com.tripify.hotels.parser.models.provider.HotelsProviderAdapter;
+import com.tripify.hotels.parser.models.common.*;
+import com.tripify.hotels.parser.models.HotelsProviderAdapter;
 import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;
 import com.tripify.hotels.parser.models.provider.mock.MockReviews;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,8 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                     .hotels(List.of())
                     .countryInfo(CountryInfo.builder().title("").alpha2("").build())
                     .providerName(Provider.MOCK.getProviderName())
-                    .parsedAt(java.time.LocalDateTime.now())
-                    .providedAt(java.time.LocalDateTime.now())
+                    .parsedAt(LocalDateTime.now())
+                    .providedAt(LocalDateTime.now())
                     .totalHotels(0)
                     .build();
         }
@@ -36,7 +37,7 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                 .map(this::toHotel)
                 .collect(Collectors.toList());
 
-        String countryAlpha2 = providerData.get(0).getCountryCode();
+        String countryAlpha2 = providerData.getFirst().getCountryCode();
         CountryInfo countryInfo = CountryInfo.builder()
                 .title(countryAlpha2)
                 .alpha2(countryAlpha2)
@@ -46,8 +47,8 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                 .hotels(hotels)
                 .countryInfo(countryInfo)
                 .providerName(Provider.MOCK.getProviderName())
-                .parsedAt(java.time.LocalDateTime.now())
-                .providedAt(java.time.LocalDateTime.now())
+                .parsedAt(LocalDateTime.now())
+                .providedAt(LocalDateTime.now())
                 .totalHotels(hotels.size())
                 .build();
     }

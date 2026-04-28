@@ -1,7 +1,7 @@
 package com.tripify.hotels.parser.dto;
 
-import com.tripify.hotels.parser.models.hotel.CountryInfo;
-import com.tripify.hotels.parser.models.hotel.Hotel;
+import com.tripify.hotels.parser.models.common.CountryInfo;
+import com.tripify.hotels.parser.models.common.Hotel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

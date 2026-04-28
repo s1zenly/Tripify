@@ -1,0 +1,8 @@
+providers:
+  MOCK:
+    poolName: parser-mock
+    corePoolSize: 10
+    maxPoolSize: 20
+    queueSize: 100
+    batchSize: 10
+    rps: 20

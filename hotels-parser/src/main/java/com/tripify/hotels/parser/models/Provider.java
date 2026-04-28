@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Provider {
 
-    MOCK("mock");
+    MOCK("MOCK");
 
     private final String providerName;
 

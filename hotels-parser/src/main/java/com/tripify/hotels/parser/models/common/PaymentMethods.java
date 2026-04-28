@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models.hotel;
+package com.tripify.hotels.parser.models.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Facility {
-    private String type;
-    private boolean isFree;
+public class PaymentMethods {
+    private CashInfo cashInfo;
+    private CardsInfo cardsInfo;
 }

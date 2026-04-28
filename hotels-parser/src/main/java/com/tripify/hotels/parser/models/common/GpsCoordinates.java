@@ -1,4 +1,4 @@
-package com.tripify.hotels.parser.models.hotel;
+package com.tripify.hotels.parser.models.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Condition {
-    private int quantityPercent;
-    private String condition;
+public class GpsCoordinates {
+    private double latitude;
+    private double longitude;
 }

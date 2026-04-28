@@ -1,15 +1,17 @@
-package com.tripify.hotels.parser.models.hotel;
+package com.tripify.hotels.parser.models.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GpsCoordinates {
-    private double latitude;
-    private double longitude;
+public class CashInfo {
+    private boolean isCash;
+    private List<String> currency;
 }

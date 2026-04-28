@@ -1,9 +1,8 @@
 package com.tripify.hotels.parser.parser;
 
 import com.tripify.hotels.parser.models.Country;
-import com.tripify.hotels.parser.models.Provider;
-import com.tripify.hotels.parser.models.provider.HotelsProviderClient;
-import com.tripify.hotels.parser.models.provider.HotelsProviderParser;
+import com.tripify.hotels.parser.models.HotelsProviderClient;
+import com.tripify.hotels.parser.models.HotelsProviderParser;
 import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
