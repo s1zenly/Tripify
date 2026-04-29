@@ -6,3 +6,18 @@ providers:
     queueSize: 100
     batchSize: 10
     rps: 20
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+
+app:
+  kafka:
+    topics:
+      hotels-parsed: hotels.parsed

@@ -1,9 +1,7 @@
 package com.tripify.hotels.parser.job;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.tripify.hotels.parser.dto.HotelsResponseDto;
 import com.tripify.hotels.parser.models.Country;
 import com.tripify.hotels.parser.service.HotelsParserService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,7 @@ public class ParsingJob {
         Country country = countries[index];
 
         logger.info("Start parsing by country - {}", country.getAlpha3());
-        List<HotelsResponseDto> result = hotelsParserService.parseByCountry(country);
+        hotelsParserService.parseByCountry(country);
         logger.info("Success parsing by country - {}", country.getAlpha3());
     }
 }
