@@ -9,7 +9,7 @@
 		<version>3.5.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cts</groupId>
+	<groupId>com.tripify</groupId>
 	<artifactId>travelpackage</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>travelpackage</name>

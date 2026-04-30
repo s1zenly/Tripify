@@ -8,7 +8,7 @@
 		<version>3.2.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.startupsync.com</groupId>
+	<groupId>com.tripify</groupId>
 	<artifactId>user-service</artifactId>
 	<version>0.0.1</version>
 	<name>user-service</name>
