@@ -1,0 +1,419 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Tripify Tickets Service",
+    "description": "Коллекция для тестирования tickets-service.\n\n**Рекомендуемый порядок:**\n1. Get Ticket Filters — статический каталог фильтров\n2. Search Tickets — сохраняет `tid` первого билета\n3. Search Tickets (with filters) — поиск с фильтрами\n4. Get Ticket by ID — детали по `tid`\n\n**Фильтры (примеры):** `direct`, `max_1_stop`, `max_2_stops`, `no_overnight`, `no_airport_change`, `no_self_transfer`, `refundable`, `checked_baggage`\n\n**baseUrl:** `http://localhost:8080` (local) или `http://localhost:8086` (docker)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "tid", "value": "ticket_8f3a1c2d" },
+    { "key": "originCityCode", "value": "MOW" },
+    { "key": "destinationCityCode", "value": "DXB" },
+    { "key": "departureDate", "value": "2026-06-01" },
+    { "key": "returnDate", "value": "2026-06-10" },
+    { "key": "adults", "value": "2" },
+    { "key": "children", "value": "0" },
+    { "key": "infants", "value": "0" },
+    { "key": "currency", "value": "RUB" },
+    { "key": "budgetMaxAmount", "value": "50000" },
+    { "key": "filter", "value": "direct" },
+    { "key": "xAnonymousId", "value": "anona8f91d_f445g4d3_rev1" },
+    { "key": "xGenerationId", "value": "anon_a8f91d_ab91ff23_rev1" },
+    { "key": "xPackRevision", "value": "1" },
+    { "key": "xGenerationMode", "value": "FULL" },
+    { "key": "xRequestId", "value": "req-tickets-{{$timestamp}}" },
+    { "key": "xTicketsRevision", "value": "1" },
+    { "key": "accessToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get Ticket Filters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.test('Has filters catalog', function () {",
+                  "    pm.expect(json.filters).to.be.an('array');",
+                  "    pm.expect(json.filters.length).to.be.above(0);",
+                  "    pm.expect(json.filters[0]).to.have.property('id');",
+                  "    pm.expect(json.filters[0]).to.not.have.property('count');",
+                  "});",
+                  "",
+                  "if (json.filters && json.filters.length > 0) {",
+                  "    pm.collectionVariables.set('filter', json.filters[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/filters",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "filters"]
+            },
+            "description": "Статический каталог фильтров (без count, без параметров маршрута)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ticket by ID (anonymous)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-tickets-' + Date.now());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" },
+              { "key": "X-Tickets-Revision", "value": "{{xTicketsRevision}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/{{tid}}?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "{{tid}}"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            },
+            "description": "Без JWT. В Kafka: user_type=ANONYMOUS, anonymous_id из X-Anonymous-Id."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Tickets",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.test('Response has tickets without provider', function () {",
+                  "    pm.expect(json.tickets).to.be.an('array');",
+                  "    if (json.tickets.length > 0) {",
+                  "        pm.expect(json.tickets[0]).to.not.have.property('provider');",
+                  "        pm.collectionVariables.set('tid', json.tickets[0].tid);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Tickets (with filters)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "const filterId = pm.collectionVariables.get('filter');",
+                  "if (json.tickets && json.tickets.length > 0 && filterId === 'direct') {",
+                  "    json.tickets.forEach(function (ticket) {",
+                  "        ticket.journeys.forEach(function (j) {",
+                  "            pm.expect(j.transfers.is_direct).to.eql(true);",
+                  "        });",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}&filters={{filter}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "filters", "value": "{{filter}}" },
+                { "key": "filters", "value": "refundable", "disabled": true }
+              ]
+            },
+            "description": "Поиск с фильтрами (AND). Включи второй filter при необходимости."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Tickets (unknown filter → 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}&filters=unknown_filter",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "filters", "value": "unknown_filter" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Tickets (with budget)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&budget_max_amount={{budgetMaxAmount}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "budget_max_amount", "value": "{{budgetMaxAmount}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ticket by ID (with JWT)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-tickets-' + Date.now());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" },
+              { "key": "X-Tickets-Revision", "value": "{{xTicketsRevision}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/{{tid}}?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "{{tid}}"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            },
+            "description": "Укажи accessToken из auth-service. В Kafka: user_type=AUTH, user_id из JWT sub."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ticket by ID (not found)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-tickets-' + Date.now());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/ticket_not_exists?origin_city_code={{originCityCode}}&destination_city_code={{destinationCityCode}}&departure_date={{departureDate}}&return_date={{returnDate}}&adults={{adults}}&children={{children}}&infants={{infants}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "ticket_not_exists"],
+              "query": [
+                { "key": "origin_city_code", "value": "{{originCityCode}}" },
+                { "key": "destination_city_code", "value": "{{destinationCityCode}}" },
+                { "key": "departure_date", "value": "{{departureDate}}" },
+                { "key": "return_date", "value": "{{returnDate}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "infants", "value": "{{infants}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Docs",
+      "item": [
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v3/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["v3", "api-docs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v3/swagger-ui.html",
+              "host": ["{{baseUrl}}"],
+              "path": ["v3", "swagger-ui.html"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

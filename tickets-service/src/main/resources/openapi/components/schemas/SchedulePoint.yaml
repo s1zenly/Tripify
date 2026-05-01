@@ -1,0 +1,12 @@
+type: object
+required:
+  - datetime
+  - timezone
+properties:
+  datetime:
+    type: string
+    format: date-time
+    example: '2026-05-12T10:30:00+03:00'
+  timezone:
+    type: string
+    example: Europe/Moscow

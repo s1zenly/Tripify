@@ -1,0 +1,26 @@
+type: object
+required:
+  - city_code
+  - city_name
+  - airport_code
+  - airport_name
+properties:
+  city_code:
+    type: string
+    minLength: 3
+    maxLength: 3
+    example: MOW
+  city_name:
+    type: string
+    example: Moscow
+  airport_code:
+    type: string
+    minLength: 3
+    maxLength: 3
+    example: SVO
+  airport_name:
+    type: string
+    example: Sheremetyevo
+  terminal:
+    type: string
+    example: C

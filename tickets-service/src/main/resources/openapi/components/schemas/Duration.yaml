@@ -1,0 +1,8 @@
+type: object
+required:
+  - minutes
+properties:
+  minutes:
+    type: integer
+    minimum: 0
+    example: 360

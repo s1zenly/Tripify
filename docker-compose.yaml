@@ -29,8 +29,8 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
 
       KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:9093,EXTERNAL://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://${SERVER_IP:-localhost}:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
@@ -198,11 +198,31 @@ services:
       TRIPIFY_S3_BUCKET: tripify-hotels
       TRIPIFY_S3_ROOMS_BUCKET: tripify-hotels-rooms
       TRIPIFY_S3_REVIEWS_BUCKET: tripify-hotels-reviews
-      TRIPIFY_S3_UPLOAD_ENABLED: false
+      TRIPIFY_S3_UPLOAD_ENABLED: "false"
       TRIPIFY_S3_ACCESS_KEY: YCAJEhwv_RECwDriBuxqXQSyl
       TRIPIFY_S3_SECRET_KEY: YCNw-gkJLJoNEg2hLo_-kX_PjHHAxWiSuwqc81lr
     ports:
       - "8084:8080"
+    networks:
+      - tripify
+
+  tickets-service:
+    build:
+      context: ./tickets-service
+      dockerfile: Dockerfile
+    container_name: tripify-tickets-service
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TRIPIFY_JWT_SECRET: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+    ports:
+      - "8086:8080"
     networks:
       - tripify
 

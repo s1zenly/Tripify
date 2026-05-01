@@ -1,0 +1,34 @@
+package com.tripify.tickets.service.model.unified;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.Arrays;
+
+public enum JourneyType {
+    OUTBOUND("outbound"),
+    RETURN("return");
+
+    private final String value;
+
+    JourneyType(String value) {
+        this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @JsonCreator
+    public static JourneyType fromValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        return Arrays.stream(values())
+                .filter(type -> type.value.equalsIgnoreCase(value)
+                        || ("inbound".equalsIgnoreCase(value) && type == RETURN))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown journey type: " + value));
+    }
+}

@@ -21,7 +21,7 @@ public class ParsingJob {
     private final AtomicInteger countryIndex = new AtomicInteger(0);
     private final Country[] countries = Country.values();
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 20000)
     public void parseNextCountry() {
         int index = countryIndex.getAndUpdate(i -> (i + 1) % countries.length);
         Country country = countries[index];

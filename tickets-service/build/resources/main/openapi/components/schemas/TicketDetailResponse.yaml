@@ -1,0 +1,6 @@
+type: object
+required:
+  - ticket
+properties:
+  ticket:
+    $ref: './TicketDetail.yaml'

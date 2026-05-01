@@ -1,0 +1,36 @@
+ErrorCode:
+  type: string
+  enum:
+    - VALIDATION_ERROR
+    - TICKET_NOT_FOUND
+    - INTERNAL_ERROR
+
+ErrorResponse:
+  type: object
+  required:
+    - code
+    - message
+    - timestamp
+  properties:
+    code:
+      $ref: '#/ErrorCode'
+    message:
+      type: string
+      example: Invalid date
+    details:
+      type: array
+      items:
+        $ref: '#/ErrorDetail'
+    timestamp:
+      type: string
+      format: date-time
+
+ErrorDetail:
+  type: object
+  properties:
+    field:
+      type: string
+      example: departure_date
+    message:
+      type: string
+      example: must not be null

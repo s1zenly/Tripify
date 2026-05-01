@@ -1,0 +1,5 @@
+type: string
+enum:
+  - RUB
+  - USD
+example: RUB

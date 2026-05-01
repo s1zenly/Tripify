@@ -1,0 +1,18 @@
+type: object
+required:
+  - code
+  - name
+  - logo_url
+properties:
+  code:
+    type: string
+    minLength: 2
+    maxLength: 3
+    example: EK
+  name:
+    type: string
+    example: Emirates
+  logo_url:
+    type: string
+    format: uri
+    example: https://pics.avs.io/200/200/EK.png

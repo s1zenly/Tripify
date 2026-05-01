@@ -1,0 +1,34 @@
+type: object
+required:
+  - type
+  - from
+  - to
+  - departure
+  - arrival
+  - duration
+  - transfers
+  - airline
+properties:
+  type:
+    $ref: './enums/JourneyType.yaml'
+
+  from:
+    $ref: './LocationSummary.yaml'
+
+  to:
+    $ref: './LocationSummary.yaml'
+
+  departure:
+    $ref: './DateTimePoint.yaml'
+
+  arrival:
+    $ref: './DateTimePoint.yaml'
+
+  duration:
+    $ref: './Duration.yaml'
+
+  transfers:
+    $ref: './TransfersSummary.yaml'
+
+  airline:
+    $ref: './AirlineSummary.yaml'

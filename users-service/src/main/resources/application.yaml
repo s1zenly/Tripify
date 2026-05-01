@@ -5,6 +5,9 @@ spring:
   application:
     name: users-service
 
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -43,3 +46,15 @@ app:
       user-registered: auth.user.registered
   jwt:
     secret: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
+  swagger-ui:
+    path: /v3/swagger-ui.html
+    disable-swagger-default-url: true
+    try-it-out-enabled: true
+    display-request-duration: true
+    operations-sorter: alpha
+    tags-sorter: alpha
