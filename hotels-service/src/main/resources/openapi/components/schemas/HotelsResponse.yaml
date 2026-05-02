@@ -1,0 +1,14 @@
+type: object
+required:
+  - hotels
+  - totalHotels
+properties:
+  hotels:
+    type: array
+    items:
+      $ref: './HotelCard.yaml'
+
+  totalHotels:
+    type: integer
+    format: int64
+    example: 100

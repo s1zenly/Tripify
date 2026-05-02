@@ -1,0 +1,26 @@
+type: object
+properties:
+  cleanliness:
+    type: number
+    format: double
+    example: 7.8
+
+  service:
+    type: number
+    format: double
+    example: 9.0
+
+  priceQuality:
+    type: number
+    format: double
+    example: 9.5
+
+  room:
+    type: number
+    format: double
+    example: 10.0
+
+  location:
+    type: number
+    format: double
+    example: 8.3

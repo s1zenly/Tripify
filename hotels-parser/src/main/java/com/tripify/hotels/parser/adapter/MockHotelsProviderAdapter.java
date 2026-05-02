@@ -1,18 +1,33 @@
 package com.tripify.hotels.parser.adapter;
 
-import com.tripify.hotels.parser.dto.HotelsResponseDto;
-import com.tripify.hotels.parser.models.Provider;
-import com.tripify.hotels.parser.models.common.*;
-import com.tripify.hotels.parser.models.HotelsProviderAdapter;
-import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;
-import com.tripify.hotels.parser.models.provider.mock.MockReviews;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.tripify.hotels.parser.dto.HotelsResponseDto;
+import com.tripify.hotels.parser.models.HotelsProviderAdapter;
+import com.tripify.hotels.parser.models.Provider;
+import com.tripify.hotels.parser.models.common.CardsInfo;
+import com.tripify.hotels.parser.models.common.CashInfo;
+import com.tripify.hotels.parser.models.common.CheckInOut;
+import com.tripify.hotels.parser.models.common.Comment;
+import com.tripify.hotels.parser.models.common.Condition;
+import com.tripify.hotels.parser.models.common.CountryInfo;
+import com.tripify.hotels.parser.models.common.Facility;
+import com.tripify.hotels.parser.models.common.GpsCoordinates;
+import com.tripify.hotels.parser.models.common.Hotel;
+import com.tripify.hotels.parser.models.common.NearbyPlaces;
+import com.tripify.hotels.parser.models.common.PaymentMethods;
+import com.tripify.hotels.parser.models.common.Photo;
+import com.tripify.hotels.parser.models.common.Place;
+import com.tripify.hotels.parser.models.common.RefundRule;
+import com.tripify.hotels.parser.models.common.Reviews;
+import com.tripify.hotels.parser.models.common.TermsPlacement;
+import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;
+import com.tripify.hotels.parser.models.provider.mock.MockReviews;
+import org.springframework.stereotype.Component;
 
 /**
  * Mock-адаптер: приводит DTO поставщика (MockProviderHotel) к общему HotelsResponseDto.
@@ -27,8 +42,8 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                     .hotels(List.of())
                     .countryInfo(CountryInfo.builder().title("").alpha2("").build())
                     .providerName(Provider.MOCK.getProviderName())
-                    .parsedAt(LocalDateTime.now())
-                    .providedAt(LocalDateTime.now())
+                    .parsedAt(Instant.now())
+                    .providedAt(Instant.now())
                     .totalHotels(0)
                     .build();
         }
@@ -47,8 +62,8 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                 .hotels(hotels)
                 .countryInfo(countryInfo)
                 .providerName(Provider.MOCK.getProviderName())
-                .parsedAt(LocalDateTime.now())
-                .providedAt(LocalDateTime.now())
+                .parsedAt(Instant.now())
+                .providedAt(Instant.now())
                 .totalHotels(hotels.size())
                 .build();
     }

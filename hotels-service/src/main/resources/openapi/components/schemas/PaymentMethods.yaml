@@ -1,0 +1,31 @@
+type: object
+properties:
+  cashInfo:
+    type: object
+    properties:
+      isCash:
+        type: boolean
+        example: true
+
+      currency:
+        type: array
+        items:
+          type: string
+        example:
+          - USD
+          - EUR
+
+  cardsInfo:
+    type: object
+    properties:
+      isCard:
+        type: boolean
+        example: true
+
+      cardTypes:
+        type: array
+        items:
+          type: string
+        example:
+          - VISA
+          - MASTERCARD

@@ -17,4 +17,13 @@ spring:
 tripify:
   kafka:
     topics:
-      otp-requested: otp.requested
+      otp-requested: auth.otp.requested
+
+  notification:
+    providers:
+      aero-sms:
+        enabled: true
+        name: AeroSms
+        email: semaclasss@mail.ru
+        api-key: UkiOdPKZRgJDyRansau-SyCXEzSfRxS3
+        sign: SMS Aero

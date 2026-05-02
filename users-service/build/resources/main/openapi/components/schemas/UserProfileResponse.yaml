@@ -1,0 +1,41 @@
+type: object
+required:
+  - userId
+  - email
+  - firstName
+  - lastName
+  - phoneNumber
+  - city
+  - country
+  - currency
+  - citizenship
+properties:
+  userId:
+    type: string
+    format: uuid
+    example: "4f0c9d4c-7a8a-4b62-9e3e-7cbf28a5fd31"
+  email:
+    type: string
+    format: email
+    example: "lev@example.com"
+  firstName:
+    type: string
+    example: "Лев"
+  lastName:
+    type: string
+    example: "Гурьков"
+  phoneNumber:
+    type: string
+    example: "+4915123456789"
+  city:
+    type: string
+    example: "Москва"
+  country:
+    type: string
+    example: "Россия"
+  currency:
+    type: string
+    example: "Российский рубль"
+  citizenship:
+    type: string
+    example: "РФ"

@@ -1,0 +1,27 @@
+Unauthorized:
+  description: Unauthorized
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+InternalServerError:
+  description: Internal server error
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+BadRequest:
+  description: Bad request
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+NotFound:
+  description: Not found
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'

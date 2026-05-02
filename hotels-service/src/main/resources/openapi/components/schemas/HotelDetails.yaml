@@ -1,0 +1,89 @@
+type: object
+required:
+  - hotelId
+  - title
+  - city
+  - country
+  - currency
+  - price
+  - hotelClass
+  - reviews
+  - facilities
+  - tags
+  - nearbyPlaces
+  - termsPlacement
+  - paymentMethods
+  - score
+properties:
+  hotelId:
+    type: integer
+    format: int64
+    example: 7467355
+
+  title:
+    type: string
+    example: Florida Radison 5*
+
+  link:
+    type: string
+    format: uri
+    example: https://example.com/hotels/7467355
+
+  description:
+    type: string
+    example: Contemporary hotel with a restaurant, business center and fitness room.
+
+  address:
+    type: string
+    example: Fool Street, New York City
+
+  gpsCoordinates:
+    $ref: './GpsCoordinates.yaml'
+
+  city:
+    type: string
+    example: New York City
+
+  country:
+    type: string
+    example: US
+
+  currency:
+    type: string
+    example: USD
+
+  price:
+    type: integer
+    format: int64
+    example: 176
+
+  hotelClass:
+    type: integer
+    minimum: 1
+    maximum: 5
+    example: 3
+
+  reviews:
+    $ref: './HotelReviewsFull.yaml'
+
+  facilities:
+    type: array
+    items:
+      $ref: './Facility.yaml'
+
+  tags:
+    type: array
+    items:
+      type: string
+
+  nearbyPlaces:
+    $ref: './NearbyPlaces.yaml'
+
+  termsPlacement:
+    $ref: './TermsPlacement.yaml'
+
+  paymentMethods:
+    $ref: './PaymentMethods.yaml'
+
+  score:
+    $ref: './HotelScore.yaml'

@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -18,7 +18,7 @@ public class HotelsResponseDto {
     private List<Hotel> hotels;
     private CountryInfo countryInfo;
     private String providerName;
-    private LocalDateTime parsedAt;
-    private LocalDateTime providedAt;
+    private Instant parsedAt;
+    private Instant providedAt;
     private int totalHotels;
 }
