@@ -74,6 +74,17 @@ openApiGenerate {
     generateApiDocumentation.set(false)
     generateModelDocumentation.set(false)
 
+    typeMappings.set(
+        mapOf(
+            "UUID" to "java.util.UUID"
+        )
+    )
+    importMappings.set(
+        mapOf(
+            "UUID" to "java.util.UUID"
+        )
+    )
+
     configOptions.set(
         mapOf(
             "interfaceOnly" to "true",

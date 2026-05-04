@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class S3ObjectKeyBuilder {
 
-    public String hotelPhotoKey(UUID hotelInternalId, String fileName) {
-        return "hotels/%s/photos/%s".formatted(hotelInternalId, sanitizeFileName(fileName));
+    public String hotelPhotoKey(UUID hotelId, String fileName) {
+        return "hotels/%s/photos/%s".formatted(hotelId, sanitizeFileName(fileName));
     }
 
-    public String reviewPhotoKey(UUID hotelInternalId, int commentIndex, String fileName) {
+    public String reviewPhotoKey(UUID hotelId, int commentIndex, String fileName) {
         return "hotels/%s/reviews/%s/%s".formatted(
-                hotelInternalId,
+                hotelId,
                 commentIndex,
                 sanitizeFileName(fileName)
         );

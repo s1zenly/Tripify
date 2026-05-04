@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.tripify.hotels.generated.model.CheckInOut;
+import com.tripify.hotels.generated.model.RefundRule;
 import org.springframework.lang.Nullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -19,10 +21,16 @@ import jakarta.annotation.Generated;
  * TermsPlacement
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-20T23:06:41.504250+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class TermsPlacement {
 
+  private @Nullable CheckInOut checkIn;
+
+  private @Nullable CheckInOut checkOut;
+
   private @Nullable Boolean cancellation;
+
+  private @Nullable RefundRule refundRule;
 
   private @Nullable Boolean smoking;
 
@@ -33,6 +41,46 @@ public class TermsPlacement {
   private @Nullable String ageRestriction;
 
   private @Nullable String additionalInfo;
+
+  public TermsPlacement checkIn(@Nullable CheckInOut checkIn) {
+    this.checkIn = checkIn;
+    return this;
+  }
+
+  /**
+   * Get checkIn
+   * @return checkIn
+   */
+  @Valid 
+  @Schema(name = "checkIn", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("checkIn")
+  public @Nullable CheckInOut getCheckIn() {
+    return checkIn;
+  }
+
+  public void setCheckIn(@Nullable CheckInOut checkIn) {
+    this.checkIn = checkIn;
+  }
+
+  public TermsPlacement checkOut(@Nullable CheckInOut checkOut) {
+    this.checkOut = checkOut;
+    return this;
+  }
+
+  /**
+   * Get checkOut
+   * @return checkOut
+   */
+  @Valid 
+  @Schema(name = "checkOut", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("checkOut")
+  public @Nullable CheckInOut getCheckOut() {
+    return checkOut;
+  }
+
+  public void setCheckOut(@Nullable CheckInOut checkOut) {
+    this.checkOut = checkOut;
+  }
 
   public TermsPlacement cancellation(@Nullable Boolean cancellation) {
     this.cancellation = cancellation;
@@ -52,6 +100,26 @@ public class TermsPlacement {
 
   public void setCancellation(@Nullable Boolean cancellation) {
     this.cancellation = cancellation;
+  }
+
+  public TermsPlacement refundRule(@Nullable RefundRule refundRule) {
+    this.refundRule = refundRule;
+    return this;
+  }
+
+  /**
+   * Get refundRule
+   * @return refundRule
+   */
+  @Valid 
+  @Schema(name = "refundRule", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("refundRule")
+  public @Nullable RefundRule getRefundRule() {
+    return refundRule;
+  }
+
+  public void setRefundRule(@Nullable RefundRule refundRule) {
+    this.refundRule = refundRule;
   }
 
   public TermsPlacement smoking(@Nullable Boolean smoking) {
@@ -163,7 +231,10 @@ public class TermsPlacement {
       return false;
     }
     TermsPlacement termsPlacement = (TermsPlacement) o;
-    return Objects.equals(this.cancellation, termsPlacement.cancellation) &&
+    return Objects.equals(this.checkIn, termsPlacement.checkIn) &&
+        Objects.equals(this.checkOut, termsPlacement.checkOut) &&
+        Objects.equals(this.cancellation, termsPlacement.cancellation) &&
+        Objects.equals(this.refundRule, termsPlacement.refundRule) &&
         Objects.equals(this.smoking, termsPlacement.smoking) &&
         Objects.equals(this.petFriendly, termsPlacement.petFriendly) &&
         Objects.equals(this.partyFriendly, termsPlacement.partyFriendly) &&
@@ -173,14 +244,17 @@ public class TermsPlacement {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cancellation, smoking, petFriendly, partyFriendly, ageRestriction, additionalInfo);
+    return Objects.hash(checkIn, checkOut, cancellation, refundRule, smoking, petFriendly, partyFriendly, ageRestriction, additionalInfo);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TermsPlacement {\n");
+    sb.append("    checkIn: ").append(toIndentedString(checkIn)).append("\n");
+    sb.append("    checkOut: ").append(toIndentedString(checkOut)).append("\n");
     sb.append("    cancellation: ").append(toIndentedString(cancellation)).append("\n");
+    sb.append("    refundRule: ").append(toIndentedString(refundRule)).append("\n");
     sb.append("    smoking: ").append(toIndentedString(smoking)).append("\n");
     sb.append("    petFriendly: ").append(toIndentedString(petFriendly)).append("\n");
     sb.append("    partyFriendly: ").append(toIndentedString(partyFriendly)).append("\n");

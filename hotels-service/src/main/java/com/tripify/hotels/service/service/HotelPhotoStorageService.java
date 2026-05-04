@@ -22,32 +22,32 @@ public class HotelPhotoStorageService {
     private final S3ObjectKeyBuilder keyBuilder;
 
     public String uploadHotelPhoto(
-            UUID hotelInternalId,
+            UUID hotelId,
             String fileName,
             byte[] content,
             String contentType
     ) {
-        String key = keyBuilder.hotelPhotoKey(hotelInternalId, fileName);
+        String key = keyBuilder.hotelPhotoKey(hotelId, fileName);
         putObject(key, content, contentType);
         return key;
     }
 
-    public String uploadHotelPhotoFromUrl(UUID hotelInternalId, String sourceUrl) {
+    public String uploadHotelPhotoFromUrl(UUID hotelId, String sourceUrl) {
         String fileName = PhotoDownloadUtils.resolveFileName(sourceUrl);
-        String key = keyBuilder.hotelPhotoKey(hotelInternalId, fileName);
+        String key = keyBuilder.hotelPhotoKey(hotelId, fileName);
         putObject(key, PhotoDownloadUtils.downloadBytes(sourceUrl), S3ObjectKeyBuilder.resolveContentType(fileName));
         return key;
     }
 
-    public String uploadReviewPhotoFromUrl(UUID hotelInternalId, int commentIndex, String sourceUrl) {
+    public String uploadReviewPhotoFromUrl(UUID hotelId, int commentIndex, String sourceUrl) {
         String fileName = PhotoDownloadUtils.resolveFileName(sourceUrl);
-        String key = keyBuilder.reviewPhotoKey(hotelInternalId, commentIndex, fileName);
+        String key = keyBuilder.reviewPhotoKey(hotelId, commentIndex, fileName);
         putObject(key, PhotoDownloadUtils.downloadBytes(sourceUrl), S3ObjectKeyBuilder.resolveContentType(fileName));
         return key;
     }
 
     public List<String> uploadReviewPhotosFromUrls(
-            UUID hotelInternalId,
+            UUID hotelId,
             int commentIndex,
             List<PhotoDto> photos
     ) {
@@ -58,7 +58,7 @@ public class HotelPhotoStorageService {
         return photos.stream()
                 .map(PhotoDto::url)
                 .filter(url -> url != null && !url.isBlank())
-                .map(url -> uploadReviewPhotoFromUrl(hotelInternalId, commentIndex, url))
+                .map(url -> uploadReviewPhotoFromUrl(hotelId, commentIndex, url))
                 .toList();
     }
 

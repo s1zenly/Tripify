@@ -1,0 +1,29 @@
+type: object
+properties:
+  final:
+    type: number
+    format: double
+    example: 0.87
+
+  breakdown:
+    type: object
+    properties:
+      price:
+        type: number
+        format: double
+        example: 0.8
+
+      rating:
+        type: number
+        format: double
+        example: 0.9
+
+      location:
+        type: number
+        format: double
+        example: 0.85
+
+      facilities:
+        type: number
+        format: double
+        example: 0.75

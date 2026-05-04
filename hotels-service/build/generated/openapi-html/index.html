@@ -844,9 +844,26 @@ ul.nav-tabs {
   <script>
     // Script section to load models into a JS Var
     var defs = {}
+    defs["CheckInOut"] = {
+  "type" : "object",
+  "properties" : {
+    "afterTime" : {
+      "type" : "string",
+      "example" : "14:00"
+    },
+    "beforeTime" : {
+      "type" : "string",
+      "example" : "00:00"
+    },
+    "timezone" : {
+      "type" : "string",
+      "example" : "UTC"
+    }
+  }
+};
     defs["ErrorCode"] = {
   "type" : "string",
-  "enum" : [ "TEST" ]
+  "enum" : [ "VALIDATION_ERROR", "HOTEL_NOT_FOUND", "INTERNAL_ERROR" ]
 };
     defs["ErrorDetail"] = {
   "type" : "object",
@@ -913,13 +930,13 @@ ul.nav-tabs {
   }
 };
     defs["HotelCard"] = {
-  "required" : [ "city", "country", "currency", "facilities", "hotelClass", "hotelId", "price", "reviews", "tags", "title" ],
+  "required" : [ "city", "country", "currency", "facilities", "hotelClass", "hotelId", "photos", "price", "reviews", "tags", "title" ],
   "type" : "object",
   "properties" : {
     "hotelId" : {
-      "type" : "integer",
-      "format" : "int64",
-      "example" : 7467355
+      "type" : "string",
+      "format" : "uuid",
+      "example" : "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d"
     },
     "title" : {
       "type" : "string",
@@ -979,17 +996,24 @@ ul.nav-tabs {
       "items" : {
         "type" : "string"
       }
+    },
+    "photos" : {
+      "type" : "array",
+      "description" : "Публичные ссылки на фото отеля (пустой массив, если фото нет)",
+      "items" : {
+        "$ref" : "#/components/schemas/Photo"
+      }
     }
   }
 };
     defs["HotelDetails"] = {
-  "required" : [ "city", "country", "currency", "facilities", "hotelClass", "hotelId", "nearbyPlaces", "paymentMethods", "price", "reviews", "score", "tags", "termsPlacement", "title" ],
+  "required" : [ "city", "country", "currency", "facilities", "hotelClass", "hotelId", "nearbyPlaces", "paymentMethods", "photos", "price", "reviews", "tags", "termsPlacement", "title" ],
   "type" : "object",
   "properties" : {
     "hotelId" : {
-      "type" : "integer",
-      "format" : "int64",
-      "example" : 7467355
+      "type" : "string",
+      "format" : "uuid",
+      "example" : "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d"
     },
     "title" : {
       "type" : "string",
@@ -1049,6 +1073,13 @@ ul.nav-tabs {
         "type" : "string"
       }
     },
+    "photos" : {
+      "type" : "array",
+      "description" : "Публичные ссылки на фото отеля (пустой массив, если фото нет)",
+      "items" : {
+        "$ref" : "#/components/schemas/Photo"
+      }
+    },
     "nearbyPlaces" : {
       "$ref" : "#/components/schemas/NearbyPlaces"
     },
@@ -1060,6 +1091,56 @@ ul.nav-tabs {
     },
     "score" : {
       "$ref" : "#/components/schemas/HotelScore"
+    }
+  }
+};
+    defs["HotelFilterOption"] = {
+  "required" : [ "count", "id", "label", "type" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "string",
+      "description" : "Идентификатор для query-параметра filters",
+      "example" : "beachfront"
+    },
+    "type" : {
+      "type" : "string",
+      "description" : "facet — поисковый фасет (hotel_search_facets),\nterms — условие размещения,\nattribute — рейтинг/звёзды (колонки hotels)\n",
+      "enum" : [ "facet", "terms", "attribute" ]
+    },
+    "label" : {
+      "type" : "string",
+      "description" : "Подпись для UI",
+      "example" : "У моря"
+    },
+    "count" : {
+      "minimum" : 0,
+      "type" : "integer",
+      "description" : "Число отелей в выбранном городе"
+    }
+  }
+};
+    defs["HotelFiltersResponse"] = {
+  "required" : [ "city", "country", "filters" ],
+  "type" : "object",
+  "properties" : {
+    "country" : {
+      "maxLength" : 2,
+      "minLength" : 2,
+      "type" : "string",
+      "example" : "AE"
+    },
+    "city" : {
+      "minLength" : 1,
+      "type" : "string",
+      "example" : "Dubai"
+    },
+    "filters" : {
+      "type" : "array",
+      "description" : "Доступные фильтры с количеством отелей (только с count > 0)",
+      "items" : {
+        "$ref" : "#/components/schemas/HotelFilterOption"
+      }
     }
   }
 };
@@ -1158,7 +1239,7 @@ ul.nav-tabs {
   }
 };
     defs["HotelsResponse"] = {
-  "required" : [ "hotels", "totalHotels" ],
+  "required" : [ "hotels" ],
   "type" : "object",
   "properties" : {
     "hotels" : {
@@ -1167,10 +1248,12 @@ ul.nav-tabs {
         "$ref" : "#/components/schemas/HotelCard"
       }
     },
-    "totalHotels" : {
-      "type" : "integer",
-      "format" : "int64",
-      "example" : 100
+    "nextCursor" : {
+      "type" : "string",
+      "description" : "hotelId последнего отеля на странице (id > nextCursor). Есть только если отелей больше, чем limit.\n",
+      "format" : "uuid",
+      "nullable" : true,
+      "example" : "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d"
     }
   }
 };
@@ -1243,6 +1326,34 @@ ul.nav-tabs {
       "type" : "string",
       "format" : "uri",
       "example" : "https://example.com/photo.jpg"
+    }
+  }
+};
+    defs["RefundCondition"] = {
+  "type" : "object",
+  "properties" : {
+    "quantityPercent" : {
+      "type" : "integer",
+      "example" : 100
+    },
+    "condition" : {
+      "type" : "string",
+      "example" : "Free cancellation 24h before"
+    }
+  }
+};
+    defs["RefundRule"] = {
+  "type" : "object",
+  "properties" : {
+    "refundPrepayment" : {
+      "type" : "boolean",
+      "example" : true
+    },
+    "conditions" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/components/schemas/RefundCondition"
+      }
     }
   }
 };
@@ -1324,9 +1435,18 @@ ul.nav-tabs {
     defs["TermsPlacement"] = {
   "type" : "object",
   "properties" : {
+    "checkIn" : {
+      "$ref" : "#/components/schemas/CheckInOut"
+    },
+    "checkOut" : {
+      "$ref" : "#/components/schemas/CheckInOut"
+    },
     "cancellation" : {
       "type" : "boolean",
       "example" : true
+    },
+    "refundRule" : {
+      "$ref" : "#/components/schemas/RefundRule"
     },
     "smoking" : {
       "type" : "boolean",
@@ -1372,6 +1492,9 @@ ul.nav-tabs {
                   <li class="nav-header" data-group="Hotels"><a href="#api-Hotels">API Methods - Hotels</a></li>
                     <li data-group="Hotels" data-name="getHotelById" class="">
                       <a href="#api-Hotels-getHotelById">getHotelById</a>
+                    </li>
+                    <li data-group="Hotels" data-name="getHotelFilters" class="">
+                      <a href="#api-Hotels-getHotelFilters">getHotelFilters</a>
                     </li>
                     <li data-group="Hotels" data-name="getHotels" class="">
                       <a href="#api-Hotels-getHotels">getHotels</a>
@@ -1435,7 +1558,7 @@ ul.nav-tabs {
                           <div class="tab-pane active" id="examples-Hotels-getHotelById-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Accept: application/json" \
- "http://localhost:8084/hotels/{hotelId}"
+ "http://localhost:8084/hotels/{hotelId}?currency=RUB"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Hotels-getHotelById-0-java">
@@ -1457,11 +1580,12 @@ public class HotelsApiExample {
         Integer xPackRevision = 1; // Integer | Current pack revision number
         String xGenerationMode = FULL; // String | Generation mode
         String xRequestId = req-123; // String | Request tracing identifier
-        Long hotelId = 7467355; // Long | 
+        UUID hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // UUID | Internal Tripify hotel id (deterministic UUID)
+        String currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD)
         Integer xHotelsRevision = 1; // Integer | Hotels revision number
 
         try {
-            HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision);
+            HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling HotelsApi#getHotelById");
@@ -1482,11 +1606,12 @@ final String xGenerationId = new String(); // String | Travel generation identif
 final Integer xPackRevision = new Integer(); // Integer | Current pack revision number
 final String xGenerationMode = new String(); // String | Generation mode
 final String xRequestId = new String(); // String | Request tracing identifier
-final Long hotelId = new Long(); // Long | 
+final UUID hotelId = new UUID(); // UUID | Internal Tripify hotel id (deterministic UUID)
+final String currency = new String(); // String | Валюта ответа для фронта (цены в БД в USD)
 final Integer xHotelsRevision = new Integer(); // Integer | Hotels revision number
 
 try {
-    final result = await api_instance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision);
+    final result = await api_instance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->getHotelById: $e\n');
@@ -1506,11 +1631,12 @@ public class HotelsApiExample {
         Integer xPackRevision = 1; // Integer | Current pack revision number
         String xGenerationMode = FULL; // String | Generation mode
         String xRequestId = req-123; // String | Request tracing identifier
-        Long hotelId = 7467355; // Long | 
+        UUID hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // UUID | Internal Tripify hotel id (deterministic UUID)
+        String currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD)
         Integer xHotelsRevision = 1; // Integer | Hotels revision number
 
         try {
-            HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision);
+            HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling HotelsApi#getHotelById");
@@ -1533,7 +1659,8 @@ String *xGenerationId = anon_a8f91d_ab91ff23_rev1; // Travel generation identifi
 Integer *xPackRevision = 1; // Current pack revision number (default to null)
 String *xGenerationMode = FULL; // Generation mode (default to null)
 String *xRequestId = req-123; // Request tracing identifier (default to null)
-Long *hotelId = 7467355; //  (default to null)
+UUID *hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // Internal Tripify hotel id (deterministic UUID) (default to null)
+String *currency = RUB; // Валюта ответа для фронта (цены в БД в USD) (default to null)
 Integer *xHotelsRevision = 1; // Hotels revision number (optional) (default to null)
 
 // Get hotel details
@@ -1543,6 +1670,7 @@ Integer *xHotelsRevision = 1; // Hotels revision number (optional) (default to n
     xGenerationMode:xGenerationMode
     xRequestId:xRequestId
     hotelId:hotelId
+    currency:currency
     xHotelsRevision:xHotelsRevision
               completionHandler: ^(HotelDetails output, NSError* error) {
     if (output) {
@@ -1565,7 +1693,8 @@ var xGenerationId = anon_a8f91d_ab91ff23_rev1; // {String} Travel generation ide
 var xPackRevision = 1; // {Integer} Current pack revision number
 var xGenerationMode = FULL; // {String} Generation mode
 var xRequestId = req-123; // {String} Request tracing identifier
-var hotelId = 7467355; // {Long} 
+var hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // {UUID} Internal Tripify hotel id (deterministic UUID)
+var currency = RUB; // {String} Валюта ответа для фронта (цены в БД в USD)
 var opts = {
   'xHotelsRevision': 1 // {Integer} Hotels revision number
 };
@@ -1577,7 +1706,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, opts, callback);
+api.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, opts, callback);
 </code></pre>
                             </div>
 
@@ -1605,12 +1734,13 @@ namespace Example
             var xPackRevision = 1;  // Integer | Current pack revision number (default to null)
             var xGenerationMode = FULL;  // String | Generation mode (default to null)
             var xRequestId = req-123;  // String | Request tracing identifier (default to null)
-            var hotelId = 7467355;  // Long |  (default to null)
+            var hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d;  // UUID | Internal Tripify hotel id (deterministic UUID) (default to null)
+            var currency = RUB;  // String | Валюта ответа для фронта (цены в БД в USD) (default to null)
             var xHotelsRevision = 1;  // Integer | Hotels revision number (optional)  (default to null)
 
             try {
                 // Get hotel details
-                HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision);
+                HotelDetails result = apiInstance.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling HotelsApi.getHotelById: " + e.Message );
@@ -1632,11 +1762,12 @@ $xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identi
 $xPackRevision = 1; // Integer | Current pack revision number
 $xGenerationMode = FULL; // String | Generation mode
 $xRequestId = req-123; // String | Request tracing identifier
-$hotelId = 7467355; // Long | 
+$hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // UUID | Internal Tripify hotel id (deterministic UUID)
+$currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD)
 $xHotelsRevision = 1; // Integer | Hotels revision number
 
 try {
-    $result = $api_instance->getHotelById($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $hotelId, $xHotelsRevision);
+    $result = $api_instance->getHotelById($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $hotelId, $currency, $xHotelsRevision);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling HotelsApi->getHotelById: ', $e->getMessage(), PHP_EOL;
@@ -1656,11 +1787,12 @@ my $xGenerationId = anon_a8f91d_ab91ff23_rev1; # String | Travel generation iden
 my $xPackRevision = 1; # Integer | Current pack revision number
 my $xGenerationMode = FULL; # String | Generation mode
 my $xRequestId = req-123; # String | Request tracing identifier
-my $hotelId = 7467355; # Long | 
+my $hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; # UUID | Internal Tripify hotel id (deterministic UUID)
+my $currency = RUB; # String | Валюта ответа для фронта (цены в БД в USD)
 my $xHotelsRevision = 1; # Integer | Hotels revision number
 
 eval {
-    my $result = $api_instance->getHotelById(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, hotelId => $hotelId, xHotelsRevision => $xHotelsRevision);
+    my $result = $api_instance->getHotelById(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, hotelId => $hotelId, currency => $currency, xHotelsRevision => $xHotelsRevision);
     print Dumper($result);
 };
 if ($@) {
@@ -1682,12 +1814,13 @@ xGenerationId = anon_a8f91d_ab91ff23_rev1 # String | Travel generation identifie
 xPackRevision = 1 # Integer | Current pack revision number (default to null)
 xGenerationMode = FULL # String | Generation mode (default to null)
 xRequestId = req-123 # String | Request tracing identifier (default to null)
-hotelId = 7467355 # Long |  (default to null)
+hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d # UUID | Internal Tripify hotel id (deterministic UUID) (default to null)
+currency = RUB # String | Валюта ответа для фронта (цены в БД в USD) (default to null)
 xHotelsRevision = 1 # Integer | Hotels revision number (optional) (default to null)
 
 try:
     # Get hotel details
-    api_response = api_instance.get_hotel_by_id(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision=xHotelsRevision)
+    api_response = api_instance.get_hotel_by_id(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision=xHotelsRevision)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling HotelsApi->getHotelById: %s\n" % e)</code></pre>
@@ -1702,11 +1835,12 @@ pub fn main() {
     let xPackRevision = 1; // Integer
     let xGenerationMode = FULL; // String
     let xRequestId = req-123; // String
-    let hotelId = 7467355; // Long
+    let hotelId = 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d; // UUID
+    let currency = RUB; // String
     let xHotelsRevision = 1; // Integer
 
     let mut context = HotelsApi::Context::default();
-    let result = client.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, xHotelsRevision, &context).wait();
+    let result = client.getHotelById(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, hotelId, currency, xHotelsRevision, &context).wait();
 
     println!("{:?}", result);
 }
@@ -1735,12 +1869,15 @@ pub fn main() {
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Long
+                    UUID
                 </span>
                     <span class="format">
-                        (int64)
+                        (uuid)
                     </span>
 
+                    <div class="inner description marked">
+Internal Tripify hotel id (deterministic UUID)
+                    </div>
             </div>
                 <div class="inner required">
                     Required
@@ -1897,6 +2034,36 @@ Hotels revision number
 
 
 
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">currency*</td>
+<td>
+
+
+    <div id="d2e199_getHotelById_currency">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Валюта ответа для фронта (цены в БД в USD)
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
 
                           <h2>Responses</h2>
                             <h3 id="examples-Hotels-getHotelById-title-200"></h3>
@@ -2206,6 +2373,765 @@ Hotels revision number
                         </article>
                       </div>
                       <hr>
+                    <div id="api-Hotels-getHotelFilters">
+                      <article id="api-Hotels-getHotelFilters-0" data-group="User" data-name="getHotelFilters" data-version="0">
+                        <div class="pull-left">
+                          <h1>getHotelFilters</h1>
+                          <p>Get available hotel filters for city</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked"></p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/hotels/filters</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Hotels-getHotelFilters-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Hotels-getHotelFilters-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Hotels-getHotelFilters-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Hotels-getHotelFilters-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Hotels-getHotelFilters-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Accept: application/json" \
+ "http://localhost:8084/hotels/filters?country=AE&city=Dubai"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.HotelsApi;
+
+import java.io.File;
+import java.util.*;
+
+public class HotelsApiExample {
+    public static void main(String[] args) {
+
+        // Create an instance of the API class
+        HotelsApi apiInstance = new HotelsApi();
+        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+        Integer xPackRevision = 1; // Integer | Current pack revision number
+        String xGenerationMode = FULL; // String | Generation mode
+        String xRequestId = req-123; // String | Request tracing identifier
+        String country = AE; // String | 
+        String city = Dubai; // String | 
+        Integer xHotelsRevision = 1; // Integer | Hotels revision number
+
+        try {
+            HotelFiltersResponse result = apiInstance.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling HotelsApi#getHotelFilters");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final String xAnonymousId = new String(); // String | Anonymous user identifier
+final String xGenerationId = new String(); // String | Travel generation identifier
+final Integer xPackRevision = new Integer(); // Integer | Current pack revision number
+final String xGenerationMode = new String(); // String | Generation mode
+final String xRequestId = new String(); // String | Request tracing identifier
+final String country = new String(); // String | 
+final String city = new String(); // String | 
+final Integer xHotelsRevision = new Integer(); // Integer | Hotels revision number
+
+try {
+    final result = await api_instance.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->getHotelFilters: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.HotelsApi;
+
+public class HotelsApiExample {
+    public static void main(String[] args) {
+        HotelsApi apiInstance = new HotelsApi();
+        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+        Integer xPackRevision = 1; // Integer | Current pack revision number
+        String xGenerationMode = FULL; // String | Generation mode
+        String xRequestId = req-123; // String | Request tracing identifier
+        String country = AE; // String | 
+        String city = Dubai; // String | 
+        Integer xHotelsRevision = 1; // Integer | Hotels revision number
+
+        try {
+            HotelFiltersResponse result = apiInstance.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling HotelsApi#getHotelFilters");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
+
+// Create an instance of the API class
+HotelsApi *apiInstance = [[HotelsApi alloc] init];
+String *xAnonymousId = anona8f91d_f445g4d3_rev1; // Anonymous user identifier (default to null)
+String *xGenerationId = anon_a8f91d_ab91ff23_rev1; // Travel generation identifier (default to null)
+Integer *xPackRevision = 1; // Current pack revision number (default to null)
+String *xGenerationMode = FULL; // Generation mode (default to null)
+String *xRequestId = req-123; // Request tracing identifier (default to null)
+String *country = AE; //  (default to null)
+String *city = Dubai; //  (default to null)
+Integer *xHotelsRevision = 1; // Hotels revision number (optional) (default to null)
+
+// Get available hotel filters for city
+[apiInstance getHotelFiltersWith:xAnonymousId
+    xGenerationId:xGenerationId
+    xPackRevision:xPackRevision
+    xGenerationMode:xGenerationMode
+    xRequestId:xRequestId
+    country:country
+    city:city
+    xHotelsRevision:xHotelsRevision
+              completionHandler: ^(HotelFiltersResponse output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var TripifyHotelsServiceApi = require('tripify_hotels_service_api');
+
+// Create an instance of the API class
+var api = new TripifyHotelsServiceApi.HotelsApi()
+var xAnonymousId = anona8f91d_f445g4d3_rev1; // {String} Anonymous user identifier
+var xGenerationId = anon_a8f91d_ab91ff23_rev1; // {String} Travel generation identifier
+var xPackRevision = 1; // {Integer} Current pack revision number
+var xGenerationMode = FULL; // {String} Generation mode
+var xRequestId = req-123; // {String} Request tracing identifier
+var country = AE; // {String} 
+var city = Dubai; // {String} 
+var opts = {
+  'xHotelsRevision': 1 // {Integer} Hotels revision number
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Hotels-getHotelFilters-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getHotelFiltersExample
+    {
+        public void main()
+        {
+
+            // Create an instance of the API class
+            var apiInstance = new HotelsApi();
+            var xAnonymousId = anona8f91d_f445g4d3_rev1;  // String | Anonymous user identifier (default to null)
+            var xGenerationId = anon_a8f91d_ab91ff23_rev1;  // String | Travel generation identifier (default to null)
+            var xPackRevision = 1;  // Integer | Current pack revision number (default to null)
+            var xGenerationMode = FULL;  // String | Generation mode (default to null)
+            var xRequestId = req-123;  // String | Request tracing identifier (default to null)
+            var country = AE;  // String |  (default to null)
+            var city = Dubai;  // String |  (default to null)
+            var xHotelsRevision = 1;  // Integer | Hotels revision number (optional)  (default to null)
+
+            try {
+                // Get available hotel filters for city
+                HotelFiltersResponse result = apiInstance.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling HotelsApi.getHotelFilters: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\HotelsApi();
+$xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+$xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+$xPackRevision = 1; // Integer | Current pack revision number
+$xGenerationMode = FULL; // String | Generation mode
+$xRequestId = req-123; // String | Request tracing identifier
+$country = AE; // String | 
+$city = Dubai; // String | 
+$xHotelsRevision = 1; // Integer | Hotels revision number
+
+try {
+    $result = $api_instance->getHotelFilters($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $country, $city, $xHotelsRevision);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling HotelsApi->getHotelFilters: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::HotelsApi;
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::HotelsApi->new();
+my $xAnonymousId = anona8f91d_f445g4d3_rev1; # String | Anonymous user identifier
+my $xGenerationId = anon_a8f91d_ab91ff23_rev1; # String | Travel generation identifier
+my $xPackRevision = 1; # Integer | Current pack revision number
+my $xGenerationMode = FULL; # String | Generation mode
+my $xRequestId = req-123; # String | Request tracing identifier
+my $country = AE; # String | 
+my $city = Dubai; # String | 
+my $xHotelsRevision = 1; # Integer | Hotels revision number
+
+eval {
+    my $result = $api_instance->getHotelFilters(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, country => $country, city => $city, xHotelsRevision => $xHotelsRevision);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling HotelsApi->getHotelFilters: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Create an instance of the API class
+api_instance = openapi_client.HotelsApi()
+xAnonymousId = anona8f91d_f445g4d3_rev1 # String | Anonymous user identifier (default to null)
+xGenerationId = anon_a8f91d_ab91ff23_rev1 # String | Travel generation identifier (default to null)
+xPackRevision = 1 # Integer | Current pack revision number (default to null)
+xGenerationMode = FULL # String | Generation mode (default to null)
+xRequestId = req-123 # String | Request tracing identifier (default to null)
+country = AE # String |  (default to null)
+city = Dubai # String |  (default to null)
+xHotelsRevision = 1 # Integer | Hotels revision number (optional) (default to null)
+
+try:
+    # Get available hotel filters for city
+    api_response = api_instance.get_hotel_filters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision=xHotelsRevision)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling HotelsApi->getHotelFilters: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Hotels-getHotelFilters-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate HotelsApi;
+
+pub fn main() {
+    let xAnonymousId = anona8f91d_f445g4d3_rev1; // String
+    let xGenerationId = anon_a8f91d_ab91ff23_rev1; // String
+    let xPackRevision = 1; // Integer
+    let xGenerationMode = FULL; // String
+    let xRequestId = req-123; // String
+    let country = AE; // String
+    let city = Dubai; // String
+    let xHotelsRevision = 1; // Integer
+
+    let mut context = HotelsApi::Context::default();
+    let result = client.getHotelFilters(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, xHotelsRevision, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">X-Anonymous-Id*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xAnonymousId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Anonymous user identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Generation-Id*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xGenerationId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Travel generation identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Pack-Revision*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xPackRevision">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Current pack revision number
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Generation-Mode*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xGenerationMode">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Generation mode
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Request-Id*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xRequestId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Request tracing identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Hotels-Revision</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_xHotelsRevision">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Hotels revision number
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">country*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_country">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">city*</td>
+<td>
+
+
+    <div id="d2e199_getHotelFilters_city">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Hotels-getHotelFilters-title-200"></h3>
+                            <p id="examples-Hotels-getHotelFilters-description-200" class="marked"></p>
+                            <script>
+                              var responseHotels200_description = `Available filters fetched successfully`;
+                              var responseHotels200_description_break = responseHotels200_description.indexOf('\n');
+                              if (responseHotels200_description_break == -1) {
+                                $("#examples-Hotels-getHotelFilters-title-200").text("Status: 200 - " + responseHotels200_description);
+                              } else {
+                                $("#examples-Hotels-getHotelFilters-title-200").text("Status: 200 - " + responseHotels200_description.substring(0, responseHotels200_description_break));
+                                $("#examples-Hotels-getHotelFilters-description-200").html(responseHotels200_description.substring(responseHotels200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Hotels-getHotelFilters-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Hotels-getHotelFilters-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Hotels-getHotelFilters-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-getHotelFilters-200-schema">
+                                <div id="responses-Hotels-getHotelFilters-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Available filters fetched successfully",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/HotelFiltersResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Hotels-getHotelFilters-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-getHotelFilters-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Hotels-getHotelFilters-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Hotels-getHotelFilters-title-400"></h3>
+                            <p id="examples-Hotels-getHotelFilters-description-400" class="marked"></p>
+                            <script>
+                              var responseHotels400_description = `Bad request`;
+                              var responseHotels400_description_break = responseHotels400_description.indexOf('\n');
+                              if (responseHotels400_description_break == -1) {
+                                $("#examples-Hotels-getHotelFilters-title-400").text("Status: 400 - " + responseHotels400_description);
+                              } else {
+                                $("#examples-Hotels-getHotelFilters-title-400").text("Status: 400 - " + responseHotels400_description.substring(0, responseHotels400_description_break));
+                                $("#examples-Hotels-getHotelFilters-description-400").html(responseHotels400_description.substring(responseHotels400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Hotels-getHotelFilters-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Hotels-getHotelFilters-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Hotels-getHotelFilters-400-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-getHotelFilters-400-schema">
+                                <div id="responses-Hotels-getHotelFilters-schema-400" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Bad request",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ErrorResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Hotels-getHotelFilters-400-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-getHotelFilters-schema-400');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Hotels-getHotelFilters-400-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Hotels-getHotelFilters-title-500"></h3>
+                            <p id="examples-Hotels-getHotelFilters-description-500" class="marked"></p>
+                            <script>
+                              var responseHotels500_description = `Internal server error`;
+                              var responseHotels500_description_break = responseHotels500_description.indexOf('\n');
+                              if (responseHotels500_description_break == -1) {
+                                $("#examples-Hotels-getHotelFilters-title-500").text("Status: 500 - " + responseHotels500_description);
+                              } else {
+                                $("#examples-Hotels-getHotelFilters-title-500").text("Status: 500 - " + responseHotels500_description.substring(0, responseHotels500_description_break));
+                                $("#examples-Hotels-getHotelFilters-description-500").html(responseHotels500_description.substring(responseHotels500_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Hotels-getHotelFilters-500" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Hotels-getHotelFilters-500-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Hotels-getHotelFilters-500-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-getHotelFilters-500-schema">
+                                <div id="responses-Hotels-getHotelFilters-schema-500" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Internal server error",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ErrorResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Hotels-getHotelFilters-500-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-getHotelFilters-schema-500');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Hotels-getHotelFilters-500-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Hotels-getHotels">
                       <article id="api-Hotels-getHotels-0" data-group="User" data-name="getHotels" data-version="0">
                         <div class="pull-left">
@@ -2242,7 +3168,7 @@ Hotels revision number
                           <div class="tab-pane active" id="examples-Hotels-getHotels-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Accept: application/json" \
- "http://localhost:8084/hotels?city=Dubai&check_in=2026-06-01&check_out=2026-06-10&guests=2&budget=150000&currency=RUB&limit=56&offset=56"
+ "http://localhost:8084/hotels?country=AE&city=Dubai&check_in=2026-06-01&check_out=2026-06-10&currency=RUB&guests=2&budget=150000&limit=56&cursor=38400000-8cf0-11bd-b23e-10b96e4ef00d&filters=[pool, beachfront, rating_8_plus]"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Hotels-getHotels-0-java">
@@ -2264,18 +3190,21 @@ public class HotelsApiExample {
         Integer xPackRevision = 1; // Integer | Current pack revision number
         String xGenerationMode = FULL; // String | Generation mode
         String xRequestId = req-123; // String | Request tracing identifier
-        String city = Dubai; // String | 
+        String country = AE; // String | Country code ISO Alpha-2
+        String city = Dubai; // String | City where hotels are searched
         date checkIn = 2026-06-01; // date | 
         date checkOut = 2026-06-10; // date | 
+        String currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
         Integer guests = 2; // Integer | 
         Integer xHotelsRevision = 1; // Integer | Hotels revision number
-        Long budget = 150000; // Long | Maximum total travel budget for hotels
-        String currency = RUB; // String | 
+        Long budget = 150000; // Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
         Integer limit = 56; // Integer | 
-        Integer offset = 56; // Integer | 
+        UUID cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // UUID | hotelId последнего отеля с предыдущей страницы (id > cursor)
+        array[String] filters = [pool, beachfront, rating_8_plus]; // array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 
         try {
-            HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision, budget, currency, limit, offset);
+            HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision, budget, limit, cursor, filters);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling HotelsApi#getHotels");
@@ -2296,18 +3225,21 @@ final String xGenerationId = new String(); // String | Travel generation identif
 final Integer xPackRevision = new Integer(); // Integer | Current pack revision number
 final String xGenerationMode = new String(); // String | Generation mode
 final String xRequestId = new String(); // String | Request tracing identifier
-final String city = new String(); // String | 
+final String country = new String(); // String | Country code ISO Alpha-2
+final String city = new String(); // String | City where hotels are searched
 final date checkIn = new date(); // date | 
 final date checkOut = new date(); // date | 
+final String currency = new String(); // String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
 final Integer guests = new Integer(); // Integer | 
 final Integer xHotelsRevision = new Integer(); // Integer | Hotels revision number
-final Long budget = new Long(); // Long | Maximum total travel budget for hotels
-final String currency = new String(); // String | 
+final Long budget = new Long(); // Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
 final Integer limit = new Integer(); // Integer | 
-final Integer offset = new Integer(); // Integer | 
+final UUID cursor = new UUID(); // UUID | hotelId последнего отеля с предыдущей страницы (id > cursor)
+final array[String] filters = new array[String](); // array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 
 try {
-    final result = await api_instance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision, budget, currency, limit, offset);
+    final result = await api_instance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision, budget, limit, cursor, filters);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->getHotels: $e\n');
@@ -2327,18 +3259,21 @@ public class HotelsApiExample {
         Integer xPackRevision = 1; // Integer | Current pack revision number
         String xGenerationMode = FULL; // String | Generation mode
         String xRequestId = req-123; // String | Request tracing identifier
-        String city = Dubai; // String | 
+        String country = AE; // String | Country code ISO Alpha-2
+        String city = Dubai; // String | City where hotels are searched
         date checkIn = 2026-06-01; // date | 
         date checkOut = 2026-06-10; // date | 
+        String currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
         Integer guests = 2; // Integer | 
         Integer xHotelsRevision = 1; // Integer | Hotels revision number
-        Long budget = 150000; // Long | Maximum total travel budget for hotels
-        String currency = RUB; // String | 
+        Long budget = 150000; // Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
         Integer limit = 56; // Integer | 
-        Integer offset = 56; // Integer | 
+        UUID cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // UUID | hotelId последнего отеля с предыдущей страницы (id > cursor)
+        array[String] filters = [pool, beachfront, rating_8_plus]; // array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 
         try {
-            HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision, budget, currency, limit, offset);
+            HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision, budget, limit, cursor, filters);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling HotelsApi#getHotels");
@@ -2361,15 +3296,18 @@ String *xGenerationId = anon_a8f91d_ab91ff23_rev1; // Travel generation identifi
 Integer *xPackRevision = 1; // Current pack revision number (default to null)
 String *xGenerationMode = FULL; // Generation mode (default to null)
 String *xRequestId = req-123; // Request tracing identifier (default to null)
-String *city = Dubai; //  (default to null)
+String *country = AE; // Country code ISO Alpha-2 (default to null)
+String *city = Dubai; // City where hotels are searched (default to null)
 date *checkIn = 2026-06-01; //  (default to null)
 date *checkOut = 2026-06-10; //  (default to null)
+String *currency = RUB; // Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче) (default to null)
 Integer *guests = 2; //  (default to null)
 Integer *xHotelsRevision = 1; // Hotels revision number (optional) (default to null)
-Long *budget = 150000; // Maximum total travel budget for hotels (optional) (default to null)
-String *currency = RUB; //  (optional) (default to null)
+Long *budget = 150000; // Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD) (optional) (default to null)
 Integer *limit = 56; //  (optional) (default to 20)
-Integer *offset = 56; //  (optional) (default to 0)
+UUID *cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // hotelId последнего отеля с предыдущей страницы (id > cursor) (optional) (default to null)
+array[String] *filters = [pool, beachfront, rating_8_plus]; // Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+ (optional) (default to null)
 
 // Get hotel cards list
 [apiInstance getHotelsWith:xAnonymousId
@@ -2377,15 +3315,17 @@ Integer *offset = 56; //  (optional) (default to 0)
     xPackRevision:xPackRevision
     xGenerationMode:xGenerationMode
     xRequestId:xRequestId
+    country:country
     city:city
     checkIn:checkIn
     checkOut:checkOut
+    currency:currency
     guests:guests
     xHotelsRevision:xHotelsRevision
     budget:budget
-    currency:currency
     limit:limit
-    offset:offset
+    cursor:cursor
+    filters:filters
               completionHandler: ^(HotelsResponse output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
@@ -2407,16 +3347,19 @@ var xGenerationId = anon_a8f91d_ab91ff23_rev1; // {String} Travel generation ide
 var xPackRevision = 1; // {Integer} Current pack revision number
 var xGenerationMode = FULL; // {String} Generation mode
 var xRequestId = req-123; // {String} Request tracing identifier
-var city = Dubai; // {String} 
+var country = AE; // {String} Country code ISO Alpha-2
+var city = Dubai; // {String} City where hotels are searched
 var checkIn = 2026-06-01; // {date} 
 var checkOut = 2026-06-10; // {date} 
+var currency = RUB; // {String} Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
 var guests = 2; // {Integer} 
 var opts = {
   'xHotelsRevision': 1, // {Integer} Hotels revision number
-  'budget': 150000, // {Long} Maximum total travel budget for hotels
-  'currency': RUB, // {String} 
+  'budget': 150000, // {Long} Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
   'limit': 56, // {Integer} 
-  'offset': 56 // {Integer} 
+  'cursor': 38400000-8cf0-11bd-b23e-10b96e4ef00d, // {UUID} hotelId последнего отеля с предыдущей страницы (id > cursor)
+  'filters': [pool, beachfront, rating_8_plus] // {array[String]} Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 };
 
 var callback = function(error, data, response) {
@@ -2426,7 +3369,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, opts, callback);
+api.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, opts, callback);
 </code></pre>
                             </div>
 
@@ -2454,19 +3397,22 @@ namespace Example
             var xPackRevision = 1;  // Integer | Current pack revision number (default to null)
             var xGenerationMode = FULL;  // String | Generation mode (default to null)
             var xRequestId = req-123;  // String | Request tracing identifier (default to null)
-            var city = Dubai;  // String |  (default to null)
+            var country = AE;  // String | Country code ISO Alpha-2 (default to null)
+            var city = Dubai;  // String | City where hotels are searched (default to null)
             var checkIn = 2026-06-01;  // date |  (default to null)
             var checkOut = 2026-06-10;  // date |  (default to null)
+            var currency = RUB;  // String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче) (default to null)
             var guests = 2;  // Integer |  (default to null)
             var xHotelsRevision = 1;  // Integer | Hotels revision number (optional)  (default to null)
-            var budget = 150000;  // Long | Maximum total travel budget for hotels (optional)  (default to null)
-            var currency = RUB;  // String |  (optional)  (default to null)
+            var budget = 150000;  // Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD) (optional)  (default to null)
             var limit = 56;  // Integer |  (optional)  (default to 20)
-            var offset = 56;  // Integer |  (optional)  (default to 0)
+            var cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d;  // UUID | hotelId последнего отеля с предыдущей страницы (id > cursor) (optional)  (default to null)
+            var filters = new array[String](); // array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+ (optional)  (default to null)
 
             try {
                 // Get hotel cards list
-                HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision, budget, currency, limit, offset);
+                HotelsResponse result = apiInstance.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision, budget, limit, cursor, filters);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling HotelsApi.getHotels: " + e.Message );
@@ -2488,18 +3434,21 @@ $xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identi
 $xPackRevision = 1; // Integer | Current pack revision number
 $xGenerationMode = FULL; // String | Generation mode
 $xRequestId = req-123; // String | Request tracing identifier
-$city = Dubai; // String | 
+$country = AE; // String | Country code ISO Alpha-2
+$city = Dubai; // String | City where hotels are searched
 $checkIn = 2026-06-01; // date | 
 $checkOut = 2026-06-10; // date | 
+$currency = RUB; // String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
 $guests = 2; // Integer | 
 $xHotelsRevision = 1; // Integer | Hotels revision number
-$budget = 150000; // Long | Maximum total travel budget for hotels
-$currency = RUB; // String | 
+$budget = 150000; // Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
 $limit = 56; // Integer | 
-$offset = 56; // Integer | 
+$cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // UUID | hotelId последнего отеля с предыдущей страницы (id > cursor)
+$filters = [pool, beachfront, rating_8_plus]; // array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 
 try {
-    $result = $api_instance->getHotels($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $city, $checkIn, $checkOut, $guests, $xHotelsRevision, $budget, $currency, $limit, $offset);
+    $result = $api_instance->getHotels($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $country, $city, $checkIn, $checkOut, $currency, $guests, $xHotelsRevision, $budget, $limit, $cursor, $filters);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling HotelsApi->getHotels: ', $e->getMessage(), PHP_EOL;
@@ -2519,18 +3468,21 @@ my $xGenerationId = anon_a8f91d_ab91ff23_rev1; # String | Travel generation iden
 my $xPackRevision = 1; # Integer | Current pack revision number
 my $xGenerationMode = FULL; # String | Generation mode
 my $xRequestId = req-123; # String | Request tracing identifier
-my $city = Dubai; # String | 
+my $country = AE; # String | Country code ISO Alpha-2
+my $city = Dubai; # String | City where hotels are searched
 my $checkIn = 2026-06-01; # date | 
 my $checkOut = 2026-06-10; # date | 
+my $currency = RUB; # String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
 my $guests = 2; # Integer | 
 my $xHotelsRevision = 1; # Integer | Hotels revision number
-my $budget = 150000; # Long | Maximum total travel budget for hotels
-my $currency = RUB; # String | 
+my $budget = 150000; # Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
 my $limit = 56; # Integer | 
-my $offset = 56; # Integer | 
+my $cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; # UUID | hotelId последнего отеля с предыдущей страницы (id > cursor)
+my $filters = [[pool, beachfront, rating_8_plus]]; # array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
 
 eval {
-    my $result = $api_instance->getHotels(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, city => $city, checkIn => $checkIn, checkOut => $checkOut, guests => $guests, xHotelsRevision => $xHotelsRevision, budget => $budget, currency => $currency, limit => $limit, offset => $offset);
+    my $result = $api_instance->getHotels(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, country => $country, city => $city, checkIn => $checkIn, checkOut => $checkOut, currency => $currency, guests => $guests, xHotelsRevision => $xHotelsRevision, budget => $budget, limit => $limit, cursor => $cursor, filters => $filters);
     print Dumper($result);
 };
 if ($@) {
@@ -2552,19 +3504,22 @@ xGenerationId = anon_a8f91d_ab91ff23_rev1 # String | Travel generation identifie
 xPackRevision = 1 # Integer | Current pack revision number (default to null)
 xGenerationMode = FULL # String | Generation mode (default to null)
 xRequestId = req-123 # String | Request tracing identifier (default to null)
-city = Dubai # String |  (default to null)
+country = AE # String | Country code ISO Alpha-2 (default to null)
+city = Dubai # String | City where hotels are searched (default to null)
 checkIn = 2026-06-01 # date |  (default to null)
 checkOut = 2026-06-10 # date |  (default to null)
+currency = RUB # String | Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче) (default to null)
 guests = 2 # Integer |  (default to null)
 xHotelsRevision = 1 # Integer | Hotels revision number (optional) (default to null)
-budget = 150000 # Long | Maximum total travel budget for hotels (optional) (default to null)
-currency = RUB # String |  (optional) (default to null)
+budget = 150000 # Long | Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD) (optional) (default to null)
 limit = 56 # Integer |  (optional) (default to 20)
-offset = 56 # Integer |  (optional) (default to 0)
+cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d # UUID | hotelId последнего отеля с предыдущей страницы (id > cursor) (optional) (default to null)
+filters = [pool, beachfront, rating_8_plus] # array[String] | Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+ (optional) (default to null)
 
 try:
     # Get hotel cards list
-    api_response = api_instance.get_hotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision=xHotelsRevision, budget=budget, currency=currency, limit=limit, offset=offset)
+    api_response = api_instance.get_hotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision=xHotelsRevision, budget=budget, limit=limit, cursor=cursor, filters=filters)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling HotelsApi->getHotels: %s\n" % e)</code></pre>
@@ -2579,18 +3534,20 @@ pub fn main() {
     let xPackRevision = 1; // Integer
     let xGenerationMode = FULL; // String
     let xRequestId = req-123; // String
+    let country = AE; // String
     let city = Dubai; // String
     let checkIn = 2026-06-01; // date
     let checkOut = 2026-06-10; // date
+    let currency = RUB; // String
     let guests = 2; // Integer
     let xHotelsRevision = 1; // Integer
     let budget = 150000; // Long
-    let currency = RUB; // String
     let limit = 56; // Integer
-    let offset = 56; // Integer
+    let cursor = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // UUID
+    let filters = [pool, beachfront, rating_8_plus]; // array[String]
 
     let mut context = HotelsApi::Context::default();
-    let result = client.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, city, checkIn, checkOut, guests, xHotelsRevision, budget, currency, limit, offset, &context).wait();
+    let result = client.getHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, country, city, checkIn, checkOut, currency, guests, xHotelsRevision, budget, limit, cursor, filters, &context).wait();
 
     println!("{:?}", result);
 }
@@ -2757,6 +3714,29 @@ Hotels revision number
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
+                                <tr><td style="width:150px;">country*</td>
+<td>
+
+
+    <div id="d2e199_getHotels_country">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Country code ISO Alpha-2
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
                                 <tr><td style="width:150px;">city*</td>
 <td>
 
@@ -2768,6 +3748,9 @@ Hotels revision number
                     String
                 </span>
 
+                    <div class="inner description marked">
+City where hotels are searched
+                    </div>
             </div>
                 <div class="inner required">
                     Required
@@ -2823,6 +3806,29 @@ Hotels revision number
 </td>
 </tr>
 
+                                <tr><td style="width:150px;">currency*</td>
+<td>
+
+
+    <div id="d2e199_getHotels_currency">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
                                 <tr><td style="width:150px;">guests*</td>
 <td>
 
@@ -2858,25 +3864,8 @@ Hotels revision number
                     </span>
 
                     <div class="inner description marked">
-Maximum total travel budget for hotels
+Максимальная цена в валюте currency (в БД сравнивается после конвертации в USD)
                     </div>
-            </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">currency</td>
-<td>
-
-
-    <div id="d2e199_getHotels_currency">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
             </div>
         </div>
     </div>
@@ -2900,17 +3889,44 @@ Maximum total travel budget for hotels
 </td>
 </tr>
 
-                                <tr><td style="width:150px;">offset</td>
+                                <tr><td style="width:150px;">cursor</td>
 <td>
 
 
-    <div id="d2e199_getHotels_offset">
+    <div id="d2e199_getHotels_cursor">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Integer
+                    UUID
+                </span>
+                    <span class="format">
+                        (uuid)
+                    </span>
+
+                    <div class="inner description marked">
+hotelId последнего отеля с предыдущей страницы (id &gt; cursor)
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">filters</td>
+<td>
+
+
+    <div id="d2e199_getHotels_filters">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    array[String]
                 </span>
 
+                    <div class="inner description marked">
+Фильтры из каталога GET /hotels/filters (AND). Примеры: pool, beachfront, rating_8_plus, stars_4_plus. budget по-прежнему отдельный параметр (диапазон цены).
+
+                    </div>
             </div>
         </div>
     </div>

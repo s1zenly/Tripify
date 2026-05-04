@@ -22,27 +22,19 @@ public class HotelReviewsStorageService {
     private final ReviewsDocumentMapper mapper;
     private final HotelPhotoStorageService photoStorageService;
 
-    public UUID upsertReviews(
-            UUID hotelInternalId,
-            Long externalHotelId,
-            String providerName,
-            ReviewsDto reviews,
-            Instant now
-    ) {
+    public UUID upsertReviews(UUID hotelId, ReviewsDto reviews, Instant now) {
         if (reviews == null) {
             return null;
         }
 
-        Instant createdAt = repository.findById(hotelInternalId.toString())
+        Instant createdAt = repository.findById(hotelId.toString())
                 .map(HotelReviewsDocument::createdAt)
                 .orElse(now);
 
-        List<ReviewCommentDocument> comments = mapComments(hotelInternalId, reviews.comments());
+        List<ReviewCommentDocument> comments = mapComments(hotelId, reviews.comments());
 
         HotelReviewsDocument document = mapper.toDocument(
-                hotelInternalId,
-                externalHotelId,
-                providerName,
+                hotelId,
                 reviews,
                 comments,
                 createdAt,
@@ -51,18 +43,18 @@ public class HotelReviewsStorageService {
 
         repository.save(document);
 
-        return hotelInternalId;
+        return hotelId;
     }
 
-    public HotelReviewsDocument findByHotelInternalId(UUID hotelInternalId) {
-        return repository.findById(hotelInternalId.toString())
+    public HotelReviewsDocument findByHotelId(UUID hotelId) {
+        return repository.findById(hotelId.toString())
                 .orElseThrow(() -> new IllegalStateException(
-                        "Hotel reviews not found for hotelInternalId=" + hotelInternalId
+                        "Hotel reviews not found for hotelId=" + hotelId
                 ));
     }
 
     private List<ReviewCommentDocument> mapComments(
-            UUID hotelInternalId,
+            UUID hotelId,
             List<ReviewCommentDto> comments
     ) {
         if (comments == null || comments.isEmpty()) {
@@ -74,7 +66,7 @@ public class HotelReviewsStorageService {
         for (int index = 0; index < comments.size(); index++) {
             ReviewCommentDto comment = comments.get(index);
             List<String> photoS3Keys = photoStorageService.uploadReviewPhotosFromUrls(
-                    hotelInternalId,
+                    hotelId,
                     index,
                     comment.photos()
             );

@@ -3,11 +3,17 @@ package com.tripify.hotels.service.repository;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.tripify.hotels.service.infra.SqlParams;
 import com.tripify.hotels.service.model.Hotel;
+import com.tripify.hotels.service.model.HotelSearchFilter;
+import com.tripify.hotels.service.model.filter.HotelAttributeRule;
+import com.tripify.hotels.service.model.filter.HotelFilterCatalog;
+import com.tripify.hotels.service.model.filter.HotelFilterDefinition;
+import com.tripify.hotels.service.model.HotelSearchPage;
 import com.tripify.hotels.service.repository.contract.HotelRepository;
 import com.tripify.hotels.service.utils.ResultSetUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +26,7 @@ public class HotelRepositoryImpl implements HotelRepository {
 
     private static final String HOTEL_COLUMNS = """
             id, external_hotel_id, provider_name, title, external_link, description,
-            address, city, country, currency, price, hotel_class, reviews_mongo_id,
+            address, city, country, currency, price, hotel_class,
             latitude, longitude, reviews_total, reviews_rating,
             parsed_at, provided_at, created_at, updated_at
             """;
@@ -28,25 +34,24 @@ public class HotelRepositoryImpl implements HotelRepository {
     private static final String FIND_BY_ID_QUERY =
             "select " + HOTEL_COLUMNS + " from hotels where id = :id";
 
-    private static final String FIND_BY_PROVIDER_AND_EXTERNAL_ID_QUERY =
+    private static final String SEARCH_FROM_WHERE =
             """
-            select %s
-            from hotels
-            where provider_name = :providerName
-              and external_hotel_id = :externalHotelId
-            """.formatted(HOTEL_COLUMNS);
+            from hotels h
+            where lower(h.country) = lower(:country)
+              and lower(h.city) = lower(:city)
+            """;
 
     private static final String UPSERT_QUERY =
             """
             insert into hotels (
                 id, external_hotel_id, provider_name, title, external_link, description,
-                address, city, country, currency, price, hotel_class, reviews_mongo_id,
+                address, city, country, currency, price, hotel_class,
                 latitude, longitude, reviews_total, reviews_rating,
                 parsed_at, provided_at, created_at, updated_at
             )
             values (
                 :id, :externalHotelId, :providerName, :title, :externalLink, :description,
-                :address, :city, :country, :currency, :price, :hotelClass, :reviewsMongoId,
+                :address, :city, :country, :currency, :price, :hotelClass,
                 :latitude, :longitude, :reviewsTotal, :reviewsRating,
                 :parsedAt, :providedAt, :createdAt, :updatedAt
             )
@@ -60,7 +65,6 @@ public class HotelRepositoryImpl implements HotelRepository {
                 currency = excluded.currency,
                 price = excluded.price,
                 hotel_class = excluded.hotel_class,
-                reviews_mongo_id = excluded.reviews_mongo_id,
                 latitude = excluded.latitude,
                 longitude = excluded.longitude,
                 reviews_total = excluded.reviews_total,
@@ -83,14 +87,21 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public Optional<Hotel> findByProviderAndExternalId(String providerName, Long externalHotelId) {
-        return jdbcTemplate.query(
-                FIND_BY_PROVIDER_AND_EXTERNAL_ID_QUERY,
-                new SqlParams()
-                        .addValue("providerName", providerName)
-                        .addValue("externalHotelId", externalHotelId),
+    public HotelSearchPage search(HotelSearchFilter filter) {
+        int fetchLimit = filter.limit() + 1;
+        SearchQuery searchQuery = buildSearchQuery(filter, fetchLimit);
+        List<Hotel> hotels = jdbcTemplate.query(
+                searchQuery.sql(),
+                searchQuery.params(),
                 this::mapHotel
-        ).stream().findFirst();
+        );
+
+        if (hotels.size() <= filter.limit()) {
+            return new HotelSearchPage(hotels, null);
+        }
+
+        List<Hotel> page = hotels.subList(0, filter.limit());
+        return new HotelSearchPage(page, page.getLast().id());
     }
 
     @Override
@@ -110,7 +121,6 @@ public class HotelRepositoryImpl implements HotelRepository {
                         .addValue("currency", hotel.currency())
                         .addValue("price", hotel.price())
                         .addValue("hotelClass", hotel.hotelClass())
-                        .addValue("reviewsMongoId", hotel.reviewsMongoId())
                         .addValue("latitude", hotel.latitude())
                         .addValue("longitude", hotel.longitude())
                         .addValue("reviewsTotal", hotel.reviewsTotal())
@@ -121,6 +131,121 @@ public class HotelRepositoryImpl implements HotelRepository {
                         .addTimestamp("updatedAt", hotel.updatedAt()),
                 this::mapHotel
         ).getFirst();
+    }
+
+    private SearchQuery buildSearchQuery(HotelSearchFilter filter, int fetchLimit) {
+        StringBuilder sql = new StringBuilder("select ")
+                .append(HOTEL_COLUMNS)
+                .append(SEARCH_FROM_WHERE);
+
+        SqlParams params = new SqlParams()
+                .addValue("country", filter.country())
+                .addValue("city", filter.city());
+
+        if (filter.maxPriceUsd() != null) {
+            sql.append(" and h.price <= :maxPriceUsd");
+            params.addValue("maxPriceUsd", filter.maxPriceUsd());
+        }
+
+        if (filter.resolvedFilters() != null) {
+            if (filter.resolvedFilters().hasFacets()) {
+                sql.append("""
+                         and (
+                             select count(distinct sf.facet)
+                             from hotel_search_facets sf
+                             where sf.hotel_id = h.id
+                               and sf.facet in (:facets)
+                         ) = :facetsCount
+                        """);
+                params.addValue("facets", filter.resolvedFilters().facets());
+                params.addValue("facetsCount", filter.resolvedFilters().facets().size());
+            }
+
+            appendTermsFilters(sql, filter.resolvedFilters().termsFilterIds());
+            appendAttributeFilters(sql, params, filter.resolvedFilters().attributeFilterIds());
+        }
+
+        if (filter.maxPriceUsd() != null) {
+            appendBudgetPagination(sql, params, filter);
+            sql.append(" order by h.price desc, h.id desc limit :limit");
+        } else {
+            if (filter.lastId() != null) {
+                sql.append(" and h.id > :lastId");
+                params.addValue("lastId", filter.lastId());
+            }
+            sql.append(" order by h.id asc limit :limit");
+        }
+
+        params.addValue("limit", fetchLimit);
+
+        return new SearchQuery(sql.toString(), params);
+    }
+
+    private static void appendBudgetPagination(StringBuilder sql, SqlParams params, HotelSearchFilter filter) {
+        if (filter.lastId() == null) {
+            return;
+        }
+
+        if (filter.lastPriceUsd() == null) {
+            throw new IllegalArgumentException("lastPriceUsd is required when lastId is set with budget search");
+        }
+
+        sql.append("""
+                 and (
+                     h.price < :lastPriceUsd
+                     or (h.price = :lastPriceUsd and h.id < :lastId)
+                 )
+                """);
+        params.addValue("lastPriceUsd", filter.lastPriceUsd());
+        params.addValue("lastId", filter.lastId());
+    }
+
+    private static void appendTermsFilters(StringBuilder sql, List<String> termsFilterIds) {
+        for (String termsFilterId : termsFilterIds) {
+            if (HotelFilterCatalog.FREE_CANCELLATION.equals(termsFilterId)) {
+                sql.append("""
+                         and exists (
+                             select 1
+                             from hotel_terms_placement tp
+                             where tp.hotel_id = h.id
+                               and tp.cancellation = true
+                         )
+                        """);
+            } else {
+                throw new IllegalArgumentException("Unsupported terms filter: " + termsFilterId);
+            }
+        }
+    }
+
+    private static void appendAttributeFilters(StringBuilder sql, SqlParams params, List<String> attributeFilterIds) {
+        for (String attributeFilterId : attributeFilterIds) {
+            HotelFilterDefinition definition = HotelFilterCatalog.find(attributeFilterId)
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown attribute filter: " + attributeFilterId));
+
+            if (definition.attributeRule() == null) {
+                throw new IllegalArgumentException("Attribute rule is missing for filter: " + attributeFilterId);
+            }
+
+            HotelAttributeRule rule = definition.attributeRule();
+
+            if (rule.minHotelClass() != null) {
+                sql.append(" and h.hotel_class >= :").append(attributeFilterId).append("_minClass");
+                params.addValue(attributeFilterId + "_minClass", rule.minHotelClass());
+            }
+
+            if (rule.maxHotelClass() != null) {
+                sql.append(" and h.hotel_class <= :").append(attributeFilterId).append("_maxClass");
+                params.addValue(attributeFilterId + "_maxClass", rule.maxHotelClass());
+            }
+
+            if (rule.minReviewsRating() != null) {
+                sql.append(" and h.reviews_rating >= :").append(attributeFilterId).append("_minRating");
+                params.addValue(attributeFilterId + "_minRating", rule.minReviewsRating());
+            }
+        }
+    }
+
+    private record SearchQuery(String sql, SqlParams params) {
     }
 
     private Hotel mapHotel(ResultSet rs, int rowNum) throws SQLException {
@@ -137,7 +262,6 @@ public class HotelRepositoryImpl implements HotelRepository {
                 rs.getString("currency"),
                 rs.getBigDecimal("price"),
                 rs.getInt("hotel_class"),
-                rs.getString("reviews_mongo_id"),
                 rs.getBigDecimal("latitude"),
                 rs.getBigDecimal("longitude"),
                 rs.getInt("reviews_total"),

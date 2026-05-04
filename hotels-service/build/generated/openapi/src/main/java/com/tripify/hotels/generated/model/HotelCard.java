@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.tripify.hotels.generated.model.Facility;
 import com.tripify.hotels.generated.model.GpsCoordinates;
 import com.tripify.hotels.generated.model.HotelReviewsShort;
+import com.tripify.hotels.generated.model.Photo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,10 +27,10 @@ import jakarta.annotation.Generated;
  * HotelCard
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-20T23:06:41.504250+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class HotelCard {
 
-  private Long hotelId;
+  private java.util.UUID hotelId;
 
   private String title;
 
@@ -59,6 +60,9 @@ public class HotelCard {
   @Valid
   private List<String> tags = new ArrayList<>();
 
+  @Valid
+  private List<@Valid Photo> photos = new ArrayList<>();
+
   public HotelCard() {
     super();
   }
@@ -66,7 +70,7 @@ public class HotelCard {
   /**
    * Constructor with only required parameters
    */
-  public HotelCard(Long hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsShort reviews, List<@Valid Facility> facilities, List<String> tags) {
+  public HotelCard(java.util.UUID hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsShort reviews, List<@Valid Facility> facilities, List<String> tags, List<@Valid Photo> photos) {
     this.hotelId = hotelId;
     this.title = title;
     this.city = city;
@@ -77,9 +81,10 @@ public class HotelCard {
     this.reviews = reviews;
     this.facilities = facilities;
     this.tags = tags;
+    this.photos = photos;
   }
 
-  public HotelCard hotelId(Long hotelId) {
+  public HotelCard hotelId(java.util.UUID hotelId) {
     this.hotelId = hotelId;
     return this;
   }
@@ -88,14 +93,14 @@ public class HotelCard {
    * Get hotelId
    * @return hotelId
    */
-  @NotNull 
-  @Schema(name = "hotelId", example = "7467355", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "hotelId", example = "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hotelId")
-  public Long getHotelId() {
+  public java.util.UUID getHotelId() {
     return hotelId;
   }
 
-  public void setHotelId(Long hotelId) {
+  public void setHotelId(java.util.UUID hotelId) {
     this.hotelId = hotelId;
   }
 
@@ -377,6 +382,34 @@ public class HotelCard {
     this.tags = tags;
   }
 
+  public HotelCard photos(List<@Valid Photo> photos) {
+    this.photos = photos;
+    return this;
+  }
+
+  public HotelCard addPhotosItem(Photo photosItem) {
+    if (this.photos == null) {
+      this.photos = new ArrayList<>();
+    }
+    this.photos.add(photosItem);
+    return this;
+  }
+
+  /**
+   * Публичные ссылки на фото отеля (пустой массив, если фото нет)
+   * @return photos
+   */
+  @NotNull @Valid 
+  @Schema(name = "photos", description = "Публичные ссылки на фото отеля (пустой массив, если фото нет)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("photos")
+  public List<@Valid Photo> getPhotos() {
+    return photos;
+  }
+
+  public void setPhotos(List<@Valid Photo> photos) {
+    this.photos = photos;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -399,12 +432,13 @@ public class HotelCard {
         Objects.equals(this.hotelClass, hotelCard.hotelClass) &&
         Objects.equals(this.reviews, hotelCard.reviews) &&
         Objects.equals(this.facilities, hotelCard.facilities) &&
-        Objects.equals(this.tags, hotelCard.tags);
+        Objects.equals(this.tags, hotelCard.tags) &&
+        Objects.equals(this.photos, hotelCard.photos);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags);
+    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags, photos);
   }
 
   @Override
@@ -425,6 +459,7 @@ public class HotelCard {
     sb.append("    reviews: ").append(toIndentedString(reviews)).append("\n");
     sb.append("    facilities: ").append(toIndentedString(facilities)).append("\n");
     sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
+    sb.append("    photos: ").append(toIndentedString(photos)).append("\n");
     sb.append("}");
     return sb.toString();
   }

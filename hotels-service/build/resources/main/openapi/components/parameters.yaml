@@ -1,0 +1,58 @@
+XAnonymousId:
+  name: X-Anonymous-Id
+  in: header
+  required: true
+  description: Anonymous user identifier
+  schema:
+    type: string
+  example: anona8f91d_f445g4d3_rev1
+
+XGenerationId:
+  name: X-Generation-Id
+  in: header
+  required: true
+  description: Travel generation identifier
+  schema:
+    type: string
+  example: anon_a8f91d_ab91ff23_rev1
+
+XPackRevision:
+  name: X-Pack-Revision
+  in: header
+  required: true
+  description: Current pack revision number
+  schema:
+    type: integer
+    minimum: 1
+  example: 1
+
+XGenerationMode:
+  name: X-Generation-Mode
+  in: header
+  required: true
+  description: Generation mode
+  schema:
+    type: string
+    enum:
+      - FULL
+      - HOTELS
+  example: FULL
+
+XRequestId:
+  name: X-Request-Id
+  in: header
+  required: true
+  description: Request tracing identifier
+  schema:
+    type: string
+  example: req-123
+
+XHotelsRevision:
+  name: X-Hotels-Revision
+  in: header
+  required: false
+  description: Hotels revision number
+  schema:
+    type: integer
+    minimum: 1
+  example: 1

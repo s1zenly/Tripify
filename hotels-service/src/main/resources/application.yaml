@@ -2,6 +2,13 @@ tripify:
   kafka:
     topics:
       hotels-parsed: hotels.parsed
+      hotels-pack-viewed: hotels.pack.viewed
+  outbox:
+    worker:
+      enabled: true
+      fixed-delay-ms: 3000
+      batch-size: 50
+      max-attempts: 5
   s3:
     endpoint: https://storage.yandexcloud.net
     region: ru-central1
@@ -24,6 +31,11 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
     consumer:
       group-id: hotels-service
       auto-offset-reset: earliest

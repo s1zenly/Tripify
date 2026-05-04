@@ -1,0 +1,10 @@
+type: object
+properties:
+  refundPrepayment:
+    type: boolean
+    example: true
+
+  conditions:
+    type: array
+    items:
+      $ref: './RefundCondition.yaml'

@@ -3,6 +3,9 @@ get:
     - hotels
   summary: Get hotel details
   operationId: getHotelById
+  description: >
+    Те же query-параметры поиска отелей, что и в GET /hotels (контекст hotels-service).
+    Фронт повторяет их при открытии карточки для PackService и аналитики.
 
   parameters:
     - $ref: '../components/parameters.yaml#/XAnonymousId'
@@ -15,10 +18,20 @@ get:
     - name: hotelId
       in: path
       required: true
+      description: Internal Tripify hotel id (deterministic UUID)
       schema:
-        type: integer
-        format: int64
-      example: 7467355
+        type: string
+        format: uuid
+      example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d
+
+    - $ref: '../components/parameters.yaml#/HotelsSearchCountry'
+    - $ref: '../components/parameters.yaml#/HotelsSearchCity'
+    - $ref: '../components/parameters.yaml#/HotelsSearchCheckIn'
+    - $ref: '../components/parameters.yaml#/HotelsSearchCheckOut'
+    - $ref: '../components/parameters.yaml#/HotelsSearchCurrency'
+    - $ref: '../components/parameters.yaml#/HotelsSearchGuests'
+    - $ref: '../components/parameters.yaml#/HotelsSearchBudget'
+    - $ref: '../components/parameters.yaml#/HotelsSearchFilters'
 
   responses:
     '200':

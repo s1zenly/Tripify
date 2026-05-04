@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tripify.hotels.service.service.filter.HotelFilterDerivationServiceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-24T16:09:41.740Z" hostname="114989913i" time="0.011">
+  <properties/>
+  <testcase name="derive_buildsSearchFacetsFromHotelData()" classname="com.tripify.hotels.service.service.filter.HotelFilterDerivationServiceTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

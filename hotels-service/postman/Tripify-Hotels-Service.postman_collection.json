@@ -1,0 +1,509 @@
+{
+  "info": {
+    "_postman_id": "tripify-hotels-service-api",
+    "name": "Tripify Hotels Service",
+    "description": "Hotels API: каталог фильтров, поиск, детали отеля.\n\n**Порядок теста**\n1. `Get Hotel Filters` — доступные `filters` для city/country\n2. `Get Hotels` — список (сохраняет `hotelId`, `cursor`)\n3. `Get Hotels (with filters)` — поиск с `filters` из каталога (AND)\n4. `Get Hotel By Id` — детали + photos + ML tags\n\n**Переменные:** `baseUrl` = http://localhost:8080, `country`/`city` под твои данные в БД.\n\n**Каталог filters (MVP):** pool, wifi, breakfast, beachfront, pet_friendly, free_cancellation, rating_8_plus, rating_9_plus, stars_4_plus, stars_5\n\n`budget` — отдельно (макс. цена). `tags` в ответе — ML-теги, не путать с filters.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "xAnonymousId",
+      "value": "anona8f91d_f445g4d3_rev1"
+    },
+    {
+      "key": "xGenerationId",
+      "value": "anon_a8f91d_ab91ff23_rev1"
+    },
+    {
+      "key": "xPackRevision",
+      "value": "1"
+    },
+    {
+      "key": "xGenerationMode",
+      "value": "FULL"
+    },
+    {
+      "key": "xRequestId",
+      "value": "req-test"
+    },
+    {
+      "key": "xHotelsRevision",
+      "value": "1"
+    },
+    {
+      "key": "country",
+      "value": "AE"
+    },
+    {
+      "key": "city",
+      "value": "Dubai"
+    },
+    {
+      "key": "checkIn",
+      "value": "2026-06-01"
+    },
+    {
+      "key": "checkOut",
+      "value": "2026-06-10"
+    },
+    {
+      "key": "currency",
+      "value": "RUB"
+    },
+    {
+      "key": "guests",
+      "value": "2"
+    },
+    {
+      "key": "limit",
+      "value": "20"
+    },
+    {
+      "key": "budget",
+      "value": ""
+    },
+    {
+      "key": "cursor",
+      "value": ""
+    },
+    {
+      "key": "hotelId",
+      "value": "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d"
+    }
+  ],
+  "item": [
+    {
+      "name": "Hotels",
+      "item": [
+        {
+          "name": "Get Hotel Filters",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.test('Has filters array', function () {",
+                  "        pm.expect(body).to.have.property('filters');",
+                  "        pm.expect(body.filters).to.be.an('array');",
+                  "    });",
+                  "    if (body.filters && body.filters.length > 0) {",
+                  "        console.log('Available filters:', body.filters.map(f => f.id + ' (' + f.count + ')').join(', '));",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Anonymous-Id",
+                "value": "{{xAnonymousId}}"
+              },
+              {
+                "key": "X-Generation-Id",
+                "value": "{{xGenerationId}}"
+              },
+              {
+                "key": "X-Pack-Revision",
+                "value": "{{xPackRevision}}"
+              },
+              {
+                "key": "X-Generation-Mode",
+                "value": "{{xGenerationMode}}"
+              },
+              {
+                "key": "X-Request-Id",
+                "value": "{{xRequestId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels/filters?country={{country}}&city={{city}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels", "filters"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" }
+              ]
+            },
+            "description": "Каталог фильтров с count > 0 для города. Id из ответа передавай в `filters` при поиске."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotels",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.test('Has hotels array', function () {",
+                  "        pm.expect(body).to.have.property('hotels');",
+                  "        pm.expect(body.hotels).to.be.an('array');",
+                  "    });",
+                  "",
+                  "    if (body.hotels && body.hotels.length > 0) {",
+                  "        const hotel = body.hotels[0];",
+                  "        pm.collectionVariables.set('hotelId', hotel.hotelId);",
+                  "        pm.test('Hotel has photos array', function () {",
+                  "            pm.expect(hotel).to.have.property('photos');",
+                  "            pm.expect(hotel.photos).to.be.an('array');",
+                  "        });",
+                  "        console.log('Saved hotelId:', hotel.hotelId);",
+                  "    }",
+                  "",
+                  "    if (body.nextCursor) {",
+                  "        pm.collectionVariables.set('cursor', body.nextCursor);",
+                  "        console.log('Saved cursor:', body.nextCursor);",
+                  "    } else {",
+                  "        pm.collectionVariables.unset('cursor');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&currency={{currency}}&guests={{guests}}&limit={{limit}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "limit", "value": "{{limit}}" },
+                { "key": "budget", "value": "{{budget}}", "disabled": true }
+              ]
+            },
+            "description": "Список отелей без фильтров. Сохраняет hotelId и nextCursor."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotels (with filters)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&currency={{currency}}&guests={{guests}}&limit=10&budget=150000&filters=pool&filters=beachfront&filters=rating_8_plus",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "limit", "value": "10" },
+                { "key": "budget", "value": "150000", "description": "Макс. цена в currency" },
+                { "key": "filters", "value": "pool" },
+                { "key": "filters", "value": "beachfront" },
+                { "key": "filters", "value": "rating_8_plus" }
+              ]
+            },
+            "description": "Поиск с filters (AND). Подставь id из Get Hotel Filters. Примеры: wifi, breakfast, pet_friendly, stars_4_plus, stars_5, free_cancellation."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotels (unknown filter → 400)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&currency={{currency}}&guests={{guests}}&filters=not_in_catalog",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "filters", "value": "not_in_catalog" }
+              ]
+            },
+            "description": "Негативный сценарий: неизвестный filter id."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotels (next page)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));",
+                  "const cursor = pm.collectionVariables.get('cursor');",
+                  "if (!cursor) {",
+                  "    throw new Error('cursor пустой. Сначала Get Hotels с limit=5 и проверь nextCursor в ответе.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    if (body.nextCursor) { pm.collectionVariables.set('cursor', body.nextCursor); }",
+                  "    else { pm.collectionVariables.unset('cursor'); }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&currency={{currency}}&guests={{guests}}&limit=5&cursor={{cursor}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "limit", "value": "5" },
+                { "key": "cursor", "value": "{{cursor}}" }
+              ]
+            },
+            "description": "Пагинация по nextCursor."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotel By Id",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.test('hotelId matches', function () {",
+                  "        pm.expect(body.hotelId).to.eql(pm.collectionVariables.get('hotelId'));",
+                  "    });",
+                  "    pm.test('photos is array', function () {",
+                  "        pm.expect(body.photos).to.be.an('array');",
+                  "    });",
+                  "    pm.test('tags is array (ML)', function () {",
+                  "        pm.expect(body.tags).to.be.an('array');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels/{{hotelId}}?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&guests={{guests}}&currency={{currency}}&budget=150000",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels", "{{hotelId}}"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "budget", "value": "150000", "disabled": true },
+                { "key": "filters", "value": "pool", "disabled": true }
+              ]
+            },
+            "description": "Детали отеля. Те же query, что в Get Hotels (контекст hotels-service): country, city, dates, guests, currency, budget, filters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotel By Id (404)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels/00000000-0000-0000-0000-000000000000?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&guests={{guests}}&currency={{currency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels", "00000000-0000-0000-0000-000000000000"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "guests", "value": "{{guests}}" },
+                { "key": "currency", "value": "{{currency}}" }
+              ]
+            },
+            "description": "Несуществующий hotelId."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

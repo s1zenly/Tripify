@@ -3,6 +3,9 @@ package com.tripify.hotels.service.repository;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +29,9 @@ public class HotelReviewsSummaryRepositoryImpl implements HotelReviewsSummaryRep
 
     private static final String FIND_BY_HOTEL_ID_QUERY =
             "select " + SUMMARY_COLUMNS + " from hotel_reviews_summary where hotel_id = :hotelId";
+
+    private static final String FIND_BY_HOTEL_IDS_QUERY =
+            "select " + SUMMARY_COLUMNS + " from hotel_reviews_summary where hotel_id in (:hotelIds)";
 
     private static final String UPSERT_QUERY =
             """
@@ -60,6 +66,26 @@ public class HotelReviewsSummaryRepositoryImpl implements HotelReviewsSummaryRep
                 new SqlParams().addValue("hotelId", hotelId),
                 this::mapReviewsSummary
         ).stream().findFirst();
+    }
+
+    @Override
+    public Map<UUID, HotelReviewsSummary> findByHotelIds(List<UUID> hotelIds) {
+        if (hotelIds == null || hotelIds.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<UUID, HotelReviewsSummary> result = new HashMap<>();
+        jdbcTemplate.query(
+                FIND_BY_HOTEL_IDS_QUERY,
+                new SqlParams().addValue("hotelIds", hotelIds),
+                (rs, rowNum) -> {
+                    HotelReviewsSummary summary = mapReviewsSummary(rs, rowNum);
+                    result.put(summary.hotelId(), summary);
+                    return summary;
+                }
+        );
+
+        return result;
     }
 
     @Override

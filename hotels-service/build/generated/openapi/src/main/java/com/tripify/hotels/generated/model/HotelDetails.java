@@ -10,6 +10,7 @@ import com.tripify.hotels.generated.model.HotelReviewsFull;
 import com.tripify.hotels.generated.model.HotelScore;
 import com.tripify.hotels.generated.model.NearbyPlace;
 import com.tripify.hotels.generated.model.PaymentMethods;
+import com.tripify.hotels.generated.model.Photo;
 import com.tripify.hotels.generated.model.TermsPlacement;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ import jakarta.annotation.Generated;
  * HotelDetails
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-20T23:06:41.504250+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class HotelDetails {
 
-  private Long hotelId;
+  private java.util.UUID hotelId;
 
   private String title;
 
@@ -66,13 +67,16 @@ public class HotelDetails {
   private List<String> tags = new ArrayList<>();
 
   @Valid
+  private List<@Valid Photo> photos = new ArrayList<>();
+
+  @Valid
   private Map<String, List<@Valid NearbyPlace>> nearbyPlaces = new HashMap<>();
 
   private TermsPlacement termsPlacement;
 
   private PaymentMethods paymentMethods;
 
-  private HotelScore score;
+  private @Nullable HotelScore score;
 
   public HotelDetails() {
     super();
@@ -81,7 +85,7 @@ public class HotelDetails {
   /**
    * Constructor with only required parameters
    */
-  public HotelDetails(Long hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsFull reviews, List<@Valid Facility> facilities, List<String> tags, Map<String, List<@Valid NearbyPlace>> nearbyPlaces, TermsPlacement termsPlacement, PaymentMethods paymentMethods, HotelScore score) {
+  public HotelDetails(java.util.UUID hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsFull reviews, List<@Valid Facility> facilities, List<String> tags, List<@Valid Photo> photos, Map<String, List<@Valid NearbyPlace>> nearbyPlaces, TermsPlacement termsPlacement, PaymentMethods paymentMethods) {
     this.hotelId = hotelId;
     this.title = title;
     this.city = city;
@@ -92,13 +96,13 @@ public class HotelDetails {
     this.reviews = reviews;
     this.facilities = facilities;
     this.tags = tags;
+    this.photos = photos;
     this.nearbyPlaces = nearbyPlaces;
     this.termsPlacement = termsPlacement;
     this.paymentMethods = paymentMethods;
-    this.score = score;
   }
 
-  public HotelDetails hotelId(Long hotelId) {
+  public HotelDetails hotelId(java.util.UUID hotelId) {
     this.hotelId = hotelId;
     return this;
   }
@@ -107,14 +111,14 @@ public class HotelDetails {
    * Get hotelId
    * @return hotelId
    */
-  @NotNull 
-  @Schema(name = "hotelId", example = "7467355", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "hotelId", example = "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hotelId")
-  public Long getHotelId() {
+  public java.util.UUID getHotelId() {
     return hotelId;
   }
 
-  public void setHotelId(Long hotelId) {
+  public void setHotelId(java.util.UUID hotelId) {
     this.hotelId = hotelId;
   }
 
@@ -396,6 +400,34 @@ public class HotelDetails {
     this.tags = tags;
   }
 
+  public HotelDetails photos(List<@Valid Photo> photos) {
+    this.photos = photos;
+    return this;
+  }
+
+  public HotelDetails addPhotosItem(Photo photosItem) {
+    if (this.photos == null) {
+      this.photos = new ArrayList<>();
+    }
+    this.photos.add(photosItem);
+    return this;
+  }
+
+  /**
+   * Публичные ссылки на фото отеля (пустой массив, если фото нет)
+   * @return photos
+   */
+  @NotNull @Valid 
+  @Schema(name = "photos", description = "Публичные ссылки на фото отеля (пустой массив, если фото нет)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("photos")
+  public List<@Valid Photo> getPhotos() {
+    return photos;
+  }
+
+  public void setPhotos(List<@Valid Photo> photos) {
+    this.photos = photos;
+  }
+
   public HotelDetails nearbyPlaces(Map<String, List<@Valid NearbyPlace>> nearbyPlaces) {
     this.nearbyPlaces = nearbyPlaces;
     return this;
@@ -464,7 +496,7 @@ public class HotelDetails {
     this.paymentMethods = paymentMethods;
   }
 
-  public HotelDetails score(HotelScore score) {
+  public HotelDetails score(@Nullable HotelScore score) {
     this.score = score;
     return this;
   }
@@ -473,14 +505,14 @@ public class HotelDetails {
    * Get score
    * @return score
    */
-  @NotNull @Valid 
-  @Schema(name = "score", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "score", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("score")
-  public HotelScore getScore() {
+  public @Nullable HotelScore getScore() {
     return score;
   }
 
-  public void setScore(HotelScore score) {
+  public void setScore(@Nullable HotelScore score) {
     this.score = score;
   }
 
@@ -507,6 +539,7 @@ public class HotelDetails {
         Objects.equals(this.reviews, hotelDetails.reviews) &&
         Objects.equals(this.facilities, hotelDetails.facilities) &&
         Objects.equals(this.tags, hotelDetails.tags) &&
+        Objects.equals(this.photos, hotelDetails.photos) &&
         Objects.equals(this.nearbyPlaces, hotelDetails.nearbyPlaces) &&
         Objects.equals(this.termsPlacement, hotelDetails.termsPlacement) &&
         Objects.equals(this.paymentMethods, hotelDetails.paymentMethods) &&
@@ -515,7 +548,7 @@ public class HotelDetails {
 
   @Override
   public int hashCode() {
-    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags, nearbyPlaces, termsPlacement, paymentMethods, score);
+    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags, photos, nearbyPlaces, termsPlacement, paymentMethods, score);
   }
 
   @Override
@@ -536,6 +569,7 @@ public class HotelDetails {
     sb.append("    reviews: ").append(toIndentedString(reviews)).append("\n");
     sb.append("    facilities: ").append(toIndentedString(facilities)).append("\n");
     sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
+    sb.append("    photos: ").append(toIndentedString(photos)).append("\n");
     sb.append("    nearbyPlaces: ").append(toIndentedString(nearbyPlaces)).append("\n");
     sb.append("    termsPlacement: ").append(toIndentedString(termsPlacement)).append("\n");
     sb.append("    paymentMethods: ").append(toIndentedString(paymentMethods)).append("\n");

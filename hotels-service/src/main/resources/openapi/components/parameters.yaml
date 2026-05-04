@@ -56,3 +56,92 @@ XHotelsRevision:
     type: integer
     minimum: 1
   example: 1
+
+HotelsSearchCountry:
+  name: country
+  in: query
+  required: true
+  description: Country code ISO Alpha-2
+  schema:
+    type: string
+    minLength: 2
+    maxLength: 2
+  example: AE
+
+HotelsSearchCity:
+  name: city
+  in: query
+  required: true
+  description: City for hotels search
+  schema:
+    type: string
+    minLength: 1
+  example: Dubai
+
+HotelsSearchCheckIn:
+  name: check_in
+  in: query
+  required: true
+  description: Check-in date
+  schema:
+    type: string
+    format: date
+  example: "2026-06-01"
+
+HotelsSearchCheckOut:
+  name: check_out
+  in: query
+  required: true
+  description: Check-out date
+  schema:
+    type: string
+    format: date
+  example: "2026-06-10"
+
+HotelsSearchCurrency:
+  name: currency
+  in: query
+  required: true
+  description: Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
+  schema:
+    type: string
+    minLength: 3
+    maxLength: 3
+  example: RUB
+
+HotelsSearchGuests:
+  name: guests
+  in: query
+  required: true
+  description: Number of guests
+  schema:
+    type: integer
+    minimum: 1
+  example: 2
+
+HotelsSearchBudget:
+  name: budget
+  in: query
+  required: false
+  description: >
+    Доля бюджета на отель (в currency). price <= budget, сортировка по убыванию цены.
+  schema:
+    type: integer
+    format: int64
+    minimum: 0
+  example: 150000
+
+HotelsSearchFilters:
+  name: filters
+  in: query
+  required: false
+  description: Фильтры из каталога
+  schema:
+    type: array
+    items:
+      type: string
+  style: form
+  explode: true
+  example:
+    - pool
+    - beachfront

@@ -3,7 +3,6 @@ package com.tripify.hotels.service.model.documents;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,8 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record HotelReviewsDocument(
         @Id
         String id,
-        Long externalHotelId,
-        String providerName,
         Integer total,
         Double rating,
         Map<String, Integer> reviewsHistogram,

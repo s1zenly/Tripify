@@ -1,0 +1,22 @@
+type: object
+required:
+  - country
+  - city
+  - filters
+properties:
+  country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    example: AE
+
+  city:
+    type: string
+    minLength: 1
+    example: Dubai
+
+  filters:
+    type: array
+    items:
+      $ref: './HotelFilterOption.yaml'
+    description: Доступные фильтры с количеством отелей (только с count > 0)

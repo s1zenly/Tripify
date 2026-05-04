@@ -17,18 +17,14 @@ import org.springframework.stereotype.Component;
 public class ReviewsDocumentMapper {
 
     public HotelReviewsDocument toDocument(
-            UUID hotelInternalId,
-            Long externalHotelId,
-            String providerName,
+            UUID hotelId,
             ReviewsDto reviews,
             List<ReviewCommentDocument> comments,
             Instant createdAt,
             Instant updatedAt
     ) {
         return new HotelReviewsDocument(
-                hotelInternalId.toString(),
-                externalHotelId,
-                providerName,
+                hotelId.toString(),
                 reviews.total(),
                 toDouble(reviews.rating()),
                 toHistogram(reviews.reviewsHistogram()),

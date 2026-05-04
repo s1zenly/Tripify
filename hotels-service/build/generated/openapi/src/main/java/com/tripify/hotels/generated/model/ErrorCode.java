@@ -20,10 +20,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets ErrorCode
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-20T23:06:41.504250+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public enum ErrorCode {
   
-  TEST("TEST");
+  VALIDATION_ERROR("VALIDATION_ERROR"),
+  
+  HOTEL_NOT_FOUND("HOTEL_NOT_FOUND"),
+  
+  INTERNAL_ERROR("INTERNAL_ERROR");
 
   private final String value;
 

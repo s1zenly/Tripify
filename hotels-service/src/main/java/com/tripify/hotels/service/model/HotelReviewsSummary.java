@@ -3,7 +3,6 @@ package com.tripify.hotels.service.model;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-
 public record HotelReviewsSummary(
         UUID hotelId,
         BigDecimal rating,

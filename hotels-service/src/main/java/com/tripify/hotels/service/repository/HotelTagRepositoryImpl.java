@@ -3,7 +3,10 @@ package com.tripify.hotels.service.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.tripify.hotels.service.infra.SqlParams;
@@ -18,6 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 public class HotelTagRepositoryImpl implements HotelTagRepository {
+
+    private static final String FIND_BY_HOTEL_IDS_QUERY =
+            """
+            select hotel_id, tag, created_at
+            from hotel_tags
+            where hotel_id in (:hotelIds)
+            order by hotel_id, tag
+            """;
 
     private static final String FIND_BY_HOTEL_ID_QUERY =
             """
@@ -37,6 +48,26 @@ public class HotelTagRepositoryImpl implements HotelTagRepository {
             """;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Override
+    public Map<UUID, List<String>> findTagsByHotelIds(List<UUID> hotelIds) {
+        if (hotelIds == null || hotelIds.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<UUID, List<String>> result = new HashMap<>();
+        jdbcTemplate.query(
+                FIND_BY_HOTEL_IDS_QUERY,
+                new SqlParams().addValue("hotelIds", hotelIds),
+                (rs, rowNum) -> {
+                    UUID hotelId = rs.getObject("hotel_id", UUID.class);
+                    result.computeIfAbsent(hotelId, ignored -> new ArrayList<>()).add(rs.getString("tag"));
+                    return null;
+                }
+        );
+
+        return result;
+    }
 
     @Override
     public List<HotelTag> findByHotelId(UUID hotelId) {

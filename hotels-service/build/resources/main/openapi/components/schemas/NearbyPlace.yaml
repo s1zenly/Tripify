@@ -1,0 +1,18 @@
+type: object
+required:
+  - title
+  - distance
+  - unit
+properties:
+  title:
+    type: string
+    example: Pool Bar
+
+  distance:
+    type: number
+    format: double
+    example: 2
+
+  unit:
+    type: string
+    example: km

@@ -23,13 +23,13 @@ import jakarta.annotation.Generated;
  * HotelsResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-20T23:06:41.504250+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class HotelsResponse {
 
   @Valid
   private List<@Valid HotelCard> hotels = new ArrayList<>();
 
-  private Long totalHotels;
+  private @Nullable java.util.UUID nextCursor = null;
 
   public HotelsResponse() {
     super();
@@ -38,9 +38,8 @@ public class HotelsResponse {
   /**
    * Constructor with only required parameters
    */
-  public HotelsResponse(List<@Valid HotelCard> hotels, Long totalHotels) {
+  public HotelsResponse(List<@Valid HotelCard> hotels) {
     this.hotels = hotels;
-    this.totalHotels = totalHotels;
   }
 
   public HotelsResponse hotels(List<@Valid HotelCard> hotels) {
@@ -71,24 +70,24 @@ public class HotelsResponse {
     this.hotels = hotels;
   }
 
-  public HotelsResponse totalHotels(Long totalHotels) {
-    this.totalHotels = totalHotels;
+  public HotelsResponse nextCursor(@Nullable java.util.UUID nextCursor) {
+    this.nextCursor = nextCursor;
     return this;
   }
 
   /**
-   * Get totalHotels
-   * @return totalHotels
+   * hotelId последнего отеля на странице (id > nextCursor). Есть только если отелей больше, чем limit. 
+   * @return nextCursor
    */
-  @NotNull 
-  @Schema(name = "totalHotels", example = "100", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("totalHotels")
-  public Long getTotalHotels() {
-    return totalHotels;
+  @Valid 
+  @Schema(name = "nextCursor", example = "8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d", description = "hotelId последнего отеля на странице (id > nextCursor). Есть только если отелей больше, чем limit. ", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("nextCursor")
+  public @Nullable java.util.UUID getNextCursor() {
+    return nextCursor;
   }
 
-  public void setTotalHotels(Long totalHotels) {
-    this.totalHotels = totalHotels;
+  public void setNextCursor(@Nullable java.util.UUID nextCursor) {
+    this.nextCursor = nextCursor;
   }
 
   @Override
@@ -101,12 +100,12 @@ public class HotelsResponse {
     }
     HotelsResponse hotelsResponse = (HotelsResponse) o;
     return Objects.equals(this.hotels, hotelsResponse.hotels) &&
-        Objects.equals(this.totalHotels, hotelsResponse.totalHotels);
+        Objects.equals(this.nextCursor, hotelsResponse.nextCursor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hotels, totalHotels);
+    return Objects.hash(hotels, nextCursor);
   }
 
   @Override
@@ -114,7 +113,7 @@ public class HotelsResponse {
     StringBuilder sb = new StringBuilder();
     sb.append("class HotelsResponse {\n");
     sb.append("    hotels: ").append(toIndentedString(hotels)).append("\n");
-    sb.append("    totalHotels: ").append(toIndentedString(totalHotels)).append("\n");
+    sb.append("    nextCursor: ").append(toIndentedString(nextCursor)).append("\n");
     sb.append("}");
     return sb.toString();
   }

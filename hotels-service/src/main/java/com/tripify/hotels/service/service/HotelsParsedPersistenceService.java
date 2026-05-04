@@ -84,26 +84,20 @@ public class HotelsParsedPersistenceService {
             throw new HotelPersistenceException(null, "Hotel payload or hid is missing");
         }
 
-        UUID hotelInternalId = Hotel.buildHotelId(hotelDto.hid(), event.providerName());
+        UUID hotelId = Hotel.generateId(hotelDto.hid(), event.providerName());
         Instant now = Instant.now();
 
-        persistReviews(hotelInternalId, hotelDto, event, now);
-        postgresPersistenceService.save(hotelDto, event, hotelInternalId, now);
+        persistReviews(hotelId, hotelDto, event, now);
+        postgresPersistenceService.save(hotelDto, event, hotelId, now);
     }
 
-    private void persistReviews(UUID hotelInternalId, KafkaHotelDto hotelDto, HotelsParsedEvent event, Instant now) {
+    private void persistReviews(UUID hotelId, KafkaHotelDto hotelDto, HotelsParsedEvent event, Instant now) {
         if (hotelDto.reviews() == null) {
             return;
         }
 
         try {
-            reviewsStorageService.upsertReviews(
-                    hotelInternalId,
-                    hotelDto.hid(),
-                    event.providerName(),
-                    hotelDto.reviews(),
-                    now
-            );
+            reviewsStorageService.upsertReviews(hotelId, hotelDto.reviews(), now);
         } catch (Exception exception) {
             throw new HotelPersistenceException(
                     hotelDto.hid(),

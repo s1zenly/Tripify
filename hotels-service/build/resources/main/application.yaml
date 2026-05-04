@@ -1,0 +1,60 @@
+tripify:
+  kafka:
+    topics:
+      hotels-parsed: hotels.parsed
+      hotels-pack-viewed: hotels.pack.viewed
+  s3:
+    endpoint: https://storage.yandexcloud.net
+    region: ru-central1
+    bucket: tripify-hotels
+    access-key: YCAJEhwv_RECwDriBuxqXQSyl
+    secret-key: YCNw-gkJLJoNEg2hLo_-kX_PjHHAxWiSuwqc81lr
+  jwt:
+    secret: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: hotels-service
+
+  mongodb:
+    uri: ${SPRING_MONGODB_URI:mongodb://mongo:27017/tripify_hotels}
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+    consumer:
+      group-id: hotels-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotels_db
+    username: hotels_user
+    password: hotels_password
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 2000
+      max-lifetime: 1800000
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+  logging:
+    level:
+      liquibase: DEBUG
+      org.springframework.boot.autoconfigure.liquibase: DEBUG

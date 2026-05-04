@@ -27,22 +27,28 @@ import com.tripify.hotels.service.model.HotelPaymentMethods;
 import com.tripify.hotels.service.model.HotelRefundCondition;
 import com.tripify.hotels.service.model.HotelReviewsSummary;
 import com.tripify.hotels.service.model.HotelTermsPlacement;
+import com.tripify.hotels.service.service.currency.CurrencyConversionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class HotelPersistenceMapper {
+
+    private final CurrencyConversionService currencyConversion;
 
     public Hotel toHotel(
             KafkaHotelDto hotelDto,
             HotelsParsedEvent event,
-            UUID hotelInternalId,
+            UUID hotelId,
             Instant now
     ) {
         ReviewsDto reviews = hotelDto.reviews();
         GpsCoordinatesDto gps = hotelDto.gpsCoordinates();
+        BigDecimal sourcePrice = hotelDto.price() != null ? hotelDto.price() : BigDecimal.ZERO;
 
         return new Hotel(
-                hotelInternalId,
+                hotelId,
                 hotelDto.hid(),
                 event.providerName(),
                 defaultString(hotelDto.title()),
@@ -51,10 +57,9 @@ public class HotelPersistenceMapper {
                 defaultString(hotelDto.address()),
                 defaultString(hotelDto.city()),
                 defaultString(hotelDto.country()),
-                defaultString(hotelDto.currency()),
-                hotelDto.price() != null ? hotelDto.price() : BigDecimal.ZERO,
+                currencyConversion.storageCurrency(),
+                currencyConversion.toStorageCurrency(sourcePrice, hotelDto.currency()),
                 hotelDto.hotelClass() != null ? hotelDto.hotelClass() : 0,
-                reviews != null ? hotelInternalId.toString() : null,
                 gps != null && gps.latitude() != null ? gps.latitude() : BigDecimal.ZERO,
                 gps != null && gps.longitude() != null ? gps.longitude() : BigDecimal.ZERO,
                 reviews != null && reviews.total() != null ? reviews.total() : 0,
@@ -66,7 +71,7 @@ public class HotelPersistenceMapper {
         );
     }
 
-    public List<HotelFacility> toFacilities(UUID hotelInternalId, List<FacilityDto> facilities, Instant now) {
+    public List<HotelFacility> toFacilities(UUID hotelId, List<FacilityDto> facilities, Instant now) {
         if (facilities == null || facilities.isEmpty()) {
             return List.of();
         }
@@ -74,7 +79,7 @@ public class HotelPersistenceMapper {
         return facilities.stream()
                 .filter(facility -> facility.type() != null && !facility.type().isBlank())
                 .map(facility -> new HotelFacility(
-                        hotelInternalId,
+                        hotelId,
                         facility.type(),
                         Boolean.TRUE.equals(facility.free()),
                         now
@@ -83,7 +88,7 @@ public class HotelPersistenceMapper {
     }
 
     public List<HotelNearbyPlace> toNearbyPlaces(
-            UUID hotelInternalId,
+            UUID hotelId,
             Map<String, List<NearbyPlaceDto>> nearbyPlaces,
             Instant now
     ) {
@@ -105,7 +110,7 @@ public class HotelPersistenceMapper {
 
                 result.add(new HotelNearbyPlace(
                         UUID.randomUUID(),
-                        hotelInternalId,
+                        hotelId,
                         category,
                         place.title(),
                         place.distance() != null ? place.distance() : BigDecimal.ZERO,
@@ -118,7 +123,7 @@ public class HotelPersistenceMapper {
         return List.copyOf(result);
     }
 
-    public HotelTermsPlacement toTermsPlacement(UUID hotelInternalId, TermsPlacementDto terms, Instant now) {
+    public HotelTermsPlacement toTermsPlacement(UUID hotelId, TermsPlacementDto terms, Instant now) {
         if (terms == null) {
             return null;
         }
@@ -128,7 +133,7 @@ public class HotelPersistenceMapper {
         RefundRuleDto refundRule = terms.refundRule();
 
         return new HotelTermsPlacement(
-                hotelInternalId,
+                hotelId,
                 checkIn != null ? checkIn.afterTime() : null,
                 checkIn != null ? checkIn.beforeTime() : null,
                 checkOut != null ? checkOut.afterTime() : null,
@@ -147,7 +152,7 @@ public class HotelPersistenceMapper {
     }
 
     public List<HotelRefundCondition> toRefundConditions(
-            UUID hotelInternalId,
+            UUID hotelId,
             RefundRuleDto refundRule,
             Instant now
     ) {
@@ -157,11 +162,11 @@ public class HotelPersistenceMapper {
 
         return refundRule.conditions().stream()
                 .filter(condition -> condition.condition() != null && !condition.condition().isBlank())
-                .map(condition -> toRefundCondition(hotelInternalId, condition, now))
+                .map(condition -> toRefundCondition(hotelId, condition, now))
                 .toList();
     }
 
-    public HotelPaymentMethods toPaymentMethods(UUID hotelInternalId, PaymentMethodsDto paymentMethods, Instant now) {
+    public HotelPaymentMethods toPaymentMethods(UUID hotelId, PaymentMethodsDto paymentMethods, Instant now) {
         if (paymentMethods == null) {
             return null;
         }
@@ -170,7 +175,7 @@ public class HotelPersistenceMapper {
         CardsInfoDto cardsInfo = paymentMethods.cardsInfo();
 
         return new HotelPaymentMethods(
-                hotelInternalId,
+                hotelId,
                 cashInfo != null && Boolean.TRUE.equals(cashInfo.cash()),
                 cashInfo != null ? cashInfo.currency() : List.of(),
                 cardsInfo != null && Boolean.TRUE.equals(cardsInfo.card()),
@@ -180,7 +185,7 @@ public class HotelPersistenceMapper {
         );
     }
 
-    public HotelReviewsSummary toReviewsSummary(UUID hotelInternalId, ReviewsDto reviews, Instant now) {
+    public HotelReviewsSummary toReviewsSummary(UUID hotelId, ReviewsDto reviews, Instant now) {
         if (reviews == null) {
             return null;
         }
@@ -188,7 +193,7 @@ public class HotelPersistenceMapper {
         Map<String, Object> reviewsClasses = reviews.reviewsClasses();
 
         return new HotelReviewsSummary(
-                hotelInternalId,
+                hotelId,
                 reviews.rating() != null ? reviews.rating() : BigDecimal.ZERO,
                 reviews.total() != null ? reviews.total() : 0,
                 toBigDecimal(reviewsClasses, "cleanliness"),
@@ -202,13 +207,13 @@ public class HotelPersistenceMapper {
     }
 
     private HotelRefundCondition toRefundCondition(
-            UUID hotelInternalId,
+            UUID hotelId,
             RefundConditionDto condition,
             Instant now
     ) {
         return new HotelRefundCondition(
                 UUID.randomUUID(),
-                hotelInternalId,
+                hotelId,
                 condition.quantityPercent() != null ? condition.quantityPercent() : 0,
                 condition.condition(),
                 now

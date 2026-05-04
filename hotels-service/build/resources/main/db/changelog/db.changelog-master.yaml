@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-hotels-table.sql
+  - include:
+      file: db/changelog/changes/002-create-hotel-facilities-table.sql
+  - include:
+      file: db/changelog/changes/003-create-hotel-nearby-places-table.sql
+  - include:
+      file: db/changelog/changes/004-create-hotel-terms-placement-table.sql
+  - include:
+      file: db/changelog/changes/005-create-hotel-refund-conditions-table.sql
+  - include:
+      file: db/changelog/changes/006-create-hotel-payment-methods-table.sql
+  - include:
+      file: db/changelog/changes/007-create-hotel-reviews-summary-table.sql
+  - include:
+      file: db/changelog/changes/008-create-hotel-photos-table.sql
+  - include:
+      file: db/changelog/changes/009-create-hotel-tags-table.sql
+  - include:
+      file: db/changelog/changes/010-create-hotel-scores-table.sql
+  - include:
+      file: db/changelog/changes/012-create-hotel-search-facets-table.sql

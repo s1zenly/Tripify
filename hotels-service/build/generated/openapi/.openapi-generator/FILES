@@ -1,7 +1,9 @@
+.openapi-generator-ignore
 README.md
 pom.xml
 src/main/java/com/tripify/hotels/generated/api/ApiUtil.java
 src/main/java/com/tripify/hotels/generated/api/HotelsApi.java
+src/main/java/com/tripify/hotels/generated/model/CheckInOut.java
 src/main/java/com/tripify/hotels/generated/model/ErrorCode.java
 src/main/java/com/tripify/hotels/generated/model/ErrorDetail.java
 src/main/java/com/tripify/hotels/generated/model/ErrorResponse.java
@@ -9,6 +11,8 @@ src/main/java/com/tripify/hotels/generated/model/Facility.java
 src/main/java/com/tripify/hotels/generated/model/GpsCoordinates.java
 src/main/java/com/tripify/hotels/generated/model/HotelCard.java
 src/main/java/com/tripify/hotels/generated/model/HotelDetails.java
+src/main/java/com/tripify/hotels/generated/model/HotelFilterOption.java
+src/main/java/com/tripify/hotels/generated/model/HotelFiltersResponse.java
 src/main/java/com/tripify/hotels/generated/model/HotelReviewsFull.java
 src/main/java/com/tripify/hotels/generated/model/HotelReviewsShort.java
 src/main/java/com/tripify/hotels/generated/model/HotelScore.java
@@ -19,6 +23,8 @@ src/main/java/com/tripify/hotels/generated/model/PaymentMethods.java
 src/main/java/com/tripify/hotels/generated/model/PaymentMethodsCardsInfo.java
 src/main/java/com/tripify/hotels/generated/model/PaymentMethodsCashInfo.java
 src/main/java/com/tripify/hotels/generated/model/Photo.java
+src/main/java/com/tripify/hotels/generated/model/RefundCondition.java
+src/main/java/com/tripify/hotels/generated/model/RefundRule.java
 src/main/java/com/tripify/hotels/generated/model/ReviewComment.java
 src/main/java/com/tripify/hotels/generated/model/ReviewsClasses.java
 src/main/java/com/tripify/hotels/generated/model/TermsPlacement.java

@@ -3,7 +3,10 @@ package com.tripify.hotels.service.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.tripify.hotels.service.infra.SqlParams;
@@ -18,6 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 public class HotelPhotoRepositoryImpl implements HotelPhotoRepository {
+
+    private static final String FIND_BY_HOTEL_IDS_QUERY =
+            """
+            select id, hotel_id, s3_key, sort_order, description, created_at
+            from hotel_photos
+            where hotel_id in (:hotelIds)
+            order by hotel_id, sort_order, created_at
+            """;
 
     private static final String FIND_BY_HOTEL_ID_QUERY =
             """
@@ -37,6 +48,26 @@ public class HotelPhotoRepositoryImpl implements HotelPhotoRepository {
             """;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Override
+    public Map<UUID, List<HotelPhoto>> findByHotelIds(List<UUID> hotelIds) {
+        if (hotelIds == null || hotelIds.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<UUID, List<HotelPhoto>> result = new HashMap<>();
+        jdbcTemplate.query(
+                FIND_BY_HOTEL_IDS_QUERY,
+                new SqlParams().addValue("hotelIds", hotelIds),
+                (rs, rowNum) -> {
+                    HotelPhoto photo = mapPhoto(rs, rowNum);
+                    result.computeIfAbsent(photo.hotelId(), ignored -> new ArrayList<>()).add(photo);
+                    return photo;
+                }
+        );
+
+        return result;
+    }
 
     @Override
     public List<HotelPhoto> findByHotelId(UUID hotelId) {
