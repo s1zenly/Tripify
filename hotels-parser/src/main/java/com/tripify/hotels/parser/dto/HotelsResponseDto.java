@@ -17,6 +17,7 @@ import java.util.List;
 public class HotelsResponseDto {
     private List<Hotel> hotels;
     private CountryInfo countryInfo;
+    private String cityName;
     private String providerName;
     private Instant parsedAt;
     private Instant providedAt;

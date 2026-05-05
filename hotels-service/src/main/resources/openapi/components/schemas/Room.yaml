@@ -1,0 +1,78 @@
+type: object
+required:
+  - roomId
+  - name
+  - roomType
+  - rates
+properties:
+  roomId:
+    type: string
+    example: 54c8fa2f-bbbe-4aed-974a-ef18760fe30e
+
+  name:
+    type: string
+    example: Standard Room
+
+  roomType:
+    type: string
+    example: STANDARD
+
+  description:
+    type: string
+    example: Comfortable room with all essential amenities for a pleasant stay
+
+  area:
+    $ref: './RoomArea.yaml'
+
+  floor:
+    type: integer
+    example: 9
+
+  smokingAllowed:
+    type: boolean
+    example: false
+
+  views:
+    type: array
+    items:
+      type: string
+    example:
+      - POOL_VIEW
+      - GARDEN_VIEW
+
+  photos:
+    type: array
+    items:
+      $ref: './RoomPhoto.yaml'
+
+  beds:
+    type: array
+    items:
+      $ref: './Bed.yaml'
+
+  bathrooms:
+    $ref: './Bathrooms.yaml'
+
+  occupancy:
+    $ref: './Occupancy.yaml'
+
+  amenities:
+    type: array
+    items:
+      type: string
+    example:
+      - WIFI
+      - AIR_CONDITIONING
+      - BALCONY
+
+  accessibility:
+    type: array
+    items:
+      type: string
+    example:
+      - WHEELCHAIR_ACCESSIBLE
+
+  rates:
+    type: array
+    items:
+      $ref: './Rate.yaml'

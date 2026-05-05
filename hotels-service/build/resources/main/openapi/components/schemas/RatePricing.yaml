@@ -1,0 +1,16 @@
+type: object
+properties:
+  basePrice:
+    $ref: './Money.yaml'
+
+  taxesAndFees:
+    $ref: './Money.yaml'
+
+  totalPrice:
+    $ref: './Money.yaml'
+
+  pricePerNight:
+    $ref: './Money.yaml'
+
+  discount:
+    $ref: './Discount.yaml'

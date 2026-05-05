@@ -1,0 +1,17 @@
+type: object
+properties:
+  type:
+    type: string
+    example: PAY_NOW
+
+  prepaymentRequired:
+    type: boolean
+    example: true
+
+  cards:
+    type: array
+    items:
+      type: string
+    example:
+      - VISA
+      - MASTERCARD

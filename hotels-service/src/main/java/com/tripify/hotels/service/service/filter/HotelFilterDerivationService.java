@@ -12,7 +12,8 @@ import java.util.UUID;
 import com.tripify.hotels.service.kafka.model.FacilityDto;
 import com.tripify.hotels.service.kafka.model.KafkaHotelDto;
 import com.tripify.hotels.service.kafka.model.NearbyPlaceDto;
-import com.tripify.hotels.service.kafka.model.TermsPlacementDto;
+import com.tripify.hotels.service.kafka.model.RateDto;
+import com.tripify.hotels.service.kafka.model.RoomDto;
 import com.tripify.hotels.service.model.HotelFacility;
 import com.tripify.hotels.service.model.HotelNearbyPlace;
 import com.tripify.hotels.service.model.HotelSearchFacet;
@@ -39,6 +40,7 @@ public class HotelFilterDerivationService {
         addFacilityFacets(facets, facilities, hotelDto != null ? hotelDto.facilities() : null);
         addNearbyFacets(facets, nearbyPlaces, hotelDto != null ? hotelDto.nearbyPlaces() : null);
         addTermsFacets(facets, termsPlacement, hotelDto != null ? hotelDto.termsPlacement() : null);
+        addRoomFacets(facets, hotelDto != null ? hotelDto.rooms() : null);
 
         return facets.stream()
                 .map(facet -> new HotelSearchFacet(hotelId, facet, now))
@@ -119,7 +121,7 @@ public class HotelFilterDerivationService {
     private static void addTermsFacets(
             Set<String> facets,
             HotelTermsPlacement termsPlacement,
-            TermsPlacementDto termsDto
+            com.tripify.hotels.service.kafka.model.TermsPlacementDto termsDto
     ) {
         Boolean petFriendly = termsPlacement != null ? termsPlacement.petFriendly() : null;
         if (petFriendly == null && termsDto != null) {
@@ -127,6 +129,25 @@ public class HotelFilterDerivationService {
         }
         if (Boolean.TRUE.equals(petFriendly)) {
             facets.add(HotelFilterCatalog.PET_FRIENDLY);
+        }
+    }
+
+    private static void addRoomFacets(Set<String> facets, List<RoomDto> rooms) {
+        if (rooms == null || rooms.isEmpty()) {
+            return;
+        }
+
+        for (RoomDto room : rooms) {
+            if (room.rates() == null) {
+                continue;
+            }
+            for (RateDto rate : room.rates()) {
+                if (rate.cancellationPolicy() != null
+                        && Boolean.TRUE.equals(rate.cancellationPolicy().refundable())) {
+                    facets.add(HotelFilterCatalog.FREE_CANCELLATION);
+                    return;
+                }
+            }
         }
     }
 
@@ -147,7 +168,7 @@ public class HotelFilterDerivationService {
             return null;
         }
 
-        if (unit == null || unit.isBlank()) {
+        if (unit == null || unit.isBlank() || "m".equals(unit)) {
             return distance;
         }
 

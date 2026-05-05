@@ -7,6 +7,9 @@ public record S3Properties(
     String endpoint,
     String region,
     String bucket,
+    String roomsBucket,
+    String reviewsBucket,
+    boolean uploadEnabled,
     String accessKey,
     String secretKey
 ) {

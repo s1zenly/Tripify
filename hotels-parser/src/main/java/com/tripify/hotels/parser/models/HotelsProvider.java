@@ -6,5 +6,5 @@ public interface HotelsProvider {
 
     Provider getProvider();
 
-    HotelsResponseDto supplyHotels(Country country);
+    HotelsResponseDto supplyHotels(City city);
 }

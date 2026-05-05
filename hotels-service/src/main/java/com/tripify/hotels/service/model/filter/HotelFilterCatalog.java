@@ -6,9 +6,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * MVP-каталог фильтров Tripify. Только осмысленные, короткие id для {@code GET /hotels?filters=}.
- */
 public final class HotelFilterCatalog {
 
     public static final String POOL = "pool";
@@ -34,7 +31,7 @@ public final class HotelFilterCatalog {
         registerFacet(definitions, BEACHFRONT, "У моря");
         registerFacet(definitions, PET_FRIENDLY, "Можно с животными");
 
-        registerTerms(definitions, FREE_CANCELLATION, "Бесплатная отмена");
+        registerFacet(definitions, FREE_CANCELLATION, "Бесплатная отмена");
 
         registerAttribute(definitions, RATING_8_PLUS, "Рейтинг отзывов от 8", HotelAttributeRule.minRating(8.0));
         registerAttribute(definitions, RATING_9_PLUS, "Рейтинг отзывов от 9", HotelAttributeRule.minRating(9.0));

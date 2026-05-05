@@ -5,12 +5,7 @@ get:
   operationId: getHotelFilters
 
   parameters:
-    - $ref: '../components/parameters.yaml#/XAnonymousId'
-    - $ref: '../components/parameters.yaml#/XGenerationId'
-    - $ref: '../components/parameters.yaml#/XPackRevision'
-    - $ref: '../components/parameters.yaml#/XGenerationMode'
     - $ref: '../components/parameters.yaml#/XRequestId'
-    - $ref: '../components/parameters.yaml#/XHotelsRevision'
 
     - name: country
       in: query

@@ -22,12 +22,16 @@ public class ParsingJob {
     private final Country[] countries = Country.values();
 
     @Scheduled(fixedRate = 5000)
-    public void parseByCountry() {
+    public void parseNextCountry() {
         int index = countryIndex.getAndUpdate(i -> (i + 1) % countries.length);
         Country country = countries[index];
 
-        logger.info("Start parsing by country - {}", country.getAlpha3());
+        logger.info("Start parsing country {} ({}) — {} cities",
+                country.getDisplayName(), country.getAlpha2(), country.getCities().size());
+
         hotelsParserService.parseByCountry(country);
-        logger.info("Success parsing by country - {}", country.getAlpha3());
+
+        logger.info("Submitted all cities for country {} ({})",
+                country.getDisplayName(), country.getAlpha2());
     }
 }

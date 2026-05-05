@@ -17,7 +17,7 @@ create table hotel_search_facets
 
 create index idx_hotel_search_facets_facet on hotel_search_facets (facet);
 
-comment on table hotel_search_facets is 'Поисковые фасеты отеля (для GET /hotels?filters=). Не путать с hotel_tags (ML-теги для UI)';
+comment on table hotel_search_facets is 'Поисковые фасеты отеля (для GET /hotels?filters=)';
 comment on column hotel_search_facets.hotel_id is 'Внутренний идентификатор отеля';
 comment on column hotel_search_facets.facet is 'Идентификатор фасета из каталога фильтров';
 comment on column hotel_search_facets.created_at is 'Дата создания записи';

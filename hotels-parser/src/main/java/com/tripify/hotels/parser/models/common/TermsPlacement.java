@@ -12,11 +12,6 @@ import lombok.NoArgsConstructor;
 public class TermsPlacement {
     private CheckInOut checkIn;
     private CheckInOut checkOut;
-    private boolean cancellation;
-
-    private RefundRule refundRule;
-
-    private boolean smoking;
     private boolean petFriendly;
     private boolean partyFriendly;
     private String ageRestriction;

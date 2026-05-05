@@ -8,11 +8,15 @@ import com.tripify.hotels.generated.api.HotelsApi;
 import com.tripify.hotels.generated.model.HotelDetails;
 import com.tripify.hotels.generated.model.HotelFiltersResponse;
 import com.tripify.hotels.generated.model.HotelsResponse;
+import com.tripify.hotels.service.kafka.model.UserType;
 import com.tripify.hotels.service.service.HotelFilterQueryService;
 import com.tripify.hotels.service.service.HotelPackViewPublisher;
 import com.tripify.hotels.service.service.HotelQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -58,14 +62,9 @@ public class HotelsController implements HotelsApi {
 
     @Override
     public ResponseEntity<HotelFiltersResponse> getHotelFilters(
-            String xAnonymousId,
-            String xGenerationId,
-            Integer xPackRevision,
-            String xGenerationMode,
             String xRequestId,
             String country,
-            String city,
-            Integer xHotelsRevision
+            String city
     ) {
         return ResponseEntity.ok(hotelFilterQueryService.getAvailableFilters(country, city));
     }
@@ -88,10 +87,15 @@ public class HotelsController implements HotelsApi {
             Long budget,
             List<String> filters
     ) {
-        HotelDetails response = hotelQueryService.getHotelById(hotelId, currency);
+        HotelDetails response = hotelQueryService.getHotelById(hotelId, currency, checkIn, checkOut);
+
+        String userId = extractUserIdOrNull();
+        UserType userType = userId != null ? UserType.AUTH : UserType.ANONYMOUS;
 
         hotelPackViewPublisher.publishHotelDetailView(
                 HotelPackViewPublisher.toHeaders(
+                        userType,
+                        userId,
                         xAnonymousId,
                         xGenerationId,
                         xPackRevision,
@@ -113,5 +117,13 @@ public class HotelsController implements HotelsApi {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    private static String extractUserIdOrNull() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof Jwt jwt)) {
+            return null;
+        }
+        return jwt.getSubject();
     }
 }

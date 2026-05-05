@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.tripify.hotels.parser.models.City;
 import com.tripify.hotels.parser.models.Country;
 import com.tripify.hotels.parser.models.HotelsProvider;
 import com.tripify.hotels.parser.models.Provider;
@@ -14,10 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/**
- * Смотрит всех подключённых провайдеров из enum, у каждого асинхронно вызывает parse по стране,
- * затем на результате вызывает adapt.
- */
 @Service
 public class HotelsParserService {
 
@@ -39,31 +36,41 @@ public class HotelsParserService {
     }
 
     /**
-     * По стране запускает у всех провайдеров из enum parse (асинхронно), затем adapt.
-     *
-     * @param country страна, по которой парсим отели
+     * Парсит отели по стране: последовательно перебирает все города и для каждого
+     * асинхронно запускает парсинг у всех подключённых провайдеров.
      */
     public void parseByCountry(Country country) {
+        for (City city : country.getCities()) {
+            parseByCity(city);
+        }
+    }
+
+    private void parseByCity(City city) {
         Stream.of(Provider.values())
                 .filter(providersByType::containsKey)
                 .filter(providersExecutors::containsKey)
-                .forEach(provider -> parseProvider(provider, country));
+                .forEach(provider -> parseProvider(provider, city));
     }
 
-    private void parseProvider(Provider provider, Country country) {
+    private void parseProvider(Provider provider, City city) {
         providersExecutors.get(provider)
-                .submit(() -> providersByType.get(provider).supplyHotels(country))
+                .submit(() -> providersByType.get(provider).supplyHotels(city))
                 .orTimeout(60, TimeUnit.SECONDS)
                 .thenAccept(hotelDto -> {
                     if (hotelDto == null) {
-                        logger.warn("Provider returned null: provider={}, country={}", provider, country.getAlpha3());
+                        logger.warn("Provider returned null: provider={}, city={}, country={}",
+                                provider, city.getDisplayName(), city.getCountry().getAlpha3());
+                        return;
                     }
 
                     hotelsKafkaProducer.sendHotels(hotelDto);
-                    logger.info("Provider parsed hotel successfully: provider={}, country={}", provider, country.getAlpha3());
+                    logger.info("Parsed successfully: provider={}, city={}, country={}, hotels={}",
+                            provider, city.getDisplayName(), city.getCountry().getAlpha3(),
+                            hotelDto.getTotalHotels());
                 })
                 .exceptionally(exception -> {
-                    logger.error("Failed to parse provider={}, country={}", provider, country.getAlpha3(), exception);
+                    logger.error("Failed to parse: provider={}, city={}, country={}",
+                            provider, city.getDisplayName(), city.getCountry().getAlpha3(), exception);
                     return null;
                 });
     }

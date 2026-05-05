@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * HotelCard
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class HotelCard {
 
   private java.util.UUID hotelId;
@@ -270,11 +270,11 @@ public class HotelCard {
   }
 
   /**
-   * Get price
+   * Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)
    * @return price
    */
   @NotNull 
-  @Schema(name = "price", example = "176", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "price", example = "1408", description = "Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("price")
   public Long getPrice() {
     return price;

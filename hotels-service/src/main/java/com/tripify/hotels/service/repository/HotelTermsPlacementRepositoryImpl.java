@@ -20,7 +20,7 @@ public class HotelTermsPlacementRepositoryImpl implements HotelTermsPlacementRep
     private static final String TERMS_COLUMNS = """
             hotel_id, check_in_after_time, check_in_before_time,
             check_out_after_time, check_out_before_time, timezone,
-            cancellation, refund_prepayment, smoking, pet_friendly, party_friendly,
+            pet_friendly, party_friendly,
             age_restriction, additional_info, created_at, updated_at
             """;
 
@@ -32,13 +32,13 @@ public class HotelTermsPlacementRepositoryImpl implements HotelTermsPlacementRep
             insert into hotel_terms_placement (
                 hotel_id, check_in_after_time, check_in_before_time,
                 check_out_after_time, check_out_before_time, timezone,
-                cancellation, refund_prepayment, smoking, pet_friendly, party_friendly,
+                pet_friendly, party_friendly,
                 age_restriction, additional_info, created_at, updated_at
             )
             values (
                 :hotelId, :checkInAfterTime, :checkInBeforeTime,
                 :checkOutAfterTime, :checkOutBeforeTime, :timezone,
-                :cancellation, :refundPrepayment, :smoking, :petFriendly, :partyFriendly,
+                :petFriendly, :partyFriendly,
                 :ageRestriction, :additionalInfo, :createdAt, :updatedAt
             )
             on conflict (hotel_id) do update set
@@ -47,9 +47,6 @@ public class HotelTermsPlacementRepositoryImpl implements HotelTermsPlacementRep
                 check_out_after_time = excluded.check_out_after_time,
                 check_out_before_time = excluded.check_out_before_time,
                 timezone = excluded.timezone,
-                cancellation = excluded.cancellation,
-                refund_prepayment = excluded.refund_prepayment,
-                smoking = excluded.smoking,
                 pet_friendly = excluded.pet_friendly,
                 party_friendly = excluded.party_friendly,
                 age_restriction = excluded.age_restriction,
@@ -80,9 +77,6 @@ public class HotelTermsPlacementRepositoryImpl implements HotelTermsPlacementRep
                         .addValue("checkOutAfterTime", termsPlacement.checkOutAfterTime())
                         .addValue("checkOutBeforeTime", termsPlacement.checkOutBeforeTime())
                         .addValue("timezone", termsPlacement.timezone())
-                        .addValue("cancellation", termsPlacement.cancellation())
-                        .addValue("refundPrepayment", termsPlacement.refundPrepayment())
-                        .addValue("smoking", termsPlacement.smoking())
                         .addValue("petFriendly", termsPlacement.petFriendly())
                         .addValue("partyFriendly", termsPlacement.partyFriendly())
                         .addValue("ageRestriction", termsPlacement.ageRestriction())
@@ -101,9 +95,6 @@ public class HotelTermsPlacementRepositoryImpl implements HotelTermsPlacementRep
                 rs.getString("check_out_after_time"),
                 rs.getString("check_out_before_time"),
                 rs.getString("timezone"),
-                rs.getBoolean("cancellation"),
-                (Boolean) rs.getObject("refund_prepayment"),
-                rs.getBoolean("smoking"),
                 rs.getBoolean("pet_friendly"),
                 rs.getBoolean("party_friendly"),
                 (Integer) rs.getObject("age_restriction"),

@@ -33,9 +33,7 @@ get:
     - name: cursor
       in: query
       required: false
-      description: >
-        hotelId последнего отеля на предыдущей странице (nextCursor из ответа).
-        При указанном budget — пагинация по (price desc, id desc).
+      description: hotelId последнего отеля на предыдущей странице (nextCursor из ответа)
       schema:
         type: string
         format: uuid

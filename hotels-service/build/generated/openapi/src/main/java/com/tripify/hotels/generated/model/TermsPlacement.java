@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.tripify.hotels.generated.model.CheckInOut;
-import com.tripify.hotels.generated.model.RefundRule;
 import org.springframework.lang.Nullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -21,18 +20,12 @@ import jakarta.annotation.Generated;
  * TermsPlacement
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class TermsPlacement {
 
   private @Nullable CheckInOut checkIn;
 
   private @Nullable CheckInOut checkOut;
-
-  private @Nullable Boolean cancellation;
-
-  private @Nullable RefundRule refundRule;
-
-  private @Nullable Boolean smoking;
 
   private @Nullable Boolean petFriendly;
 
@@ -80,66 +73,6 @@ public class TermsPlacement {
 
   public void setCheckOut(@Nullable CheckInOut checkOut) {
     this.checkOut = checkOut;
-  }
-
-  public TermsPlacement cancellation(@Nullable Boolean cancellation) {
-    this.cancellation = cancellation;
-    return this;
-  }
-
-  /**
-   * Get cancellation
-   * @return cancellation
-   */
-  
-  @Schema(name = "cancellation", example = "true", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("cancellation")
-  public @Nullable Boolean getCancellation() {
-    return cancellation;
-  }
-
-  public void setCancellation(@Nullable Boolean cancellation) {
-    this.cancellation = cancellation;
-  }
-
-  public TermsPlacement refundRule(@Nullable RefundRule refundRule) {
-    this.refundRule = refundRule;
-    return this;
-  }
-
-  /**
-   * Get refundRule
-   * @return refundRule
-   */
-  @Valid 
-  @Schema(name = "refundRule", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("refundRule")
-  public @Nullable RefundRule getRefundRule() {
-    return refundRule;
-  }
-
-  public void setRefundRule(@Nullable RefundRule refundRule) {
-    this.refundRule = refundRule;
-  }
-
-  public TermsPlacement smoking(@Nullable Boolean smoking) {
-    this.smoking = smoking;
-    return this;
-  }
-
-  /**
-   * Get smoking
-   * @return smoking
-   */
-  
-  @Schema(name = "smoking", example = "false", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("smoking")
-  public @Nullable Boolean getSmoking() {
-    return smoking;
-  }
-
-  public void setSmoking(@Nullable Boolean smoking) {
-    this.smoking = smoking;
   }
 
   public TermsPlacement petFriendly(@Nullable Boolean petFriendly) {
@@ -233,9 +166,6 @@ public class TermsPlacement {
     TermsPlacement termsPlacement = (TermsPlacement) o;
     return Objects.equals(this.checkIn, termsPlacement.checkIn) &&
         Objects.equals(this.checkOut, termsPlacement.checkOut) &&
-        Objects.equals(this.cancellation, termsPlacement.cancellation) &&
-        Objects.equals(this.refundRule, termsPlacement.refundRule) &&
-        Objects.equals(this.smoking, termsPlacement.smoking) &&
         Objects.equals(this.petFriendly, termsPlacement.petFriendly) &&
         Objects.equals(this.partyFriendly, termsPlacement.partyFriendly) &&
         Objects.equals(this.ageRestriction, termsPlacement.ageRestriction) &&
@@ -244,7 +174,7 @@ public class TermsPlacement {
 
   @Override
   public int hashCode() {
-    return Objects.hash(checkIn, checkOut, cancellation, refundRule, smoking, petFriendly, partyFriendly, ageRestriction, additionalInfo);
+    return Objects.hash(checkIn, checkOut, petFriendly, partyFriendly, ageRestriction, additionalInfo);
   }
 
   @Override
@@ -253,9 +183,6 @@ public class TermsPlacement {
     sb.append("class TermsPlacement {\n");
     sb.append("    checkIn: ").append(toIndentedString(checkIn)).append("\n");
     sb.append("    checkOut: ").append(toIndentedString(checkOut)).append("\n");
-    sb.append("    cancellation: ").append(toIndentedString(cancellation)).append("\n");
-    sb.append("    refundRule: ").append(toIndentedString(refundRule)).append("\n");
-    sb.append("    smoking: ").append(toIndentedString(smoking)).append("\n");
     sb.append("    petFriendly: ").append(toIndentedString(petFriendly)).append("\n");
     sb.append("    partyFriendly: ").append(toIndentedString(partyFriendly)).append("\n");
     sb.append("    ageRestriction: ").append(toIndentedString(ageRestriction)).append("\n");

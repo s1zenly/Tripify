@@ -7,24 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.tripify.hotels.service.kafka.model.CardsInfoDto;
-import com.tripify.hotels.service.kafka.model.CashInfoDto;
 import com.tripify.hotels.service.kafka.model.FacilityDto;
 import com.tripify.hotels.service.kafka.model.GpsCoordinatesDto;
 import com.tripify.hotels.service.kafka.model.HotelsParsedEvent;
 import com.tripify.hotels.service.kafka.model.KafkaHotelDto;
+import com.tripify.hotels.service.kafka.model.MoneyDto;
 import com.tripify.hotels.service.kafka.model.NearbyPlaceDto;
-import com.tripify.hotels.service.kafka.model.PaymentMethodsDto;
 import com.tripify.hotels.service.kafka.model.PlacementTimeDto;
-import com.tripify.hotels.service.kafka.model.RefundConditionDto;
-import com.tripify.hotels.service.kafka.model.RefundRuleDto;
+import com.tripify.hotels.service.kafka.model.RateDto;
 import com.tripify.hotels.service.kafka.model.ReviewsDto;
+import com.tripify.hotels.service.kafka.model.RoomDto;
 import com.tripify.hotels.service.kafka.model.TermsPlacementDto;
 import com.tripify.hotels.service.model.Hotel;
 import com.tripify.hotels.service.model.HotelFacility;
 import com.tripify.hotels.service.model.HotelNearbyPlace;
-import com.tripify.hotels.service.model.HotelPaymentMethods;
-import com.tripify.hotels.service.model.HotelRefundCondition;
 import com.tripify.hotels.service.model.HotelReviewsSummary;
 import com.tripify.hotels.service.model.HotelTermsPlacement;
 import com.tripify.hotels.service.service.currency.CurrencyConversionService;
@@ -45,7 +41,9 @@ public class HotelPersistenceMapper {
     ) {
         ReviewsDto reviews = hotelDto.reviews();
         GpsCoordinatesDto gps = hotelDto.gpsCoordinates();
-        BigDecimal sourcePrice = hotelDto.price() != null ? hotelDto.price() : BigDecimal.ZERO;
+
+        BigDecimal minPriceUsd = computeMinPriceUsd(hotelDto.rooms());
+        int maxGuests = computeMaxGuests(hotelDto.rooms());
 
         return new Hotel(
                 hotelId,
@@ -58,7 +56,8 @@ public class HotelPersistenceMapper {
                 defaultString(hotelDto.city()),
                 defaultString(hotelDto.country()),
                 currencyConversion.storageCurrency(),
-                currencyConversion.toStorageCurrency(sourcePrice, hotelDto.currency()),
+                minPriceUsd,
+                maxGuests,
                 hotelDto.hotelClass() != null ? hotelDto.hotelClass() : 0,
                 gps != null && gps.latitude() != null ? gps.latitude() : BigDecimal.ZERO,
                 gps != null && gps.longitude() != null ? gps.longitude() : BigDecimal.ZERO,
@@ -130,7 +129,6 @@ public class HotelPersistenceMapper {
 
         PlacementTimeDto checkIn = terms.checkIn();
         PlacementTimeDto checkOut = terms.checkOut();
-        RefundRuleDto refundRule = terms.refundRule();
 
         return new HotelTermsPlacement(
                 hotelId,
@@ -139,47 +137,10 @@ public class HotelPersistenceMapper {
                 checkOut != null ? checkOut.afterTime() : null,
                 checkOut != null ? checkOut.beforeTime() : null,
                 checkIn != null ? checkIn.timezone() : null,
-                Boolean.TRUE.equals(terms.cancellation()),
-                refundRule != null ? refundRule.refundPrepayment() : null,
-                Boolean.TRUE.equals(terms.smoking()),
                 Boolean.TRUE.equals(terms.petFriendly()),
                 Boolean.TRUE.equals(terms.partyFriendly()),
                 terms.ageRestriction(),
                 terms.additionalInfo(),
-                now,
-                now
-        );
-    }
-
-    public List<HotelRefundCondition> toRefundConditions(
-            UUID hotelId,
-            RefundRuleDto refundRule,
-            Instant now
-    ) {
-        if (refundRule == null || refundRule.conditions() == null || refundRule.conditions().isEmpty()) {
-            return List.of();
-        }
-
-        return refundRule.conditions().stream()
-                .filter(condition -> condition.condition() != null && !condition.condition().isBlank())
-                .map(condition -> toRefundCondition(hotelId, condition, now))
-                .toList();
-    }
-
-    public HotelPaymentMethods toPaymentMethods(UUID hotelId, PaymentMethodsDto paymentMethods, Instant now) {
-        if (paymentMethods == null) {
-            return null;
-        }
-
-        CashInfoDto cashInfo = paymentMethods.cashInfo();
-        CardsInfoDto cardsInfo = paymentMethods.cardsInfo();
-
-        return new HotelPaymentMethods(
-                hotelId,
-                cashInfo != null && Boolean.TRUE.equals(cashInfo.cash()),
-                cashInfo != null ? cashInfo.currency() : List.of(),
-                cardsInfo != null && Boolean.TRUE.equals(cardsInfo.card()),
-                cardsInfo != null ? cardsInfo.cardTypes() : List.of(),
                 now,
                 now
         );
@@ -206,18 +167,52 @@ public class HotelPersistenceMapper {
         );
     }
 
-    private HotelRefundCondition toRefundCondition(
-            UUID hotelId,
-            RefundConditionDto condition,
-            Instant now
-    ) {
-        return new HotelRefundCondition(
-                UUID.randomUUID(),
-                hotelId,
-                condition.quantityPercent() != null ? condition.quantityPercent() : 0,
-                condition.condition(),
-                now
-        );
+    private BigDecimal computeMinPriceUsd(List<RoomDto> rooms) {
+        if (rooms == null || rooms.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal minPrice = null;
+
+        for (RoomDto room : rooms) {
+            if (room.rates() == null) {
+                continue;
+            }
+            for (RateDto rate : room.rates()) {
+                if (rate.pricing() == null || rate.pricing().pricePerNight() == null) {
+                    continue;
+                }
+                MoneyDto perNight = rate.pricing().pricePerNight();
+                if (perNight.amount() == null) {
+                    continue;
+                }
+
+                BigDecimal priceInUsd = currencyConversion.toStorageCurrency(
+                        perNight.amount(),
+                        perNight.currency()
+                );
+
+                if (minPrice == null || priceInUsd.compareTo(minPrice) < 0) {
+                    minPrice = priceInUsd;
+                }
+            }
+        }
+
+        return minPrice != null ? minPrice : BigDecimal.ZERO;
+    }
+
+    private int computeMaxGuests(List<RoomDto> rooms) {
+        if (rooms == null || rooms.isEmpty()) {
+            return 2;
+        }
+
+        int maxGuests = 0;
+        for (RoomDto room : rooms) {
+            if (room.occupancy() != null && room.occupancy().maxGuests() != null) {
+                maxGuests = Math.max(maxGuests, room.occupancy().maxGuests());
+            }
+        }
+        return maxGuests > 0 ? maxGuests : 2;
     }
 
     private static BigDecimal toBigDecimal(Map<String, Object> values, String key) {

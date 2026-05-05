@@ -19,6 +19,8 @@ create table hotels
     currency           varchar(8)      not null,
     price              numeric(12, 2)  not null,
 
+    max_guests         integer         not null default 2,
+
     hotel_class        smallint        not null,
 
     latitude           numeric(10, 7)  not null,
@@ -52,7 +54,8 @@ comment on column hotels.address is 'Адрес отеля';
 comment on column hotels.city is 'Город расположения';
 comment on column hotels.country is 'Код страны ISO Alpha-2';
 comment on column hotels.currency is 'Валюта хранения цены (USD)';
-comment on column hotels.price is 'Минимальная цена проживания в USD';
+comment on column hotels.price is 'Минимальная цена за ночь в USD (среди всех номеров/тарифов)';
+comment on column hotels.max_guests is 'Максимальная вместимость гостей (среди всех номеров)';
 comment on column hotels.hotel_class is 'Класс отеля в звездах';
 comment on column hotels.latitude is 'Широта расположения';
 comment on column hotels.longitude is 'Долгота расположения';

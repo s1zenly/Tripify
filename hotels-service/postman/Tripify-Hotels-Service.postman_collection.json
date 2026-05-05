@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "tripify-hotels-service-api",
     "name": "Tripify Hotels Service",
-    "description": "Hotels API: каталог фильтров, поиск, детали отеля.\n\n**Порядок теста**\n1. `Get Hotel Filters` — доступные `filters` для city/country\n2. `Get Hotels` — список (сохраняет `hotelId`, `cursor`)\n3. `Get Hotels (with filters)` — поиск с `filters` из каталога (AND)\n4. `Get Hotel By Id` — детали + photos + ML tags\n\n**Переменные:** `baseUrl` = http://localhost:8080, `country`/`city` под твои данные в БД.\n\n**Каталог filters (MVP):** pool, wifi, breakfast, beachfront, pet_friendly, free_cancellation, rating_8_plus, rating_9_plus, stars_4_plus, stars_5\n\n`budget` — отдельно (макс. цена). `tags` в ответе — ML-теги, не путать с filters.",
+    "description": "Hotels API: каталог фильтров, поиск, детали отеля.\n\n**Порядок теста**\n1. `Get Hotel Filters` — доступные `filters` для city/country\n2. `Get Hotels` — список (сохраняет `hotelId`, `cursor`)\n3. `Get Hotels (with filters)` — поиск с `filters` из каталога (AND)\n4. `Get Hotels (by guests)` — фильтрация по кол-ву гостей\n5. `Get Hotel By Id` — детали + rooms + photos + ML tags\n\n**Цена:** `price` в ответе = min_price_per_night × кол-во ночей (check_out - check_in). `budget` — макс. бюджет за весь период.\n\n**Rooms:** Каждый отель содержит массив `rooms` с тарифами (`rates`). В ответе нет `providerRoomId`, `providerRateId`, `loyalty`. Фото комнат — только `url`, без `photoId`/`order`.\n\n**Фильтрация:** `max_guests` и `price` хранятся в Postgres. `guests` фильтрует отели, где хотя бы один номер вмещает указанное кол-во гостей.\n\n**Каталог filters (MVP):** pool, wifi, breakfast, beachfront, pet_friendly, free_cancellation, rating_8_plus, rating_9_plus, stars_4_plus, stars_5\n\n`tags` в ответе — ML-теги, не путать с filters.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -118,22 +118,6 @@
             "method": "GET",
             "header": [
               {
-                "key": "X-Anonymous-Id",
-                "value": "{{xAnonymousId}}"
-              },
-              {
-                "key": "X-Generation-Id",
-                "value": "{{xGenerationId}}"
-              },
-              {
-                "key": "X-Pack-Revision",
-                "value": "{{xPackRevision}}"
-              },
-              {
-                "key": "X-Generation-Mode",
-                "value": "{{xGenerationMode}}"
-              },
-              {
                 "key": "X-Request-Id",
                 "value": "{{xRequestId}}"
               }
@@ -182,11 +166,19 @@
                   "    if (body.hotels && body.hotels.length > 0) {",
                   "        const hotel = body.hotels[0];",
                   "        pm.collectionVariables.set('hotelId', hotel.hotelId);",
+                  "",
+                  "        pm.test('Hotel has price (total for stay)', function () {",
+                  "            pm.expect(hotel).to.have.property('price');",
+                  "            pm.expect(hotel.price).to.be.a('number');",
+                  "            pm.expect(hotel.price).to.be.above(0);",
+                  "        });",
+                  "",
                   "        pm.test('Hotel has photos array', function () {",
                   "            pm.expect(hotel).to.have.property('photos');",
                   "            pm.expect(hotel.photos).to.be.an('array');",
                   "        });",
-                  "        console.log('Saved hotelId:', hotel.hotelId);",
+                  "",
+                  "        console.log('Saved hotelId:', hotel.hotelId, '| price (total):', hotel.price, hotel.currency);",
                   "    }",
                   "",
                   "    if (body.nextCursor) {",
@@ -221,10 +213,10 @@
                 { "key": "currency", "value": "{{currency}}" },
                 { "key": "guests", "value": "{{guests}}" },
                 { "key": "limit", "value": "{{limit}}" },
-                { "key": "budget", "value": "{{budget}}", "disabled": true }
+                { "key": "budget", "value": "{{budget}}", "disabled": true, "description": "Макс. бюджет за весь период проживания в currency" }
               ]
             },
-            "description": "Список отелей без фильтров. Сохраняет hotelId и nextCursor."
+            "description": "Список отелей без фильтров. `price` = min_price_per_night × nights (9 ночей при дефолтных датах). Сохраняет hotelId и nextCursor."
           },
           "response": []
         },
@@ -273,13 +265,72 @@
                 { "key": "currency", "value": "{{currency}}" },
                 { "key": "guests", "value": "{{guests}}" },
                 { "key": "limit", "value": "10" },
-                { "key": "budget", "value": "150000", "description": "Макс. цена в currency" },
+                { "key": "budget", "value": "150000", "description": "Макс. бюджет за весь период (9 ночей)" },
                 { "key": "filters", "value": "pool" },
                 { "key": "filters", "value": "beachfront" },
                 { "key": "filters", "value": "rating_8_plus" }
               ]
             },
-            "description": "Поиск с filters (AND). Подставь id из Get Hotel Filters. Примеры: wifi, breakfast, pet_friendly, stars_4_plus, stars_5, free_cancellation."
+            "description": "Поиск с filters (AND) + budget. Budget делится на ночи → max_price_per_night для SQL-фильтрации. Примеры filters: wifi, breakfast, pet_friendly, free_cancellation, stars_4_plus, stars_5."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hotels (by guests)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + pm.variables.replaceIn('{{$randomUUID}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.test('Has hotels array', function () {",
+                  "        pm.expect(body.hotels).to.be.an('array');",
+                  "    });",
+                  "    console.log('Hotels found for 4 guests:', body.hotels ? body.hotels.length : 0);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Generation-Id", "value": "{{xGenerationId}}" },
+              { "key": "X-Pack-Revision", "value": "{{xPackRevision}}" },
+              { "key": "X-Generation-Mode", "value": "{{xGenerationMode}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hotels?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&currency={{currency}}&guests=4&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                { "key": "country", "value": "{{country}}" },
+                { "key": "city", "value": "{{city}}" },
+                { "key": "check_in", "value": "{{checkIn}}" },
+                { "key": "check_out", "value": "{{checkOut}}" },
+                { "key": "currency", "value": "{{currency}}" },
+                { "key": "guests", "value": "4", "description": "Фильтрация: h.max_guests >= 4" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Фильтрация по кол-ву гостей. Показывает отели, где есть номер на 4+ гостей (max_guests в Postgres)."
           },
           "response": []
         },
@@ -411,17 +462,77 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "",
                   "if (pm.response.code === 200) {",
                   "    const body = pm.response.json();",
+                  "",
                   "    pm.test('hotelId matches', function () {",
                   "        pm.expect(body.hotelId).to.eql(pm.collectionVariables.get('hotelId'));",
                   "    });",
+                  "",
+                  "    pm.test('price is total for stay', function () {",
+                  "        pm.expect(body.price).to.be.a('number');",
+                  "        pm.expect(body.price).to.be.above(0);",
+                  "    });",
+                  "",
                   "    pm.test('photos is array', function () {",
                   "        pm.expect(body.photos).to.be.an('array');",
                   "    });",
+                  "",
                   "    pm.test('tags is array (ML)', function () {",
                   "        pm.expect(body.tags).to.be.an('array');",
                   "    });",
+                  "",
+                  "    pm.test('rooms is array', function () {",
+                  "        pm.expect(body.rooms).to.be.an('array');",
+                  "    });",
+                  "",
+                  "    if (body.rooms && body.rooms.length > 0) {",
+                  "        const room = body.rooms[0];",
+                  "",
+                  "        pm.test('Room has no providerRoomId', function () {",
+                  "            pm.expect(room).to.not.have.property('providerRoomId');",
+                  "        });",
+                  "",
+                  "        pm.test('Room has roomId, name, roomType', function () {",
+                  "            pm.expect(room).to.have.property('roomId');",
+                  "            pm.expect(room).to.have.property('name');",
+                  "            pm.expect(room).to.have.property('roomType');",
+                  "        });",
+                  "",
+                  "        if (room.photos && room.photos.length > 0) {",
+                  "            pm.test('Room photo has only url (no photoId/order)', function () {",
+                  "                const photo = room.photos[0];",
+                  "                pm.expect(photo).to.have.property('url');",
+                  "                pm.expect(photo).to.not.have.property('photoId');",
+                  "                pm.expect(photo).to.not.have.property('order');",
+                  "            });",
+                  "        }",
+                  "",
+                  "        if (room.rates && room.rates.length > 0) {",
+                  "            const rate = room.rates[0];",
+                  "",
+                  "            pm.test('Rate has no providerRateId', function () {",
+                  "                pm.expect(rate).to.not.have.property('providerRateId');",
+                  "            });",
+                  "",
+                  "            pm.test('Rate has no loyalty', function () {",
+                  "                pm.expect(rate).to.not.have.property('loyalty');",
+                  "            });",
+                  "",
+                  "            pm.test('Rate has rateId, title, pricing', function () {",
+                  "                pm.expect(rate).to.have.property('rateId');",
+                  "                pm.expect(rate).to.have.property('title');",
+                  "                pm.expect(rate).to.have.property('pricing');",
+                  "            });",
+                  "        }",
+                  "",
+                  "        console.log('Rooms count:', body.rooms.length,",
+                  "            '| First room:', room.name, '(' + room.roomType + ')',",
+                  "            '| Rates:', room.rates ? room.rates.length : 0);",
+                  "    }",
+                  "",
+                  "    console.log('Price (total for stay):', body.price, body.currency);",
                   "}"
                 ]
               }
@@ -437,7 +548,7 @@
               { "key": "X-Request-Id", "value": "{{xRequestId}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/hotels/{{hotelId}}?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&guests={{guests}}&currency={{currency}}&budget=150000",
+              "raw": "{{baseUrl}}/hotels/{{hotelId}}?country={{country}}&city={{city}}&check_in={{checkIn}}&check_out={{checkOut}}&guests={{guests}}&currency={{currency}}",
               "host": ["{{baseUrl}}"],
               "path": ["hotels", "{{hotelId}}"],
               "query": [
@@ -451,7 +562,7 @@
                 { "key": "filters", "value": "pool", "disabled": true }
               ]
             },
-            "description": "Детали отеля. Те же query, что в Get Hotels (контекст hotels-service): country, city, dates, guests, currency, budget, filters."
+            "description": "Детали отеля с rooms. `price` = min_price_per_night × nights. Rooms содержат rates без providerRateId и loyalty. Фото комнат — только url."
           },
           "response": []
         },

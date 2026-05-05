@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MockPhoto {
     private String url;
+    private int order;
 }

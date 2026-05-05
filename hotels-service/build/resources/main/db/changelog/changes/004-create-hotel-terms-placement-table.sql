@@ -13,10 +13,6 @@ create table hotel_terms_placement
 
     timezone              varchar(64),
 
-    cancellation          boolean     not null,
-    refund_prepayment     boolean,
-
-    smoking               boolean     not null,
     pet_friendly          boolean     not null,
     party_friendly        boolean     not null,
 
@@ -42,9 +38,6 @@ comment on column hotel_terms_placement.check_in_before_time is 'Время ок
 comment on column hotel_terms_placement.check_out_after_time is 'Время начала check-out';
 comment on column hotel_terms_placement.check_out_before_time is 'Время окончания check-out';
 comment on column hotel_terms_placement.timezone is 'Таймзона правил размещения';
-comment on column hotel_terms_placement.cancellation is 'Доступна ли отмена бронирования';
-comment on column hotel_terms_placement.refund_prepayment is 'Доступен ли возврат предоплаты';
-comment on column hotel_terms_placement.smoking is 'Разрешено ли курение';
 comment on column hotel_terms_placement.pet_friendly is 'Разрешено ли проживание с животными';
 comment on column hotel_terms_placement.party_friendly is 'Разрешены ли вечеринки';
 comment on column hotel_terms_placement.age_restriction is 'Возрастное ограничение';

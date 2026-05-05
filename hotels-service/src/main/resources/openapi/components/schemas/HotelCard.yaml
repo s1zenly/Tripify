@@ -52,7 +52,8 @@ properties:
   price:
     type: integer
     format: int64
-    example: 176
+    example: 1408
+    description: Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)
 
   hotelClass:
     type: integer

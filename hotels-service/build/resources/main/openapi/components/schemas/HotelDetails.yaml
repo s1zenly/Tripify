@@ -13,7 +13,7 @@ required:
   - photos
   - nearbyPlaces
   - termsPlacement
-  - paymentMethods
+  - rooms
 properties:
   hotelId:
     type: string
@@ -55,7 +55,8 @@ properties:
   price:
     type: integer
     format: int64
-    example: 176
+    example: 1408
+    description: Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)
 
   hotelClass:
     type: integer
@@ -88,8 +89,11 @@ properties:
   termsPlacement:
     $ref: './TermsPlacement.yaml'
 
-  paymentMethods:
-    $ref: './PaymentMethods.yaml'
+  rooms:
+    type: array
+    items:
+      $ref: './Room.yaml'
+    description: Доступные номера отеля с тарифами
 
   score:
     $ref: './HotelScore.yaml'

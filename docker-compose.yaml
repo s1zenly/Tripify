@@ -196,6 +196,9 @@ services:
       TRIPIFY_S3_ENDPOINT: https://storage.yandexcloud.net
       TRIPIFY_S3_REGION: ru-central1
       TRIPIFY_S3_BUCKET: tripify-hotels
+      TRIPIFY_S3_ROOMS_BUCKET: tripify-hotels-rooms
+      TRIPIFY_S3_REVIEWS_BUCKET: tripify-hotels-reviews
+      TRIPIFY_S3_UPLOAD_ENABLED: false
       TRIPIFY_S3_ACCESS_KEY: YCAJEhwv_RECwDriBuxqXQSyl
       TRIPIFY_S3_SECRET_KEY: YCNw-gkJLJoNEg2hLo_-kX_PjHHAxWiSuwqc81lr
     ports:

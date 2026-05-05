@@ -13,6 +13,9 @@ tripify:
     endpoint: https://storage.yandexcloud.net
     region: ru-central1
     bucket: tripify-hotels
+    rooms-bucket: tripify-hotels-rooms
+    reviews-bucket: tripify-hotels-reviews
+    upload-enabled: false
     access-key: YCAJEhwv_RECwDriBuxqXQSyl
     secret-key: YCNw-gkJLJoNEg2hLo_-kX_PjHHAxWiSuwqc81lr
   jwt:

@@ -1,0 +1,9 @@
+type: object
+properties:
+  type:
+    type: string
+    example: ALL_INCLUSIVE
+
+  description:
+    type: string
+    example: All meals, snacks, and selected beverages

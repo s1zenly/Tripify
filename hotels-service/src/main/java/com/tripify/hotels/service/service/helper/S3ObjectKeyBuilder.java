@@ -12,6 +12,14 @@ public class S3ObjectKeyBuilder {
         return "hotels/%s/photos/%s".formatted(hotelId, sanitizeFileName(fileName));
     }
 
+    public String roomPhotoKey(UUID hotelId, String roomId, String fileName) {
+        return "hotels/%s/rooms/%s/%s".formatted(
+                hotelId,
+                roomId != null ? roomId : "unknown",
+                sanitizeFileName(fileName)
+        );
+    }
+
     public String reviewPhotoKey(UUID hotelId, int commentIndex, String fileName) {
         return "hotels/%s/reviews/%s/%s".formatted(
                 hotelId,

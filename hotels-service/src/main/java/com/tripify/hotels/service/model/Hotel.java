@@ -18,6 +18,7 @@ public record Hotel(
         String country,
         String currency,
         BigDecimal price,
+        Integer maxGuests,
         Integer hotelClass,
         BigDecimal latitude,
         BigDecimal longitude,

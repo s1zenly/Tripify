@@ -24,6 +24,7 @@ public class HotelsParsedPersistenceService {
     private final HotelRepository hotelRepository;
     private final HotelPostgresPersistenceService postgresPersistenceService;
     private final HotelReviewsStorageService reviewsStorageService;
+    private final HotelRoomsStorageService roomsStorageService;
 
     public HotelsPersistenceResult persist(HotelsParsedEvent event) {
         validateEvent(event);
@@ -88,6 +89,7 @@ public class HotelsParsedPersistenceService {
         Instant now = Instant.now();
 
         persistReviews(hotelId, hotelDto, event, now);
+        persistRooms(hotelId, hotelDto, event, now);
         postgresPersistenceService.save(hotelDto, event, hotelId, now);
     }
 
@@ -102,6 +104,22 @@ public class HotelsParsedPersistenceService {
             throw new HotelPersistenceException(
                     hotelDto.hid(),
                     "Failed to persist reviews in MongoDB/S3",
+                    exception
+            );
+        }
+    }
+
+    private void persistRooms(UUID hotelId, KafkaHotelDto hotelDto, HotelsParsedEvent event, Instant now) {
+        if (hotelDto.rooms() == null || hotelDto.rooms().isEmpty()) {
+            return;
+        }
+
+        try {
+            roomsStorageService.upsertRooms(hotelId, hotelDto.rooms(), now);
+        } catch (Exception exception) {
+            throw new HotelPersistenceException(
+                    hotelDto.hid(),
+                    "Failed to persist rooms in MongoDB",
                     exception
             );
         }

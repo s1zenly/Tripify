@@ -27,16 +27,6 @@ public class HotelFilterStatsRepositoryImpl implements HotelFilterStatsRepositor
             group by sf.facet
             """;
 
-    private static final String COUNT_FREE_CANCELLATION_QUERY =
-            """
-            select count(distinct h.id)
-            from hotels h
-            join hotel_terms_placement tp on tp.hotel_id = h.id
-            where lower(h.country) = lower(:country)
-              and lower(h.city) = lower(:city)
-              and tp.cancellation = true
-            """;
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
@@ -55,12 +45,8 @@ public class HotelFilterStatsRepositoryImpl implements HotelFilterStatsRepositor
 
     @Override
     public int countFreeCancellation(String country, String city) {
-        Integer count = jdbcTemplate.queryForObject(
-                COUNT_FREE_CANCELLATION_QUERY,
-                baseParams(country, city),
-                Integer.class
-        );
-        return count != null ? count : 0;
+        return countFacetUsage(country, city)
+                .getOrDefault(HotelFilterCatalog.FREE_CANCELLATION, 0);
     }
 
     @Override

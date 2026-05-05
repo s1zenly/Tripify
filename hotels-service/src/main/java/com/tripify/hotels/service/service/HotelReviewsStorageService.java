@@ -12,8 +12,10 @@ import com.tripify.hotels.service.model.documents.ReviewCommentDocument;
 import com.tripify.hotels.service.repository.mongo.contract.HotelReviewsRepository;
 import com.tripify.hotels.service.service.mapper.ReviewsDocumentMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HotelReviewsStorageService {
@@ -31,7 +33,13 @@ public class HotelReviewsStorageService {
                 .map(HotelReviewsDocument::createdAt)
                 .orElse(now);
 
+        long start = System.currentTimeMillis();
         List<ReviewCommentDocument> comments = mapComments(hotelId, reviews.comments());
+        int totalPhotos = comments.stream()
+                .mapToInt(c -> c.photoS3Keys() != null ? c.photoS3Keys().size() : 0)
+                .sum();
+        log.info("Review photos processed. hotelId={}, comments={}, uploadedPhotos={}, time={}ms",
+                hotelId, comments.size(), totalPhotos, System.currentTimeMillis() - start);
 
         HotelReviewsDocument document = mapper.toDocument(
                 hotelId,

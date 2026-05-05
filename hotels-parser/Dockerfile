@@ -6,10 +6,12 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
+
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
+
 COPY src src
 
-RUN chmod +x gradlew
-RUN ./gradlew clean bootJar -x test
+RUN ./gradlew clean bootJar -x test --no-daemon --build-cache
 
 FROM eclipse-temurin:21-jre
 

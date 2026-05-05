@@ -1,0 +1,10 @@
+type: object
+properties:
+  value:
+    type: number
+    format: double
+    example: 28.0
+
+  unit:
+    type: string
+    example: M2

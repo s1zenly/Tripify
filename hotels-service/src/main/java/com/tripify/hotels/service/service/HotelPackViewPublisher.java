@@ -13,6 +13,7 @@ import com.tripify.hotels.service.exception.HotelPackViewPublishException;
 import com.tripify.hotels.service.kafka.model.HotelPackViewEvent;
 import com.tripify.hotels.service.kafka.model.HotelSearchContextEvent;
 import com.tripify.hotels.service.kafka.model.PackHeadersEvent;
+import com.tripify.hotels.service.kafka.model.UserType;
 import com.tripify.hotels.service.model.outbox.AggregateType;
 import com.tripify.hotels.service.model.outbox.OutboxEvent;
 import com.tripify.hotels.service.model.outbox.OutboxEventStatus;
@@ -62,6 +63,8 @@ public class HotelPackViewPublisher {
     }
 
     public static PackHeadersEvent toHeaders(
+            UserType userType,
+            String userId,
             String anonymousId,
             String generationId,
             int packRevision,
@@ -70,6 +73,8 @@ public class HotelPackViewPublisher {
             Integer hotelsRevision
     ) {
         return new PackHeadersEvent(
+                userType,
+                userId,
                 anonymousId,
                 generationId,
                 packRevision,

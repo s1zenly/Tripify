@@ -1,9 +1,0 @@
-type: object
-properties:
-  quantityPercent:
-    type: integer
-    example: 100
-
-  condition:
-    type: string
-    example: Free cancellation 24h before

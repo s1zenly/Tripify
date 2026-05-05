@@ -9,8 +9,8 @@ import com.tripify.hotels.generated.model.GpsCoordinates;
 import com.tripify.hotels.generated.model.HotelReviewsFull;
 import com.tripify.hotels.generated.model.HotelScore;
 import com.tripify.hotels.generated.model.NearbyPlace;
-import com.tripify.hotels.generated.model.PaymentMethods;
 import com.tripify.hotels.generated.model.Photo;
+import com.tripify.hotels.generated.model.Room;
 import com.tripify.hotels.generated.model.TermsPlacement;
 import java.net.URI;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * HotelDetails
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-24T20:52:08.294927+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class HotelDetails {
 
   private java.util.UUID hotelId;
@@ -74,7 +74,8 @@ public class HotelDetails {
 
   private TermsPlacement termsPlacement;
 
-  private PaymentMethods paymentMethods;
+  @Valid
+  private List<@Valid Room> rooms = new ArrayList<>();
 
   private @Nullable HotelScore score;
 
@@ -85,7 +86,7 @@ public class HotelDetails {
   /**
    * Constructor with only required parameters
    */
-  public HotelDetails(java.util.UUID hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsFull reviews, List<@Valid Facility> facilities, List<String> tags, List<@Valid Photo> photos, Map<String, List<@Valid NearbyPlace>> nearbyPlaces, TermsPlacement termsPlacement, PaymentMethods paymentMethods) {
+  public HotelDetails(java.util.UUID hotelId, String title, String city, String country, String currency, Long price, Integer hotelClass, HotelReviewsFull reviews, List<@Valid Facility> facilities, List<String> tags, List<@Valid Photo> photos, Map<String, List<@Valid NearbyPlace>> nearbyPlaces, TermsPlacement termsPlacement, List<@Valid Room> rooms) {
     this.hotelId = hotelId;
     this.title = title;
     this.city = city;
@@ -99,7 +100,7 @@ public class HotelDetails {
     this.photos = photos;
     this.nearbyPlaces = nearbyPlaces;
     this.termsPlacement = termsPlacement;
-    this.paymentMethods = paymentMethods;
+    this.rooms = rooms;
   }
 
   public HotelDetails hotelId(java.util.UUID hotelId) {
@@ -288,11 +289,11 @@ public class HotelDetails {
   }
 
   /**
-   * Get price
+   * Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)
    * @return price
    */
   @NotNull 
-  @Schema(name = "price", example = "176", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "price", example = "1408", description = "Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("price")
   public Long getPrice() {
     return price;
@@ -476,24 +477,32 @@ public class HotelDetails {
     this.termsPlacement = termsPlacement;
   }
 
-  public HotelDetails paymentMethods(PaymentMethods paymentMethods) {
-    this.paymentMethods = paymentMethods;
+  public HotelDetails rooms(List<@Valid Room> rooms) {
+    this.rooms = rooms;
+    return this;
+  }
+
+  public HotelDetails addRoomsItem(Room roomsItem) {
+    if (this.rooms == null) {
+      this.rooms = new ArrayList<>();
+    }
+    this.rooms.add(roomsItem);
     return this;
   }
 
   /**
-   * Get paymentMethods
-   * @return paymentMethods
+   * Доступные номера отеля с тарифами
+   * @return rooms
    */
   @NotNull @Valid 
-  @Schema(name = "paymentMethods", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("paymentMethods")
-  public PaymentMethods getPaymentMethods() {
-    return paymentMethods;
+  @Schema(name = "rooms", description = "Доступные номера отеля с тарифами", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("rooms")
+  public List<@Valid Room> getRooms() {
+    return rooms;
   }
 
-  public void setPaymentMethods(PaymentMethods paymentMethods) {
-    this.paymentMethods = paymentMethods;
+  public void setRooms(List<@Valid Room> rooms) {
+    this.rooms = rooms;
   }
 
   public HotelDetails score(@Nullable HotelScore score) {
@@ -542,13 +551,13 @@ public class HotelDetails {
         Objects.equals(this.photos, hotelDetails.photos) &&
         Objects.equals(this.nearbyPlaces, hotelDetails.nearbyPlaces) &&
         Objects.equals(this.termsPlacement, hotelDetails.termsPlacement) &&
-        Objects.equals(this.paymentMethods, hotelDetails.paymentMethods) &&
+        Objects.equals(this.rooms, hotelDetails.rooms) &&
         Objects.equals(this.score, hotelDetails.score);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags, photos, nearbyPlaces, termsPlacement, paymentMethods, score);
+    return Objects.hash(hotelId, title, link, description, address, gpsCoordinates, city, country, currency, price, hotelClass, reviews, facilities, tags, photos, nearbyPlaces, termsPlacement, rooms, score);
   }
 
   @Override
@@ -572,7 +581,7 @@ public class HotelDetails {
     sb.append("    photos: ").append(toIndentedString(photos)).append("\n");
     sb.append("    nearbyPlaces: ").append(toIndentedString(nearbyPlaces)).append("\n");
     sb.append("    termsPlacement: ").append(toIndentedString(termsPlacement)).append("\n");
-    sb.append("    paymentMethods: ").append(toIndentedString(paymentMethods)).append("\n");
+    sb.append("    rooms: ").append(toIndentedString(rooms)).append("\n");
     sb.append("    score: ").append(toIndentedString(score)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -26,7 +26,7 @@ public class HotelRepositoryImpl implements HotelRepository {
 
     private static final String HOTEL_COLUMNS = """
             id, external_hotel_id, provider_name, title, external_link, description,
-            address, city, country, currency, price, hotel_class,
+            address, city, country, currency, price, max_guests, hotel_class,
             latitude, longitude, reviews_total, reviews_rating,
             parsed_at, provided_at, created_at, updated_at
             """;
@@ -45,13 +45,13 @@ public class HotelRepositoryImpl implements HotelRepository {
             """
             insert into hotels (
                 id, external_hotel_id, provider_name, title, external_link, description,
-                address, city, country, currency, price, hotel_class,
+                address, city, country, currency, price, max_guests, hotel_class,
                 latitude, longitude, reviews_total, reviews_rating,
                 parsed_at, provided_at, created_at, updated_at
             )
             values (
                 :id, :externalHotelId, :providerName, :title, :externalLink, :description,
-                :address, :city, :country, :currency, :price, :hotelClass,
+                :address, :city, :country, :currency, :price, :maxGuests, :hotelClass,
                 :latitude, :longitude, :reviewsTotal, :reviewsRating,
                 :parsedAt, :providedAt, :createdAt, :updatedAt
             )
@@ -64,6 +64,7 @@ public class HotelRepositoryImpl implements HotelRepository {
                 country = excluded.country,
                 currency = excluded.currency,
                 price = excluded.price,
+                max_guests = excluded.max_guests,
                 hotel_class = excluded.hotel_class,
                 latitude = excluded.latitude,
                 longitude = excluded.longitude,
@@ -120,6 +121,7 @@ public class HotelRepositoryImpl implements HotelRepository {
                         .addValue("country", hotel.country())
                         .addValue("currency", hotel.currency())
                         .addValue("price", hotel.price())
+                        .addValue("maxGuests", hotel.maxGuests())
                         .addValue("hotelClass", hotel.hotelClass())
                         .addValue("latitude", hotel.latitude())
                         .addValue("longitude", hotel.longitude())
@@ -142,9 +144,14 @@ public class HotelRepositoryImpl implements HotelRepository {
                 .addValue("country", filter.country())
                 .addValue("city", filter.city());
 
-        if (filter.maxPriceUsd() != null) {
-            sql.append(" and h.price <= :maxPriceUsd");
-            params.addValue("maxPriceUsd", filter.maxPriceUsd());
+        if (filter.minGuests() != null) {
+            sql.append(" and h.max_guests >= :minGuests");
+            params.addValue("minGuests", filter.minGuests());
+        }
+
+        if (filter.maxPricePerNightUsd() != null) {
+            sql.append(" and h.price <= :maxPricePerNightUsd");
+            params.addValue("maxPricePerNightUsd", filter.maxPricePerNightUsd());
         }
 
         if (filter.resolvedFilters() != null) {
@@ -165,55 +172,20 @@ public class HotelRepositoryImpl implements HotelRepository {
             appendAttributeFilters(sql, params, filter.resolvedFilters().attributeFilterIds());
         }
 
-        if (filter.maxPriceUsd() != null) {
-            appendBudgetPagination(sql, params, filter);
-            sql.append(" order by h.price desc, h.id desc limit :limit");
-        } else {
-            if (filter.lastId() != null) {
-                sql.append(" and h.id > :lastId");
-                params.addValue("lastId", filter.lastId());
-            }
-            sql.append(" order by h.id asc limit :limit");
+        if (filter.lastId() != null) {
+            sql.append(" and h.id > :lastId");
+            params.addValue("lastId", filter.lastId());
         }
+        sql.append(" order by h.id asc limit :limit");
 
         params.addValue("limit", fetchLimit);
 
         return new SearchQuery(sql.toString(), params);
     }
 
-    private static void appendBudgetPagination(StringBuilder sql, SqlParams params, HotelSearchFilter filter) {
-        if (filter.lastId() == null) {
-            return;
-        }
-
-        if (filter.lastPriceUsd() == null) {
-            throw new IllegalArgumentException("lastPriceUsd is required when lastId is set with budget search");
-        }
-
-        sql.append("""
-                 and (
-                     h.price < :lastPriceUsd
-                     or (h.price = :lastPriceUsd and h.id < :lastId)
-                 )
-                """);
-        params.addValue("lastPriceUsd", filter.lastPriceUsd());
-        params.addValue("lastId", filter.lastId());
-    }
-
     private static void appendTermsFilters(StringBuilder sql, List<String> termsFilterIds) {
         for (String termsFilterId : termsFilterIds) {
-            if (HotelFilterCatalog.FREE_CANCELLATION.equals(termsFilterId)) {
-                sql.append("""
-                         and exists (
-                             select 1
-                             from hotel_terms_placement tp
-                             where tp.hotel_id = h.id
-                               and tp.cancellation = true
-                         )
-                        """);
-            } else {
-                throw new IllegalArgumentException("Unsupported terms filter: " + termsFilterId);
-            }
+            throw new IllegalArgumentException("Unsupported terms filter: " + termsFilterId);
         }
     }
 
@@ -261,6 +233,7 @@ public class HotelRepositoryImpl implements HotelRepository {
                 rs.getString("country"),
                 rs.getString("currency"),
                 rs.getBigDecimal("price"),
+                rs.getInt("max_guests"),
                 rs.getInt("hotel_class"),
                 rs.getBigDecimal("latitude"),
                 rs.getBigDecimal("longitude"),

@@ -6,17 +6,6 @@ properties:
   checkOut:
     $ref: './CheckInOut.yaml'
 
-  cancellation:
-    type: boolean
-    example: true
-
-  refundRule:
-    $ref: './RefundRule.yaml'
-
-  smoking:
-    type: boolean
-    example: false
-
   petFriendly:
     type: boolean
     example: true

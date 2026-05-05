@@ -1,7 +1,7 @@
 package com.tripify.hotels.parser.provider;
 
 import com.tripify.hotels.parser.dto.HotelsResponseDto;
-import com.tripify.hotels.parser.models.Country;
+import com.tripify.hotels.parser.models.City;
 import com.tripify.hotels.parser.models.Provider;
 import com.tripify.hotels.parser.models.HotelsProvider;
 import com.tripify.hotels.parser.models.HotelsProviderAdapter;
@@ -10,9 +10,6 @@ import com.tripify.hotels.parser.models.provider.mock.MockProviderHotel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- * Mock-поставщик: фасад с парсером (который использует Client) и адаптером.
- */
 @Component
 @RequiredArgsConstructor
 public class MockHotelProvider implements HotelsProvider {
@@ -26,7 +23,7 @@ public class MockHotelProvider implements HotelsProvider {
     }
 
     @Override
-    public HotelsResponseDto supplyHotels(Country country) {
-        return adapter.adapt(parser.parse(country));
+    public HotelsResponseDto supplyHotels(City city) {
+        return adapter.adapt(parser.parse(city));
     }
 }

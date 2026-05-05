@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Photo {
     private String link;
+    private int order;
 }
 

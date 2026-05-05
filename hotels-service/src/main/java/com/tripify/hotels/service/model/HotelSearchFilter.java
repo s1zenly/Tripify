@@ -8,10 +8,11 @@ import com.tripify.hotels.service.model.filter.ResolvedSearchFilters;
 public record HotelSearchFilter(
         String country,
         String city,
-        BigDecimal maxPriceUsd,
+        BigDecimal maxPricePerNightUsd,
+        Integer minGuests,
+        long nights,
         ResolvedSearchFilters resolvedFilters,
         int limit,
-        UUID lastId,
-        BigDecimal lastPriceUsd
+        UUID lastId
 ) {
 }
