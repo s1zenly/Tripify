@@ -1,0 +1,27 @@
+BadRequest:
+  description: Bad request
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+Unauthorized:
+  description: Unauthorized
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+NotFound:
+  description: Not found
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+TooManyRequests:
+  description: Too many requests
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'

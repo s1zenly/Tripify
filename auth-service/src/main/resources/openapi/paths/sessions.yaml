@@ -1,0 +1,38 @@
+sessions:
+  get:
+    tags: [Sessions]
+    operationId: getSessions
+    summary: Get current user sessions
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: User sessions
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/sessions.yaml#/SessionListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+
+sessionById:
+  delete:
+    tags: [Sessions]
+    operationId: revokeSession
+    summary: Revoke specific session
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: Session revoked
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'

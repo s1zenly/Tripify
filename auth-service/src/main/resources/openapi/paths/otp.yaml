@@ -1,0 +1,43 @@
+requestOtp:
+  post:
+    tags: [OTP]
+    operationId: requestOtp
+    summary: Request OTP code by phone number
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/otp.yaml#/OtpRequest'
+    responses:
+      '204':
+        description: OTP sent
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '429':
+        $ref: '../components/responses.yaml#/TooManyRequests'
+
+verifyOtp:
+  post:
+    tags: [OTP]
+    operationId: verifyOtp
+    summary: Verify OTP and issue tokens
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/otp.yaml#/OtpVerifyRequest'
+    responses:
+      '200':
+        description: Authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/tokens.yaml#/TokenResponse'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '429':
+        $ref: '../components/responses.yaml#/TooManyRequests'

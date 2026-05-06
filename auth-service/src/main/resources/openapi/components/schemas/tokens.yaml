@@ -1,0 +1,40 @@
+RefreshTokenRequest:
+  type: object
+  required:
+    - refreshToken
+  properties:
+    refreshToken:
+      type: string
+
+LogoutRequest:
+  type: object
+  required:
+    - refreshToken
+  properties:
+    refreshToken:
+      type: string
+
+TokenResponse:
+  type: object
+  required:
+    - tokenType
+    - accessToken
+    - accessExpiresIn
+    - refreshToken
+    - refreshExpiresIn
+  properties:
+    tokenType:
+      type: string
+      example: Bearer
+    accessToken:
+      type: string
+    accessExpiresIn:
+      type: integer
+      format: int64
+      example: 900
+    refreshToken:
+      type: string
+    refreshExpiresIn:
+      type: integer
+      format: int64
+      example: 2592000

@@ -1,0 +1,30 @@
+ErrorResponse:
+  type: object
+  required:
+    - code
+    - message
+    - timestamp
+  properties:
+    code:
+      type: string
+      example: INVALID_OTP_CODE
+    message:
+      type: string
+      example: Invalid OTP code
+    details:
+      type: array
+      items:
+        $ref: '#/ErrorDetail'
+    timestamp:
+      type: string
+      format: date-time
+
+ErrorDetail:
+  type: object
+  properties:
+    field:
+      type: string
+      example: phoneNumber
+    message:
+      type: string
+      example: must be a valid phone number

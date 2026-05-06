@@ -1,0 +1,39 @@
+refreshToken:
+  post:
+    tags: [Tokens]
+    operationId: refreshToken
+    summary: Refresh access token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/tokens.yaml#/RefreshTokenRequest'
+    responses:
+      '200':
+        description: Tokens refreshed
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/tokens.yaml#/TokenResponse'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+
+logout:
+  post:
+    tags: [Tokens]
+    operationId: logout
+    summary: Logout current session
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/tokens.yaml#/LogoutRequest'
+    responses:
+      '204':
+        description: Logged out
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'

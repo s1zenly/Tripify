@@ -1,0 +1,42 @@
+SessionListResponse:
+  type: object
+  required:
+    - sessions
+  properties:
+    sessions:
+      type: array
+      items:
+        $ref: '#/SessionResponse'
+
+SessionResponse:
+  type: object
+  required:
+    - id
+    - createdAt
+    - expiresAt
+    - current
+  properties:
+    id:
+      type: string
+      format: uuid
+    deviceName:
+      type: string
+      example: "Chrome on macOS"
+    ipAddress:
+      type: string
+      example: "127.0.0.1"
+    userAgent:
+      type: string
+      example: "Mozilla/5.0"
+    createdAt:
+      type: string
+      format: date-time
+    lastUsedAt:
+      type: string
+      format: date-time
+    expiresAt:
+      type: string
+      format: date-time
+    current:
+      type: boolean
+      example: true
