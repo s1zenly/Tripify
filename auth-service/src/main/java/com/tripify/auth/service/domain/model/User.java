@@ -12,4 +12,15 @@ public record User(
         Instant createdAt,
         Instant updatedAt
 ) {
+    public boolean isActive() {
+        return status == UserStatus.ACTIVE;
+    }
+
+    public boolean isBlocked() {
+        return status == UserStatus.BLOCKED;
+    }
+
+    public boolean isDeleted() {
+        return status == UserStatus.DELETED;
+    }
 }

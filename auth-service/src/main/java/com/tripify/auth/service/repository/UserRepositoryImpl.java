@@ -1,4 +1,62 @@
 package com.tripify.auth.service.repository;
 
-public class UserRepositoryImpl {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.UUID;
+
+import com.tripify.auth.service.domain.enums.UserStatus;
+import com.tripify.auth.service.domain.model.User;
+import com.tripify.auth.service.repository.contracts.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class UserRepositoryImpl implements UserRepository {
+
+    private static final String UPSERT_USER_QUERY =
+            """
+            insert into users(id, phone, status, created_at, updated_at)
+            values(:id, :phone, :status, :created_at, :updated_at)
+            on conflict(phone)
+            do update set
+                status = case
+                    when users.status = 'DELETED'
+                    then 'ACTIVE'
+                    else users.status
+                end,
+                updated_at = excluded.updated_at
+            returning id, phone, status, created_at, updated_at
+            """;
+
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public User upsertActiveUser(String phone) {
+        Instant now = Instant.now();
+
+        return namedParameterJdbcTemplate.queryForObject(
+                UPSERT_USER_QUERY,
+                new MapSqlParameterSource()
+                        .addValue("id", UUID.randomUUID())
+                        .addValue("phone", phone)
+                        .addValue("status", UserStatus.ACTIVE.name())
+                        .addValue("created_at", now)
+                        .addValue("updated_at", now),
+                this::mapUser
+        );
+    }
+
+    private User mapUser(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
+                rs.getObject("id", UUID.class),
+                rs.getString("phone"),
+                UserStatus.valueOf(rs.getString("status")),
+                rs.getTimestamp("created_at").toInstant(),
+                rs.getTimestamp("updated_at").toInstant()
+        );
+    }
 }

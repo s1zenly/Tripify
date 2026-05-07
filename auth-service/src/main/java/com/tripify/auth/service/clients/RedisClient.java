@@ -43,4 +43,22 @@ public class RedisClient {
             return jedis.exists(key);
         }
     }
+
+    public long incrementWithTtl(String key, Duration ttl) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            long value = jedis.incr(key);
+
+            if (value == 1L) {
+                jedis.expire(key, ttl.toSeconds());
+            }
+
+            return value;
+        }
+    }
+
+    public long ttl(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.ttl(key);
+        }
+    }
 }
