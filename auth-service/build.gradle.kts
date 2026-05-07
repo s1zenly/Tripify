@@ -25,11 +25,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.postgresql:postgresql:42.7.7")
+
+    implementation("redis.clients:jedis:6.0.0")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
 
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
-    runtimeOnly("org.postgresql:postgresql")
 
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

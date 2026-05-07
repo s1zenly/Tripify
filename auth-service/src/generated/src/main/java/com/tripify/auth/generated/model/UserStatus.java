@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets UserStatus
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-06T22:34:43.832653+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T23:12:49.949733+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public enum UserStatus {
   
   ACTIVE("ACTIVE"),
