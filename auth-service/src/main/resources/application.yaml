@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: auth_user
+    password: auth_password
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+  logging:
+    level:
+      liquibase: DEBUG
+      org.springframework.boot.autoconfigure.liquibase: DEBUG

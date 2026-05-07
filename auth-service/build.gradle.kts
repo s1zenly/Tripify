@@ -23,7 +23,17 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+
+    implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    runtimeOnly("org.postgresql:postgresql")
+
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
@@ -85,5 +95,5 @@ tasks.test {
 tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("openApiHtml") {
     generatorName.set("html2")
     inputSpec.set("$rootDir/src/main/resources/openapi/openapi.yaml")
-    outputDir.set("$buildDir/generated/openapi-html")
+    outputDir.set("$rootDir/src/generated/html")
 }
