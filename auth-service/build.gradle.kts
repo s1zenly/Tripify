@@ -45,14 +45,14 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-val openApiGeneratedDir = layout.projectDirectory.dir("src/generated")
+val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi")
 
 openApiGenerate {
     generatorName.set("spring")
     library.set("spring-boot")
 
     inputSpec.set("$rootDir/src/main/resources/openapi/openapi.yaml")
-    outputDir.set(openApiGeneratedDir.asFile.path)
+    outputDir.set(openApiGeneratedDir.get().asFile.path)
 
     apiPackage.set("com.tripify.auth.generated.api")
     modelPackage.set("com.tripify.auth.generated.model")
@@ -81,21 +81,23 @@ openApiGenerate {
 sourceSets {
     main {
         java {
-            srcDir("src/generated/src/main/java")
+            srcDir(openApiGeneratedDir.map { it.dir("src/main/java") })
         }
     }
 }
 
+tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("openApiHtml") {
+    generatorName.set("html2")
+
+    inputSpec.set("$rootDir/src/main/resources/openapi/openapi.yaml")
+    outputDir.set(layout.buildDirectory.dir("generated/openapi-html").get().asFile.path)
+}
+
 tasks.compileJava {
     dependsOn(tasks.openApiGenerate)
+    dependsOn(tasks.named("openApiHtml"))
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>("openApiHtml") {
-    generatorName.set("html2")
-    inputSpec.set("$rootDir/src/main/resources/openapi/openapi.yaml")
-    outputDir.set("$rootDir/src/generated/html")
 }
