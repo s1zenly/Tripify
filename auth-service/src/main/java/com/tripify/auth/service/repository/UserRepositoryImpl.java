@@ -3,6 +3,7 @@ package com.tripify.auth.service.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.tripify.auth.service.domain.enums.UserStatus;
@@ -16,6 +17,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
+
+    private static final String FIND_USER_BY_PHONE =
+            """
+            select id, phone, status, created_at, updated_at
+            from users
+            where phone = :phone
+            """;
 
     private static final String UPSERT_USER_QUERY =
             """
@@ -33,6 +41,15 @@ public class UserRepositoryImpl implements UserRepository {
             """;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public Optional<User> findByPhone(String phone) {
+        return namedParameterJdbcTemplate.query(
+                FIND_USER_BY_PHONE,
+                new MapSqlParameterSource()
+                        .addValue("phone", phone),
+                this::mapUser
+        ).stream().findFirst();
+    }
 
     @Override
     public User upsertActiveUser(String phone) {

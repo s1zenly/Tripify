@@ -33,3 +33,9 @@ redis:
   max-total: 20
   max-idle: 10
   min-idle: 2
+
+
+app:
+  kafka:
+    topics:
+      otp-requested: auth.otp.requested

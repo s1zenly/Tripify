@@ -1,42 +1,31 @@
 OtpRequest:
   type: object
   required:
-    - countryCode
     - phoneNumber
   properties:
-    countryCode:
-      type: string
-      description: International country calling code
-      example: "49"
-      pattern: '^\d{1,4}$'
     phoneNumber:
       type: string
-      description: National phone number without country code
-      example: "15123456789"
-      pattern: '^\d{4,15}$'
+      description: Phone number in E.164 format
+      example: "+4915123456789"
+      pattern: '^\+[1-9]\d{1,14}$'
+
 
 OtpVerifyRequest:
   type: object
   required:
-    - countryCode
     - phoneNumber
     - code
   properties:
-    countryCode:
-      type: string
-      description: International country calling code
-      example: "+49"
-      pattern: '^\d{1,4}$'
     phoneNumber:
       type: string
-      description: National phone number without country code
-      example: "15123456789"
-      pattern: '^\d{4,15}$'
+      description: Phone number in E.164 format
+      example: "+4915123456789"
+      pattern: '^\+[1-9]\d{1,14}$'
     code:
       type: string
-      description: 6-digit one-time verification code
-      example: "123456"
-      pattern: '^\d{6}$'
+      description: 4-digit one-time verification code
+      example: "1234"
+      pattern: '^\d{4}$'
     deviceName:
       type: string
       description: Human-readable device name

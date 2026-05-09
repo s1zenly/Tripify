@@ -33,6 +33,11 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
 
+    implementation("org.springframework.kafka:spring-kafka")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
@@ -41,10 +46,13 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
 
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.4")
+    implementation("org.springframework.security:spring-security-crypto")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
 val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi")
