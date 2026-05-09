@@ -19,6 +19,15 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    producer:
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+
   logging:
     level:
       liquibase: DEBUG
@@ -39,3 +48,10 @@ app:
   kafka:
     topics:
       otp-requested: auth.otp.requested
+
+  outbox:
+    worker:
+      enabled: false
+      fixed-delay-ms: 3000
+      batch-size: 50
+      max-attempts: 5

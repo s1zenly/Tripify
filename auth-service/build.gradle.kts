@@ -33,7 +33,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
 
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
 
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
