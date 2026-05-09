@@ -14,14 +14,16 @@ import com.tripify.auth.service.domain.model.CreateOtpResult;
 import com.tripify.auth.service.domain.model.OtpRequest;
 import com.tripify.auth.service.domain.model.OtpRequestedEvent;
 import com.tripify.auth.service.domain.model.OutboxEvent;
+import com.tripify.auth.service.exception.InternalServerException;
+import com.tripify.auth.service.infra.TimeProvider;
 import com.tripify.auth.service.otp.OtpCodeGenerator;
 import com.tripify.auth.service.otp.OtpHasher;
 import com.tripify.auth.service.repository.contracts.OtpRequestRepository;
 import com.tripify.auth.service.repository.contracts.OutboxEventRepository;
 import com.tripify.auth.service.utils.JsonUtils;
-import com.tripify.auth.service.utils.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -37,15 +39,17 @@ public class OtpService {
     private final OtpRequestRepository otpRequestRepository;
     private final OutboxEventRepository outboxEventRepository;
     private final KafkaTopics kafkaTopics;
+    private final TimeProvider timeProvider;
     private final TransactionTemplate transactionTemplate;
 
 
     public CreateOtpResult create(String phone, OtpPurpose purpose) {
+        log.info("Start create otp request for phone - {}", phone);
         String rawOtp = otpCodeGenerator.generate();
         String otpHash = otpHasher.hash(rawOtp);
         UUID otpRequestId = UUID.randomUUID();
 
-        Instant now = TimeUtil.NOW_UTC;
+        Instant now = timeProvider.nowUtc();
         Instant expiredAt = now.plus(OTP_TTL);
 
         OtpRequest otpRequest = new OtpRequest(otpRequestId, phone, otpHash, purpose, OtpStatus.PENDING, 0, now.plus(OTP_TTL), now, now);
@@ -67,12 +71,15 @@ public class OtpService {
 
         try {
             transactionTemplate.executeWithoutResult(status -> {
+                otpRequestRepository.markPendingAsSuperseded(phone, now);
+                outboxEventRepository.markPendingOtpEventsAsSkipped(phone, OutboxEventType.OTP_REQUESTED, now);
+
                 otpRequestRepository.save(otpRequest);
                 outboxEventRepository.saveEvent(outboxEvent);
             });
-        } catch (Exception exception) {
-            log.error("Failed to save otp request and outbox event", exception);
-            throw exception;
+        } catch (DataAccessException exception) {
+            log.error("Failed to persist otp request and outbox event for phone = {}", phone, exception);
+            throw new InternalServerException("Failed to create otp request");
         }
 
         return new CreateOtpResult(otpRequest.id(), rawOtp);

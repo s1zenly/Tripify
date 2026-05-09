@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 @Component
 public class OtpCodeGenerator {
 
-    private static final int OTP_BOUND = 1_000_000;
+    private static final int OTP_BOUND = 10_000;
 
     private final SecureRandom secureRandom = new SecureRandom();
 

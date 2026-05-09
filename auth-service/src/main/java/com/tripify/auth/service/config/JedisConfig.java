@@ -21,15 +21,17 @@ public class JedisConfig {
         poolConfig.setMaxIdle(properties.maxIdle());
         poolConfig.setMinIdle(properties.minIdle());
 
-        var clientConfig = DefaultJedisClientConfig.builder()
-                .password(properties.password())
-                .timeoutMillis(properties.timeoutMs())
-                .build();
+        var clientConfigBuilder = DefaultJedisClientConfig.builder()
+                .timeoutMillis(properties.timeoutMs());
+
+        if (properties.password() != null && !properties.password().isBlank()) {
+            clientConfigBuilder.password(properties.password());
+        }
 
         return new JedisPool(
                 poolConfig,
                 new HostAndPort(properties.host(), properties.port()),
-                clientConfig
+                clientConfigBuilder.build()
         );
     }
 }

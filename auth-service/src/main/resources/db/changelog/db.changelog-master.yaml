@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/create-otp-requests-table.sql
   - include:
       file: db/changelog/changes/create-refresh-tokens.sql
+  - include:
+      file: db/changelog/changes/create-outbox-table.sql

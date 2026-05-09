@@ -5,8 +5,10 @@ import java.time.Duration;
 import com.tripify.auth.service.clients.RedisClient;
 import com.tripify.auth.service.exception.RateLimitExceededException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OtpRateLimiter {
@@ -20,6 +22,7 @@ public class OtpRateLimiter {
         String key = "rate:otp:request:" + phoneE164;
 
         long attempts = redisClient.incrementWithTtl(key, WINDOW);
+        log.info("Phone - {} made {} attempts", phoneE164, attempts);
 
         if (attempts > MAX_REQUESTS) {
             long retryAfterSeconds = redisClient.ttl(key);

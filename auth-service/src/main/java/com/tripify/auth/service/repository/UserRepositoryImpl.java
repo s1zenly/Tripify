@@ -2,15 +2,17 @@ package com.tripify.auth.service.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.tripify.auth.service.domain.enums.UserStatus;
 import com.tripify.auth.service.domain.model.User;
+import com.tripify.auth.service.infra.SqlParams;
 import com.tripify.auth.service.repository.contracts.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -45,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByPhone(String phone) {
         return namedParameterJdbcTemplate.query(
                 FIND_USER_BY_PHONE,
-                new MapSqlParameterSource()
+                new SqlParams()
                         .addValue("phone", phone),
                 this::mapUser
         ).stream().findFirst();
@@ -57,12 +59,12 @@ public class UserRepositoryImpl implements UserRepository {
 
         return namedParameterJdbcTemplate.queryForObject(
                 UPSERT_USER_QUERY,
-                new MapSqlParameterSource()
+                new SqlParams()
                         .addValue("id", UUID.randomUUID())
                         .addValue("phone", phone)
                         .addValue("status", UserStatus.ACTIVE.name())
-                        .addValue("created_at", now)
-                        .addValue("updated_at", now),
+                        .addTimestamp("created_at", now)
+                        .addTimestamp("updated_at", now),
                 this::mapUser
         );
     }

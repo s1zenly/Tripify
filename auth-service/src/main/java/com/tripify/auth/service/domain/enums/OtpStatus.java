@@ -5,4 +5,5 @@ public enum OtpStatus {
     VERIFIED,
     EXPIRED,
     FAILED,
+    SUPERSEDED,
 }
