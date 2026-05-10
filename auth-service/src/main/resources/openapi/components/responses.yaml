@@ -12,6 +12,13 @@ Unauthorized:
       schema:
         $ref: './schemas/errors.yaml#/ErrorResponse'
 
+Forbidden:
+  description: Forbidden
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
 NotFound:
   description: Not found
   content:
@@ -21,6 +28,13 @@ NotFound:
 
 TooManyRequests:
   description: Too many requests
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+InternalServerError:
+  description: Internal server error
   content:
     application/json:
       schema:

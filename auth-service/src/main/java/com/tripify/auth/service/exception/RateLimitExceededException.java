@@ -1,15 +1,17 @@
 package com.tripify.auth.service.exception;
 
-import com.tripify.auth.service.utils.Constants;
+import com.tripify.auth.generated.model.ErrorCode;
 import lombok.Getter;
 
+@Getter
 public class RateLimitExceededException extends RuntimeException {
 
-    @Getter
+    private final ErrorCode errorCode;
     private final long retryAfterSeconds;
 
-    public RateLimitExceededException(long retryAfterSeconds) {
-        super(Constants.TO_MANY_REQUESTS_MESSAGE);
+    public RateLimitExceededException(long retryAfterSeconds, String message) {
+        super(message);
+        this.errorCode = ErrorCode.TOO_MANY_REQUESTS;
         this.retryAfterSeconds = retryAfterSeconds;
     }
 }

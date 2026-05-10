@@ -2,6 +2,8 @@ package com.tripify.auth.service.Service;
 
 import java.util.Optional;
 
+import com.tripify.auth.generated.model.ErrorCode;
+import com.tripify.auth.service.client.Messages;
 import com.tripify.auth.service.domain.model.User;
 import com.tripify.auth.service.exception.ForbiddenException;
 import com.tripify.auth.service.repository.contracts.UserRepository;
@@ -24,7 +26,7 @@ public class UserService {
         log.info("User - {}", user.orElse(null));
 
         if (user.isPresent() && user.get().isBlocked()) {
-            throw new ForbiddenException(Constants.FORBIDDEN_USER_BLOCKED_MESSAGE);
+            throw new ForbiddenException(ErrorCode.USER_BLOCKED, Messages.FORBIDDEN_USER_BLOCKED_MESSAGE);
         }
 
         return user;
@@ -34,7 +36,7 @@ public class UserService {
         User user = userRepository.upsertActiveUser(phone);
 
         if (user.isBlocked()) {
-            throw new ForbiddenException(Constants.FORBIDDEN_USER_BLOCKED_MESSAGE);
+            throw new ForbiddenException(ErrorCode.USER_BLOCKED, Messages.FORBIDDEN_USER_BLOCKED_MESSAGE);
         }
 
         return user;

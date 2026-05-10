@@ -1,3 +1,12 @@
+ErrorCode:
+  type: string
+  enum:
+    - INVALID_PHONE_NUMBER
+    - TOO_MANY_REQUESTS
+    - USER_BLOCKED
+    - INTERNAL_SERVER_ERROR
+    - VALIDATION_ERROR
+
 ErrorResponse:
   type: object
   required:
@@ -6,8 +15,7 @@ ErrorResponse:
     - timestamp
   properties:
     code:
-      type: string
-      example: INVALID_OTP_CODE
+      $ref: '#/ErrorCode'
     message:
       type: string
       example: Invalid OTP code

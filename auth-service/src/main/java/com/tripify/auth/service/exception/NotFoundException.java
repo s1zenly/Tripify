@@ -1,15 +1,17 @@
 package com.tripify.auth.service.exception;
 
 import com.tripify.auth.generated.model.ErrorCode;
-import lombok.Getter;
 
-@Getter
-public class BadRequestException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
-    public BadRequestException(ErrorCode errorCode, String message) {
+    public NotFoundException(ErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }

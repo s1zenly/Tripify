@@ -14,8 +14,12 @@ requestOtp:
         description: OTP sent
       '400':
         $ref: '../components/responses.yaml#/BadRequest'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
       '429':
         $ref: '../components/responses.yaml#/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
 
 verifyOtp:
   post:

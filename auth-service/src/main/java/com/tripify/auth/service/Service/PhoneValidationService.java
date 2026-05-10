@@ -1,5 +1,6 @@
 package com.tripify.auth.service.Service;
 
+import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.service.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public class PhoneValidationService {
 
     public String validateToE164(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isBlank()) {
-            throw new BadRequestException("Phone number is required");
+            throw new BadRequestException(ErrorCode.INVALID_PHONE_NUMBER, "Phone number is required");
         }
 
         try {
@@ -23,7 +24,7 @@ public class PhoneValidationService {
             );
 
             if (!phoneNumberUtil.isValidNumber(parsedNumber)) {
-                throw new BadRequestException("Invalid phone number");
+                throw new BadRequestException(ErrorCode.INVALID_PHONE_NUMBER, "Invalid phone number");
             }
 
             return phoneNumberUtil.format(
@@ -31,7 +32,7 @@ public class PhoneValidationService {
                     PhoneNumberUtil.PhoneNumberFormat.E164
             );
         } catch (NumberParseException exception) {
-            throw new BadRequestException("Invalid phone number format");
+            throw new BadRequestException(ErrorCode.INVALID_PHONE_NUMBER, "Invalid phone number format");
         }
     }
 }
