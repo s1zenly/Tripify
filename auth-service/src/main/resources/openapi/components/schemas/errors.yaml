@@ -6,6 +6,10 @@ ErrorCode:
     - USER_BLOCKED
     - INTERNAL_SERVER_ERROR
     - VALIDATION_ERROR
+    - OTP_NOT_FOUND
+    - OTP_EXPIRED
+    - OTP_FAILED
+    - OTP_INVALID
 
 ErrorResponse:
   type: object

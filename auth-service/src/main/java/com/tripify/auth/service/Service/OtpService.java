@@ -16,8 +16,8 @@ import com.tripify.auth.service.domain.model.OtpRequestedEvent;
 import com.tripify.auth.service.domain.model.OutboxEvent;
 import com.tripify.auth.service.exception.InternalServerException;
 import com.tripify.auth.service.infra.TimeProvider;
-import com.tripify.auth.service.otp.OtpCodeGenerator;
-import com.tripify.auth.service.otp.OtpHasher;
+import com.tripify.auth.service.helper.OtpCodeGenerator;
+import com.tripify.auth.service.helper.Hasher;
 import com.tripify.auth.service.repository.contracts.OtpRequestRepository;
 import com.tripify.auth.service.repository.contracts.OutboxEventRepository;
 import com.tripify.auth.service.utils.JsonUtils;
@@ -34,7 +34,7 @@ public class OtpService {
 
     private static final Duration OTP_TTL = Duration.ofMinutes(5);
 
-    private final OtpHasher otpHasher;
+    private final Hasher hasher;
     private final OtpCodeGenerator otpCodeGenerator;
     private final OtpRequestRepository otpRequestRepository;
     private final OutboxEventRepository outboxEventRepository;
@@ -43,10 +43,10 @@ public class OtpService {
     private final TransactionTemplate transactionTemplate;
 
 
-    public CreateOtpResult create(String phone, OtpPurpose purpose) {
+    public CreateOtpResult createOtpRequest(String phone, OtpPurpose purpose) {
         log.info("Start create otp request for phone - {}", phone);
         String rawOtp = otpCodeGenerator.generate();
-        String otpHash = otpHasher.hash(rawOtp);
+        String otpHash = hasher.hashBCrypt(rawOtp);
         UUID otpRequestId = UUID.randomUUID();
 
         Instant now = timeProvider.nowUtc();

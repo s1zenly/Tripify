@@ -1,6 +1,6 @@
 package com.tripify.auth.service.client;
 
-public class Messages {
+public final class Messages {
 
     public static final String TO_MANY_REQUESTS_MESSAGE = "Too Many Requests";
     public static final String FORBIDDEN_USER_BLOCKED_MESSAGE = "User is blocked";

@@ -45,3 +45,5 @@ verifyOtp:
         $ref: '../components/responses.yaml#/Unauthorized'
       '429':
         $ref: '../components/responses.yaml#/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'

@@ -19,22 +19,17 @@ TokenResponse:
   required:
     - tokenType
     - accessToken
-    - accessExpiresIn
     - refreshToken
-    - refreshExpiresIn
+    - accessExpiresAt
   properties:
     tokenType:
       type: string
       example: Bearer
     accessToken:
       type: string
-    accessExpiresIn:
-      type: integer
-      format: int64
-      example: 900
     refreshToken:
       type: string
-    refreshExpiresIn:
-      type: integer
-      format: int64
-      example: 2592000
+    accessExpiresAt:
+      type: string
+      format: date-time
+      example: 2026-05-10T18:45:00Z

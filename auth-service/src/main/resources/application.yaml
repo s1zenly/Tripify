@@ -51,7 +51,13 @@ app:
 
   outbox:
     worker:
-      enabled: false
+      enabled: true
       fixed-delay-ms: 3000
       batch-size: 50
       max-attempts: 5
+
+  jwt:
+    issuer: tripify-auth
+    access-token-ttl-minutes: 15
+    refresh-token-ttl-days: 30
+    secret: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc

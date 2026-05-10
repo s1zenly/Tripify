@@ -41,7 +41,6 @@ public class OutboxKafkaWorker {
         List<OutboxEvent> events = outboxEventRepository.findPendingForPublish(batchSize, maxAttempts);
 
         if (events == null || events.isEmpty()) {
-            log.info("Empty outbox events list");
             return;
         }
 

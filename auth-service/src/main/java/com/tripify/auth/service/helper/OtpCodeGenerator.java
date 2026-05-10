@@ -1,4 +1,4 @@
-package com.tripify.auth.service.otp;
+package com.tripify.auth.service.helper;
 
 import org.springframework.stereotype.Component;
 

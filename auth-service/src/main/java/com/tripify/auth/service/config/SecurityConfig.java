@@ -17,7 +17,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/otp/request"
+                                "/auth/otp/request",
+                                "/auth/otp/verify"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
