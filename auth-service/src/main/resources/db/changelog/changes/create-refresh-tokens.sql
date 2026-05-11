@@ -7,6 +7,7 @@ create table refresh_tokens
     user_id    uuid         not null,
     token_hash varchar(255) not null,
     revoked    boolean      not null default false,
+    revoked_at timestamptz,
     expires_at timestamptz  not null,
     created_at timestamptz  not null,
 

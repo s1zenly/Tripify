@@ -5,6 +5,7 @@ import java.time.Instant;
 public record SessionTokens(
         String accessToken,
         String rawRefreshToken,
+        RefreshToken refreshToken,
         Instant expiresAt
 ) {
 }

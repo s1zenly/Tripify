@@ -52,5 +52,6 @@ UserStatus:
   type: string
   enum:
     - ACTIVE
+    - INACTIVE
     - BLOCKED
     - DELETED

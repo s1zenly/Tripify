@@ -2,6 +2,7 @@ package com.tripify.auth.service.Service;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.service.client.Messages;
@@ -35,5 +36,16 @@ public class UserService {
     public User createOrActivateUser(String phone, Instant now) {
         checkUserByBlocked(phone);
         return userRepository.createOrActivateUser(phone, now);
+    }
+
+    public User getActiveUserById(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ForbiddenException(ErrorCode.USER_INACTIVE, Messages.FORBIDDEN_USER_INACTIVE_MESSAGE));
+
+        if (user.isBlocked() || user.isDeleted()) {
+            throw new ForbiddenException(ErrorCode.USER_INACTIVE, Messages.FORBIDDEN_USER_INACTIVE_MESSAGE);
+        }
+
+        return user;
     }
 }

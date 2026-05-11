@@ -7,7 +7,9 @@ import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.generated.model.OtpVerifyRequest;
 import com.tripify.auth.generated.model.TokenResponse;
 import com.tripify.auth.service.Service.OtpRateLimiter;
+import com.tripify.auth.service.Service.OtpService;
 import com.tripify.auth.service.Service.PhoneValidationService;
+import com.tripify.auth.service.Service.RefreshTokenService;
 import com.tripify.auth.service.Service.SessionService;
 import com.tripify.auth.service.Service.UserService;
 import com.tripify.auth.service.client.ConverterModelToDTO;
@@ -36,11 +38,12 @@ import org.springframework.util.MultiValueMap;
 @RequiredArgsConstructor
 public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenResponse> {
 
-    private final OtpRequestRepository otpRequestRepository;
-
     private final UserService userService;
     private final SessionService sessionService;
     private final PhoneValidationService phoneValidationService;
+    private final RefreshTokenService refreshTokenService;
+    private final OtpService otpService;
+
     private final TransactionTemplate transactionTemplate;
     private final OtpRateLimiter otpRateLimiter;
     private final TimeProvider timeProvider;
@@ -54,13 +57,11 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
 
         otpRateLimiter.checkVerifyOtpRequestAllowed(normalizedPhone);
 
-        OtpRequest otpRequest = otpRequestRepository.findLatestPendingByPhone(normalizedPhone)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.OTP_NOT_FOUND, "Invalid OTP code"));
+        OtpRequest otpRequest = otpService.findLatestPendingByPhone(normalizedPhone);
         log.info("OtpRequest - {}", otpRequest);
 
         if (!otpRequest.expiresAt().isAfter(now)) {
-            log.error("EXPIRED");
-            otpRequestRepository.changeOtpStatus(otpRequest.id(), OtpStatus.EXPIRED, now);
+            otpService.changeOtpStatus(otpRequest.id(), OtpStatus.EXPIRED, now);
             throw new BadRequestException(ErrorCode.OTP_EXPIRED, "OTP code has expired");
         }
 
@@ -73,10 +74,13 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
 
         try {
             SessionTokens sessionTokens = transactionTemplate.execute(__ -> {
-                otpRequestRepository.changeOtpStatus(otpRequest.id(), OtpStatus.VERIFIED, now);
+                otpService.changeOtpStatus(otpRequest.id(), OtpStatus.VERIFIED, now);
                 User user = userService.createOrActivateUser(otpRequest.phone(), now);
 
-                return sessionService.createSession(user, now);
+                SessionTokens tokens = sessionService.createSession(user, now);
+                refreshTokenService.saveRefreshToken(tokens.refreshToken());
+
+                return tokens;
             });
 
             return ConverterModelToDTO.createTokenResponse(sessionTokens);
@@ -87,11 +91,11 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
     }
 
     private void failedOtpCompare(OtpRequest otpRequest, Instant now) {
-        int attempts = otpRequestRepository.incrementAttempts(otpRequest.id(), now);
+        int attempts = otpService.incrementAttempts(otpRequest.id(), now);
         int remainingAttempts = Math.max(Constants.MAX_OTP_VERIFY_ATTEMPTS - attempts, 0);
 
         if (attempts >= Constants.MAX_OTP_VERIFY_ATTEMPTS) {
-            otpRequestRepository.changeOtpStatus(otpRequest.id(), OtpStatus.FAILED, now);
+            otpService.changeOtpStatus(otpRequest.id(), OtpStatus.FAILED, now);
             throw new UnauthorizedException(ErrorCode.OTP_FAILED, "The code is blocked due to a large number of incorrect attempts");
         }
 

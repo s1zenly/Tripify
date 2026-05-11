@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.service.config.property.KafkaTopics;
 import com.tripify.auth.service.domain.enums.AggregateType;
 import com.tripify.auth.service.domain.enums.OtpPurpose;
@@ -15,6 +16,7 @@ import com.tripify.auth.service.domain.model.OtpRequest;
 import com.tripify.auth.service.domain.model.OtpRequestedEvent;
 import com.tripify.auth.service.domain.model.OutboxEvent;
 import com.tripify.auth.service.exception.InternalServerException;
+import com.tripify.auth.service.exception.UnauthorizedException;
 import com.tripify.auth.service.infra.TimeProvider;
 import com.tripify.auth.service.helper.OtpCodeGenerator;
 import com.tripify.auth.service.helper.Hasher;
@@ -83,5 +85,18 @@ public class OtpService {
         }
 
         return new CreateOtpResult(otpRequest.id(), rawOtp);
+    }
+
+    public OtpRequest findLatestPendingByPhone(String phone) {
+        return otpRequestRepository.findLatestPendingByPhone(phone)
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.OTP_NOT_FOUND, "Invalid OTP code"));
+    }
+
+    public void changeOtpStatus(UUID id, OtpStatus newStatus, Instant now) {
+        otpRequestRepository.changeOtpStatus(id, newStatus, now);
+    }
+
+    public int incrementAttempts(UUID otpRequestId, Instant now) {
+        return otpRequestRepository.incrementAttempts(otpRequestId, now);
     }
 }

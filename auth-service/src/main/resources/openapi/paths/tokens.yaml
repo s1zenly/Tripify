@@ -18,6 +18,10 @@ refreshToken:
               $ref: '../components/schemas/tokens.yaml#/TokenResponse'
       '401':
         $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
 
 logout:
   post:

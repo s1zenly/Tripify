@@ -30,6 +30,13 @@ public class UserRepositoryImpl implements UserRepository {
             where phone = :phone
             """;
 
+    private static final String FIND_USER_BY_ID =
+            """
+            select id, phone, status, created_at, updated_at
+            from users
+            where id = :id
+            """;
+
     private static final String CREATE_OR_ACTIVATE_USER_QUERY =
             """
             insert into users (id, phone, status, created_at, updated_at)
@@ -54,6 +61,16 @@ public class UserRepositoryImpl implements UserRepository {
                 FIND_USER_BY_PHONE,
                 new SqlParams()
                         .addValue("phone", phone),
+                this::mapUser
+        ).stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return namedParameterJdbcTemplate.query(
+                FIND_USER_BY_ID,
+                new SqlParams()
+                        .addValue("id", id),
                 this::mapUser
         ).stream().findFirst();
     }

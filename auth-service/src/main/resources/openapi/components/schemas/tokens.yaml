@@ -32,4 +32,4 @@ TokenResponse:
     accessExpiresAt:
       type: string
       format: date-time
-      example: 2026-05-10T18:45:00Z
+      example: 2026-05-11T10:52:49.278622672Z
