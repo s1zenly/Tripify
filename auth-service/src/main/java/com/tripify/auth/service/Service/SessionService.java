@@ -11,6 +11,7 @@ import com.tripify.auth.service.domain.model.SessionTokens;
 import com.tripify.auth.service.domain.model.User;
 import com.tripify.auth.service.helper.Hasher;
 import com.tripify.auth.service.helper.RefreshTokenGenerator;
+import com.tripify.auth.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SessionService {
 
-    private final JwtTokenService jwtTokenService;
+    private final JwtService jwtService;
     private final RefreshTokenGenerator refreshTokenGenerator;
     private final JwtProperties jwtProperties;
     private final Hasher hasher;
 
     public SessionTokens createSession(User user, Instant now) {
         log.info("Start creating session keys for user - {}", user);
-        AccessToken accessToken = jwtTokenService.generateAccessToken(user, now);
+        AccessToken accessToken = jwtService.generateAccessToken(user, now);
         String rawRefreshToken = refreshTokenGenerator.generate();
         String refreshTokenHash = hasher.hashSHA256(rawRefreshToken);
 

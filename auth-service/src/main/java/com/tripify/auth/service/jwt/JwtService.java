@@ -1,8 +1,7 @@
-package com.tripify.auth.service.Service;
+package com.tripify.auth.service.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -11,7 +10,6 @@ import javax.crypto.SecretKey;
 import com.tripify.auth.service.config.property.JwtProperties;
 import com.tripify.auth.service.domain.model.AccessToken;
 import com.tripify.auth.service.domain.model.User;
-import com.tripify.auth.service.infra.TimeProvider;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class JwtTokenService {
+public class JwtService {
 
     private final JwtProperties jwtProperties;
 
@@ -36,6 +34,15 @@ public class JwtTokenService {
                 .compact();
 
         return new AccessToken(accessToken, expiresAt);
+    }
+
+    public String extractSubject(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
     private SecretKey getSigningKey() {

@@ -40,7 +40,9 @@ public class RefreshTokenScenario implements Scenario<RefreshTokenRequest, Token
         String oldRawRefreshToken = request.getRefreshToken();
         String tokenHash = hasher.hashSHA256(oldRawRefreshToken);
 
-        RefreshToken oldRefreshToken = refreshTokenService.findByTokenHash(tokenHash);
+        RefreshToken oldRefreshToken = refreshTokenService.findByTokenHash(tokenHash)
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH, "Invalid refresh token"));
+        ;
         if (!oldRefreshToken.isActive(now)) {
             throw new UnauthorizedException(ErrorCode.BAD_REFRESH, "Token revoked or expired");
         }

@@ -14,6 +14,7 @@ ErrorCode:
     - INVALID_REFRESH
     - BAD_REFRESH
     - REFRESH_REVOKED
+    - ACCESS_TOKEN_INVALID
 
 ErrorResponse:
   type: object

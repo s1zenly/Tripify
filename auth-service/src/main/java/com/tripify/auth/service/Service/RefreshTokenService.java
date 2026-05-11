@@ -1,6 +1,7 @@
 package com.tripify.auth.service.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.tripify.auth.generated.model.ErrorCode;
@@ -18,9 +19,8 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshToken findByTokenHash(String tokenHash) {
-        return refreshTokenRepository.findByTokenHash(tokenHash)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH, "Invalid refresh token"));
+    public Optional<RefreshToken> findByTokenHash(String tokenHash) {
+        return refreshTokenRepository.findByTokenHash(tokenHash);
     }
 
     public void revokeRefreshToken(UUID refreshTokenId, Instant now) {
