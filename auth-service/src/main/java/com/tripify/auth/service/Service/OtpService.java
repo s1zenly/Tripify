@@ -55,7 +55,7 @@ public class OtpService {
         Instant expiredAt = now.plus(OTP_TTL);
 
         OtpRequest otpRequest = new OtpRequest(otpRequestId, phone, otpHash, purpose, OtpStatus.PENDING, 0, now.plus(OTP_TTL), now, now);
-        OtpRequestedEvent eventPayload = new OtpRequestedEvent(phone, rawOtp, now, expiredAt);
+        OtpRequestedEvent eventPayload = new OtpRequestedEvent(otpRequestId.toString(), phone, rawOtp, now, expiredAt);
         OutboxEvent outboxEvent = new OutboxEvent(
                 UUID.randomUUID(),
                 AggregateType.OTP_REQUEST,

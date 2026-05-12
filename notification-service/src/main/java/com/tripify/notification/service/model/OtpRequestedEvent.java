@@ -1,4 +1,4 @@
-package com.tripify.auth.service.domain.model;
+package com.tripify.notification.service.model;
 
 import java.time.Instant;
 

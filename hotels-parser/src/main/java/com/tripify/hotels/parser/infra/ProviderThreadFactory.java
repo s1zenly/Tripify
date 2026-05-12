@@ -21,3 +21,12 @@ public class ProviderThreadFactory implements ThreadFactory {
         return thread;
     }
 }
+
+
+id = uuid + timestamp;
+
+req_hotel = x-header = id;
+req_plane = x-header = id;
+
+
+

@@ -1,0 +1,15 @@
+services:
+  notification-service:
+    build: .
+    container_name: tripify-notification-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    networks:
+      - tripify-network
+
+networks:
+  tripify-network:
+    external: true
+    name: auth-service_default
