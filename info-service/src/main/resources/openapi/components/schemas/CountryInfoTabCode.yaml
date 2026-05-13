@@ -1,0 +1,9 @@
+type: string
+enum:
+  - overview
+  - visa
+  - when_to_go
+  - currency
+  - prices
+  - how_to_get
+  - weather

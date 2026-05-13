@@ -27,7 +27,7 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
         if (providerData == null || providerData.isEmpty()) {
             return HotelsResponseDto.builder()
                     .hotels(List.of())
-                    .countryInfo(CountryInfo.builder().title("").alpha2("").build())
+                    .countryInfo(CountryInfo.builder().alpha2("").build())
                     .providerName(Provider.MOCK.getProviderName())
                     .parsedAt(Instant.now())
                     .providedAt(Instant.now())
@@ -44,8 +44,8 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
 
         return HotelsResponseDto.builder()
                 .hotels(hotels)
-                .countryInfo(CountryInfo.builder().title(countryAlpha2).alpha2(countryAlpha2).build())
-                .cityName(first.getLocality())
+                .countryInfo(CountryInfo.builder().alpha2(countryAlpha2).build())
+                .city(first.getLocality())
                 .providerName(Provider.MOCK.getProviderName())
                 .parsedAt(Instant.now())
                 .providedAt(Instant.now())
@@ -107,6 +107,7 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                 .gpsCoordinates(gps)
                 .nearbyPlaces(nearby)
                 .reviews(reviews)
+                .score(buildScore(raw, reviews))
                 .termsPlacement(terms)
                 .photos(photos)
                 .facilities(facilities)
@@ -236,6 +237,32 @@ public class MockHotelsProviderAdapter implements HotelsProviderAdapter<MockProv
                 .build();
     }
 
+
+    private HotelScore buildScore(MockProviderHotel raw, Reviews reviews) {
+        double rating = reviews != null && reviews.getRating() > 0
+                ? Math.min(1.0, reviews.getRating() / 5.0)
+                : 0.75;
+        int stars = raw.getStars() > 0 ? raw.getStars() : 3;
+        double price = Math.min(1.0, 0.35 + (6 - stars) * 0.12);
+        double location = Math.min(1.0, 0.55 + stars * 0.08);
+        int amenityCount = raw.getAmenities() != null ? raw.getAmenities().size() : 0;
+        double facilities = Math.min(1.0, amenityCount / 12.0);
+        double finalScore = rating * 0.35 + price * 0.25 + location * 0.25 + facilities * 0.15;
+
+        return HotelScore.builder()
+                .finalScore(roundScore(finalScore))
+                .breakdown(ScoreBreakdown.builder()
+                        .price(roundScore(price))
+                        .rating(roundScore(rating))
+                        .location(roundScore(location))
+                        .facilities(roundScore(facilities))
+                        .build())
+                .build();
+    }
+
+    private static double roundScore(double value) {
+        return Math.round(value * 10_000.0) / 10_000.0;
+    }
 
     private Reviews toReviews(MockReviews mock) {
         if (mock == null) {

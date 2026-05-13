@@ -20,6 +20,7 @@ import com.tripify.hotels.service.repository.contract.HotelNearbyPlaceRepository
 import com.tripify.hotels.service.repository.contract.HotelPhotoRepository;
 import com.tripify.hotels.service.repository.contract.HotelRepository;
 import com.tripify.hotels.service.repository.contract.HotelReviewsSummaryRepository;
+import com.tripify.hotels.service.repository.contract.HotelScoreRepository;
 import com.tripify.hotels.service.repository.contract.HotelSearchFacetRepository;
 import com.tripify.hotels.service.repository.contract.HotelTermsPlacementRepository;
 import com.tripify.hotels.service.service.filter.HotelFilterDerivationService;
@@ -39,6 +40,7 @@ public class HotelPostgresPersistenceService {
     private final HotelNearbyPlaceRepository nearbyPlaceRepository;
     private final HotelTermsPlacementRepository termsPlacementRepository;
     private final HotelReviewsSummaryRepository reviewsSummaryRepository;
+    private final HotelScoreRepository scoreRepository;
     private final HotelSearchFacetRepository searchFacetRepository;
     private final HotelPhotoRepository photoRepository;
     private final HotelPhotoStorageService photoStorageService;
@@ -77,6 +79,12 @@ public class HotelPostgresPersistenceService {
         HotelReviewsSummary reviewsSummary = mapper.toReviewsSummary(hotelId, hotelDto.reviews(), now);
         if (reviewsSummary != null) {
             reviewsSummaryRepository.upsert(reviewsSummary);
+        }
+
+        com.tripify.hotels.service.model.HotelScore hotelScore =
+                mapper.toHotelScore(hotelId, hotelDto.score(), now);
+        if (hotelScore != null) {
+            scoreRepository.upsert(hotelScore);
         }
 
         List<HotelSearchFacet> searchFacets = filterDerivationService.derive(

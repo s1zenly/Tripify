@@ -5,16 +5,21 @@ get:
   operationId: searchTickets
 
   parameters:
-    - $ref: '../components/parameters.yaml#/OriginCityCode'
-    - $ref: '../components/parameters.yaml#/DestinationCityCode'
-    - $ref: '../components/parameters.yaml#/DepartureDate'
-    - $ref: '../components/parameters.yaml#/ReturnDate'
-    - $ref: '../components/parameters.yaml#/Currency'
-    - $ref: '../components/parameters.yaml#/Adults'
-    - $ref: '../components/parameters.yaml#/BudgetMaxAmount'
-    - $ref: '../components/parameters.yaml#/Children'
-    - $ref: '../components/parameters.yaml#/Infants'
-    - $ref: '../components/parameters.yaml#/TicketSearchFilters'
+    - $ref: '../components/parameters.yaml#/XAnonymousId'
+    - $ref: '../components/parameters.yaml#/XGenerationId'
+    - $ref: '../components/parameters.yaml#/XRequestId'
+
+    - $ref: '../components/parameters.yaml#/SearchOriginCountry'
+    - $ref: '../components/parameters.yaml#/SearchOriginCity'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCountry'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCity'
+    - $ref: '../components/parameters.yaml#/SearchDateFrom'
+    - $ref: '../components/parameters.yaml#/SearchDateTo'
+    - $ref: '../components/parameters.yaml#/SearchCurrency'
+    - $ref: '../components/parameters.yaml#/SearchAdults'
+    - $ref: '../components/parameters.yaml#/SearchChildren'
+    - $ref: '../components/parameters.yaml#/SearchBudget'
+    - $ref: '../components/parameters.yaml#/SearchFilters'
 
   responses:
     '200':

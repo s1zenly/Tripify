@@ -1,0 +1,29 @@
+# Build output (classes, tests, OpenAPI generated models in build/generated/openapi/)
+build/
+out/
+bin/
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env / secrets
+.env
+.env.*

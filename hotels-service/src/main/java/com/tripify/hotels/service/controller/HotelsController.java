@@ -8,12 +8,18 @@ import com.tripify.hotels.generated.api.HotelsApi;
 import com.tripify.hotels.generated.model.HotelDetails;
 import com.tripify.hotels.generated.model.HotelFiltersResponse;
 import com.tripify.hotels.generated.model.HotelsResponse;
+import com.tripify.hotels.service.domain.ResolvedTripLocation;
+import com.tripify.hotels.service.domain.TripLocations;
+import com.tripify.hotels.service.kafka.model.GenerationMode;
+import com.tripify.hotels.service.kafka.model.PackHeadersEvent;
+import com.tripify.hotels.service.kafka.model.SearchContextEvent;
 import com.tripify.hotels.service.kafka.model.UserType;
 import com.tripify.hotels.service.service.HotelFilterQueryService;
 import com.tripify.hotels.service.service.HotelPackViewPublisher;
 import com.tripify.hotels.service.service.HotelQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -31,28 +37,32 @@ public class HotelsController implements HotelsApi {
     public ResponseEntity<HotelsResponse> getHotels(
             String xAnonymousId,
             String xGenerationId,
-            Integer xPackRevision,
-            String xGenerationMode,
             String xRequestId,
-            String country,
-            String city,
-            LocalDate checkIn,
-            LocalDate checkOut,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
             String currency,
-            Integer guests,
-            Integer xHotelsRevision,
-            Long budget,
-            List<String> filters,
+            Integer adults,
+            Integer children,
+            @Nullable Long budget,
+            @Nullable List<String> filters,
             Integer limit,
             UUID cursor
     ) {
+        TripLocations.resolveOrBadRequest(originCountry, originCity);
+        ResolvedTripLocation destination = TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
+
         return ResponseEntity.ok(hotelQueryService.getHotels(
-                country,
-                city,
-                checkIn,
-                checkOut,
+                destination.country().alpha2(),
+                destination.city().iataCode(),
+                dateFrom,
+                dateTo,
                 currency,
-                guests,
+                adults,
+                children,
                 budget,
                 limit,
                 cursor,
@@ -61,12 +71,67 @@ public class HotelsController implements HotelsApi {
     }
 
     @Override
-    public ResponseEntity<HotelFiltersResponse> getHotelFilters(
+    public ResponseEntity<HotelDetails> searchHotel(
+            String xAnonymousId,
+            String xGenerationId,
+            Integer xPackRevision,
+            GenerationMode xGenerationMode,
             String xRequestId,
-            String country,
-            String city
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            String currency,
+            Integer adults,
+            @Nullable Integer xHotelsRevision,
+            Integer children,
+            @Nullable Long budget,
+            @Nullable List<String> filters
     ) {
-        return ResponseEntity.ok(hotelFilterQueryService.getAvailableFilters(country, city));
+        TripLocations.resolveOrBadRequest(originCountry, originCity);
+        ResolvedTripLocation destination = TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
+
+        HotelDetails response = hotelQueryService.searchFirstHotelDetail(
+                destination.country().alpha2(),
+                destination.city().iataCode(),
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters
+        );
+
+        publishHotelPackView(
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xHotelsRevision,
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters,
+                response
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<HotelFiltersResponse> getHotelFilters() {
+        return ResponseEntity.ok(hotelFilterQueryService.getFiltersCatalog());
     }
 
     @Override
@@ -74,49 +139,99 @@ public class HotelsController implements HotelsApi {
             String xAnonymousId,
             String xGenerationId,
             Integer xPackRevision,
-            String xGenerationMode,
+            GenerationMode xGenerationMode,
             String xRequestId,
             UUID hotelId,
-            String country,
-            String city,
-            LocalDate checkIn,
-            LocalDate checkOut,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
             String currency,
-            Integer guests,
-            Integer xHotelsRevision,
-            Long budget,
-            List<String> filters
+            Integer adults,
+            @Nullable Integer xHotelsRevision,
+            Integer children,
+            @Nullable Long budget,
+            @Nullable List<String> filters
     ) {
-        HotelDetails response = hotelQueryService.getHotelById(hotelId, currency, checkIn, checkOut);
+        TripLocations.resolveOrBadRequest(originCountry, originCity);
+        TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
 
-        String userId = extractUserIdOrNull();
-        UserType userType = userId != null ? UserType.AUTH : UserType.ANONYMOUS;
+        HotelDetails response = hotelQueryService.getHotelById(hotelId, currency, dateFrom, dateTo);
 
-        hotelPackViewPublisher.publishHotelDetailView(
-                HotelPackViewPublisher.toHeaders(
-                        userType,
-                        userId,
-                        xAnonymousId,
-                        xGenerationId,
-                        xPackRevision,
-                        xGenerationMode,
-                        xRequestId,
-                        xHotelsRevision
-                ),
-                HotelPackViewPublisher.toSearch(
-                        country,
-                        city,
-                        checkIn,
-                        checkOut,
-                        currency,
-                        guests,
-                        budget,
-                        filters
-                ),
+        publishHotelPackView(
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xHotelsRevision,
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters,
                 response
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    private void publishHotelPackView(
+            String xAnonymousId,
+            String xGenerationId,
+            Integer xPackRevision,
+            GenerationMode xGenerationMode,
+            String xRequestId,
+            Integer xHotelsRevision,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            String currency,
+            Integer adults,
+            Integer children,
+            Long budget,
+            List<String> filters,
+            HotelDetails response
+    ) {
+        String userId = extractUserIdOrNull();
+        UserType userType = userId != null ? UserType.AUTH : UserType.ANONYMOUS;
+
+        PackHeadersEvent headers = HotelPackViewPublisher.toHeaders(
+                userType,
+                userId,
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xHotelsRevision
+        );
+        SearchContextEvent searchContext = HotelPackViewPublisher.toSearchContext(
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters
+        );
+
+        hotelPackViewPublisher.publishHotelDetailView(headers, searchContext, response);
     }
 
     private static String extractUserIdOrNull() {

@@ -1,0 +1,30 @@
+post:
+  tags: [info-admin]
+  summary: Refresh country guide data from source
+  description: |
+    Triggers scraping and upsert for a single supported country.
+    JWT in Authorization is optional; when present, subject is used as user_id.
+    X-Anonymous-Id is always required.
+  operationId: refreshCountryInfo
+  parameters:
+    - $ref: '../components/parameters.yaml#/XAnonymousId'
+    - $ref: '../components/parameters.yaml#/XRequestId'
+    - $ref: '../components/parameters.yaml#/CountryId'
+  security:
+    - bearerAuth: []
+    - {}
+  responses:
+    '200':
+      description: Country info refreshed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CountryInfoRefreshResponse.yaml'
+    '400':
+      $ref: '../components/responses.yaml#/BadRequest'
+    '404':
+      $ref: '../components/responses.yaml#/NotFound'
+    '502':
+      $ref: '../components/responses.yaml#/BadGateway'
+    '500':
+      $ref: '../components/responses.yaml#/InternalServerError'

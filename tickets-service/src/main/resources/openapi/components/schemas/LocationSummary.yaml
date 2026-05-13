@@ -1,19 +1,17 @@
 type: object
 required:
-  - city_code
-  - city_name
+  - city
   - airport_code
 properties:
-  city_code:
+  city:
     type: string
     minLength: 3
     maxLength: 3
+    description: City IATA code
     example: MOW
-  city_name:
-    type: string
-    example: Moscow
   airport_code:
     type: string
     minLength: 3
     maxLength: 3
+    description: Airport IATA code
     example: SVO

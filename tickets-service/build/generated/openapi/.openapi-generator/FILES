@@ -12,13 +12,14 @@ src/main/java/com/tripify/tickets/generated/model/Duration.java
 src/main/java/com/tripify/tickets/generated/model/ErrorCode.java
 src/main/java/com/tripify/tickets/generated/model/ErrorDetail.java
 src/main/java/com/tripify/tickets/generated/model/ErrorResponse.java
+src/main/java/com/tripify/tickets/generated/model/GenerationMode.java
 src/main/java/com/tripify/tickets/generated/model/JourneyType.java
 src/main/java/com/tripify/tickets/generated/model/LocationDetail.java
 src/main/java/com/tripify/tickets/generated/model/LocationSummary.java
 src/main/java/com/tripify/tickets/generated/model/Passengers.java
 src/main/java/com/tripify/tickets/generated/model/SchedulePoint.java
-src/main/java/com/tripify/tickets/generated/model/Ticket.java
 src/main/java/com/tripify/tickets/generated/model/TicketBaggage.java
+src/main/java/com/tripify/tickets/generated/model/TicketCard.java
 src/main/java/com/tripify/tickets/generated/model/TicketDetail.java
 src/main/java/com/tripify/tickets/generated/model/TicketDetailFare.java
 src/main/java/com/tripify/tickets/generated/model/TicketDetailResponse.java

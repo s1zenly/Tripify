@@ -6,14 +6,12 @@ import java.util.UUID;
 
 import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.generated.model.OtpVerifyRequest;
-import com.tripify.auth.generated.model.TokenResponse;
 import com.tripify.auth.service.Service.OtpRateLimiter;
 import com.tripify.auth.service.Service.OtpService;
 import com.tripify.auth.service.Service.PhoneValidationService;
 import com.tripify.auth.service.Service.RefreshTokenService;
 import com.tripify.auth.service.Service.SessionService;
 import com.tripify.auth.service.Service.UserService;
-import com.tripify.auth.service.client.ConverterModelToDTO;
 import com.tripify.auth.service.config.property.KafkaTopics;
 import com.tripify.auth.service.domain.enums.AggregateType;
 import com.tripify.auth.service.domain.enums.OtpPurpose;
@@ -45,7 +43,7 @@ import org.springframework.util.MultiValueMap;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenResponse> {
+public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, SessionTokens> {
 
     private final UserService userService;
     private final SessionService sessionService;
@@ -61,7 +59,7 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
     private final Hasher hasher;
 
     @Override
-    public TokenResponse run(OtpVerifyRequest request) {
+    public SessionTokens run(OtpVerifyRequest request) {
         Instant now = timeProvider.nowUtc();
         String normalizedPhone = phoneValidationService.validateToE164(request.getPhoneNumber());
         log.info("Success validate phone number - {}", request.getPhoneNumber());
@@ -99,7 +97,7 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
                 return tokens;
             });
 
-            return ConverterModelToDTO.createTokenResponse(sessionTokens);
+            return sessionTokens;
         } catch (DataAccessException exception) {
             log.error("Failed execute session token transaction for phone = {}", normalizedPhone, exception);
             throw new InternalServerException("Failed to create session tokens request");

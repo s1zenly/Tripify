@@ -21,7 +21,7 @@ services:
   users-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ../docker/local/Dockerfile
     container_name: tripify-users-service
     depends_on:
       users-postgres:

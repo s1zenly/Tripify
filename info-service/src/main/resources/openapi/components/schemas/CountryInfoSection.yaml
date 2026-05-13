@@ -1,0 +1,20 @@
+type: object
+required:
+  - title
+  - type
+properties:
+  title:
+    type: string
+  type:
+    $ref: './CountryInfoSectionType.yaml'
+  content:
+    type: string
+  items:
+    type: array
+    items:
+      $ref: './CountryInfoFactItem.yaml'
+  data:
+    type: array
+    items:
+      type: object
+      additionalProperties: true

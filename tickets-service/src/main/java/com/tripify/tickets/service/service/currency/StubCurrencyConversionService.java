@@ -10,7 +10,6 @@ import java.util.Map;
 
 /**
  * Заглушка курсов: офферы храним в RUB, на чтение конвертируем в валюту запроса фронта.
- * Курсы: сколько RUB за 1 единицу исходной валюты (1 USD = 90 RUB и т.д.).
  */
 @Service
 public class StubCurrencyConversionService implements CurrencyConversionService {

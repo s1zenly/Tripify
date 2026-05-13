@@ -1,9 +1,0 @@
-type: object
-properties:
-  percent:
-    type: integer
-    example: 25
-
-  amount:
-    type: number
-    format: double

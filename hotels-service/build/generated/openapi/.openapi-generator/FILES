@@ -13,6 +13,7 @@ src/main/java/com/tripify/hotels/generated/model/ErrorCode.java
 src/main/java/com/tripify/hotels/generated/model/ErrorDetail.java
 src/main/java/com/tripify/hotels/generated/model/ErrorResponse.java
 src/main/java/com/tripify/hotels/generated/model/Facility.java
+src/main/java/com/tripify/hotels/generated/model/GenerationMode.java
 src/main/java/com/tripify/hotels/generated/model/GpsCoordinates.java
 src/main/java/com/tripify/hotels/generated/model/HotelCard.java
 src/main/java/com/tripify/hotels/generated/model/HotelDetails.java

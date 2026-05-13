@@ -233,7 +233,7 @@ public class TicketsSearchService {
 
     public UnifiedOffer getById(String tid) {
         return ticketOfferStore.findById(tid)
-                .orElseThrow(() -> new TicketNotFoundException(tid));
+                .orElseThrow(() -> TicketNotFoundException.byId(tid));
     }
 
     private List<UnifiedOffer> filterByBudget(List<UnifiedOffer> offers, TicketSearchRequest request) {

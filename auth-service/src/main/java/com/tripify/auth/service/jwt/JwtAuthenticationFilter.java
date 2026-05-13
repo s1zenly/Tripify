@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.tripify.auth.generated.model.ErrorCode;
+import com.tripify.auth.service.Service.CookieService;
 import com.tripify.auth.service.client.Messages;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final CookieService cookieService;
 
     @Override
     protected void doFilterInternal(
@@ -32,14 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String accessToken = cookieService.getCookieValue(request, cookieService.accessTokenCookieName())
+                .orElse(null);
 
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
+        if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String accessToken = authorization.substring(7);
 
         try {
             String userId = jwtService.extractSubject(accessToken);

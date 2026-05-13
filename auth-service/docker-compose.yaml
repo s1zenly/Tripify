@@ -56,7 +56,7 @@ services:
   auth-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ../docker/local/Dockerfile
     container_name: tripify-auth-service
     depends_on:
       auth-postgres:

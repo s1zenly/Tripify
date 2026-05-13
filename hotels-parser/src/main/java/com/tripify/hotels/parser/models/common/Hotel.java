@@ -24,6 +24,7 @@ public class Hotel {
     private GpsCoordinates gpsCoordinates;
     private NearbyPlaces nearbyPlaces;
     private Reviews reviews;
+    private HotelScore score;
     private TermsPlacement termsPlacement;
 
     private List<Photo> photos;

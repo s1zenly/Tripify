@@ -4,7 +4,7 @@ get:
   summary: Get hotel details
   operationId: getHotelById
   description: >
-    Те же query-параметры поиска отелей, что и в GET /hotels (контекст hotels-service).
+    Единые query-параметры search context, что и в GET /hotels.
     Фронт повторяет их при открытии карточки для PackService и аналитики.
 
   parameters:
@@ -24,14 +24,17 @@ get:
         format: uuid
       example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d
 
-    - $ref: '../components/parameters.yaml#/HotelsSearchCountry'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCity'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCheckIn'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCheckOut'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCurrency'
-    - $ref: '../components/parameters.yaml#/HotelsSearchGuests'
-    - $ref: '../components/parameters.yaml#/HotelsSearchBudget'
-    - $ref: '../components/parameters.yaml#/HotelsSearchFilters'
+    - $ref: '../components/parameters.yaml#/SearchOriginCountry'
+    - $ref: '../components/parameters.yaml#/SearchOriginCity'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCountry'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCity'
+    - $ref: '../components/parameters.yaml#/SearchDateFrom'
+    - $ref: '../components/parameters.yaml#/SearchDateTo'
+    - $ref: '../components/parameters.yaml#/SearchCurrency'
+    - $ref: '../components/parameters.yaml#/SearchAdults'
+    - $ref: '../components/parameters.yaml#/SearchChildren'
+    - $ref: '../components/parameters.yaml#/SearchBudget'
+    - $ref: '../components/parameters.yaml#/SearchFilters'
 
   responses:
     '200':

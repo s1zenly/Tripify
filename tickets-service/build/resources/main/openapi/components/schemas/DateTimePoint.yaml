@@ -1,8 +1,0 @@
-type: object
-required:
-  - datetime
-properties:
-  datetime:
-    type: string
-    format: date-time
-    example: '2026-05-12T10:30:00+03:00'

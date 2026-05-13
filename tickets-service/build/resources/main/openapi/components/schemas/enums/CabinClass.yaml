@@ -1,7 +1,0 @@
-type: string
-enum:
-  - economy
-  - premium_economy
-  - business
-  - first
-example: economy

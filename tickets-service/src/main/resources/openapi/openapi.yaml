@@ -24,6 +24,9 @@ paths:
   /tickets:
     $ref: './paths/tickets.yaml'
 
+  /tickets/search:
+    $ref: './paths/ticket-search.yaml'
+
   /tickets/filters:
     $ref: './paths/ticket-filters.yaml'
 

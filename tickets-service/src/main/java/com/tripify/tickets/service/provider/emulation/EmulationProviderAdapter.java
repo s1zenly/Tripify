@@ -54,7 +54,6 @@ public class EmulationProviderAdapter implements TicketsProviderAdapter<Emulatio
         return Passengers.builder()
                 .adults(pax.adt())
                 .children(pax.chd())
-                .infants(pax.inf())
                 .build();
     }
 
@@ -110,7 +109,6 @@ public class EmulationProviderAdapter implements TicketsProviderAdapter<Emulatio
     private LocationPoint toLocation(EmulationRawPoint point) {
         return LocationPoint.builder()
                 .cityCode(point.cityIata())
-                .cityName(point.cityTitle())
                 .airportCode(point.airportIata())
                 .airportName(point.airportTitle())
                 .terminal(point.terminal())

@@ -82,7 +82,8 @@ openApiGenerate {
     )
     importMappings.set(
         mapOf(
-            "UUID" to "java.util.UUID"
+            "UUID" to "java.util.UUID",
+            "GenerationMode" to "com.tripify.hotels.service.kafka.model.GenerationMode"
         )
     )
 

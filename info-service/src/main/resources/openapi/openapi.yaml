@@ -1,0 +1,30 @@
+openapi: 3.0.3
+
+info:
+  title: Tripify Info Service API
+  description: Country guide info API for Tripify frontend and admin maintenance
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local environment
+
+tags:
+  - name: info
+    description: Country guide data for frontend
+  - name: info-admin
+    description: Country info maintenance
+
+paths:
+  /v1/countries/{country_id}/info:
+    $ref: './paths/country-info.yaml'
+
+  /v1/admin/countries/{country_id}/refresh:
+    $ref: './paths/country-info-refresh.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -7,6 +7,7 @@ package com.tripify.hotels.generated.api;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import com.tripify.hotels.generated.model.ErrorResponse;
+import com.tripify.hotels.service.kafka.model.GenerationMode;
 import com.tripify.hotels.generated.model.HotelDetails;
 import com.tripify.hotels.generated.model.HotelFiltersResponse;
 import com.tripify.hotels.generated.model.HotelsResponse;
@@ -39,7 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:24:42.207813975Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 @Validated
 @Tag(name = "hotels", description = "Hotels search and details API")
 public interface HotelsApi {
@@ -47,7 +48,7 @@ public interface HotelsApi {
     public static final String PATH_GET_HOTEL_BY_ID = "/hotels/{hotelId}";
     /**
      * GET /hotels/{hotelId} : Get hotel details
-     * Те же query-параметры поиска отелей, что и в GET /hotels (контекст hotels-service). Фронт повторяет их при открытии карточки для PackService и аналитики. 
+     * Единые query-параметры search context, что и в GET /hotels. Фронт повторяет их при открытии карточки для PackService и аналитики. 
      *
      * @param xAnonymousId Anonymous user identifier (required)
      * @param xGenerationId Travel generation identifier (required)
@@ -55,15 +56,18 @@ public interface HotelsApi {
      * @param xGenerationMode Generation mode (required)
      * @param xRequestId Request tracing identifier (required)
      * @param hotelId Internal Tripify hotel id (deterministic UUID) (required)
-     * @param country Country code ISO Alpha-2 (required)
-     * @param city City for hotels search (required)
-     * @param checkIn Check-in date (required)
-     * @param checkOut Check-out date (required)
-     * @param currency Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче) (required)
-     * @param guests Number of guests (required)
+     * @param originCountry Origin country ISO Alpha-2 (required)
+     * @param originCity Origin city IATA code (required)
+     * @param destinationCountry Destination country ISO Alpha-2 (required)
+     * @param destinationCity Destination city IATA code (required)
+     * @param dateFrom Trip start date (check-in / outbound departure) (required)
+     * @param dateTo Trip end date (check-out / return departure) (required)
+     * @param currency Response currency for the frontend (required)
+     * @param adults Number of adult travelers (required)
      * @param xHotelsRevision Hotels revision number (optional)
-     * @param budget Доля бюджета на отель (в currency). price &lt;&#x3D; budget, сортировка по убыванию цены.  (optional)
-     * @param filters Фильтры из каталога (optional)
+     * @param children Number of child travelers (optional, default to 0)
+     * @param budget Optional trip budget in currency (optional)
+     * @param filters Filters from GET /hotels/filters catalog (optional)
      * @return Hotel details fetched successfully (status code 200)
      *         or Bad request (status code 400)
      *         or Not found (status code 404)
@@ -72,7 +76,7 @@ public interface HotelsApi {
     @Operation(
         operationId = "getHotelById",
         summary = "Get hotel details",
-        description = "Те же query-параметры поиска отелей, что и в GET /hotels (контекст hotels-service). Фронт повторяет их при открытии карточки для PackService и аналитики. ",
+        description = "Единые query-параметры search context, что и в GET /hotels. Фронт повторяет их при открытии карточки для PackService и аналитики. ",
         tags = { "hotels" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Hotel details fetched successfully", content = {
@@ -99,42 +103,40 @@ public interface HotelsApi {
         @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
         @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
         @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,
-        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) String xGenerationMode,
+        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) GenerationMode xGenerationMode,
         @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
         @NotNull @Parameter(name = "hotelId", description = "Internal Tripify hotel id (deterministic UUID)", required = true, in = ParameterIn.PATH) @PathVariable("hotelId") java.util.UUID hotelId,
-        @NotNull @Size(min = 2, max = 2) @Parameter(name = "country", description = "Country code ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "country", required = true) String country,
-        @NotNull @Size(min = 1) @Parameter(name = "city", description = "City for hotels search", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "city", required = true) String city,
-        @NotNull @Parameter(name = "check_in", description = "Check-in date", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "check_in", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
-        @NotNull @Parameter(name = "check_out", description = "Check-out date", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "check_out", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
-        @NotNull @Size(min = 3, max = 3) @Parameter(name = "currency", description = "Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) String currency,
-        @NotNull @Min(1) @Parameter(name = "guests", description = "Number of guests", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "guests", required = true) Integer guests,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "origin_country", description = "Origin country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_country", required = true) String originCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "origin_city", description = "Origin city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_city", required = true) String originCity,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "destination_country", description = "Destination country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_country", required = true) String destinationCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "destination_city", description = "Destination city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_city", required = true) String destinationCity,
+        @NotNull @Parameter(name = "date_from", description = "Trip start date (check-in / outbound departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @NotNull @Parameter(name = "date_to", description = "Trip end date (check-out / return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) String currency,
+        @NotNull @Min(1) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
         @Min(1) @Parameter(name = "X-Hotels-Revision", description = "Hotels revision number", in = ParameterIn.HEADER) @RequestHeader(value = "X-Hotels-Revision", required = false) @Nullable Integer xHotelsRevision,
-        @Min(0L) @Parameter(name = "budget", description = "Доля бюджета на отель (в currency). price <= budget, сортировка по убыванию цены. ", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
-        @Parameter(name = "filters", description = "Фильтры из каталога", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters
+        @Min(0) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
+        @Min(0L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
+        @Parameter(name = "filters", description = "Filters from GET /hotels/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters
     );
 
 
     public static final String PATH_GET_HOTEL_FILTERS = "/hotels/filters";
     /**
-     * GET /hotels/filters : Get available hotel filters for city
+     * GET /hotels/filters : Get hotel search filters catalog
+     * Возвращает общий каталог фильтров для UI. Список не зависит от маршрута и дат — применяется на этапе GET /hotels через query-параметр filters. 
      *
-     * @param xRequestId Request tracing identifier (required)
-     * @param country  (required)
-     * @param city  (required)
-     * @return Available filters fetched successfully (status code 200)
-     *         or Bad request (status code 400)
+     * @return Filters catalog fetched successfully (status code 200)
      *         or Internal server error (status code 500)
      */
     @Operation(
         operationId = "getHotelFilters",
-        summary = "Get available hotel filters for city",
+        summary = "Get hotel search filters catalog",
+        description = "Возвращает общий каталог фильтров для UI. Список не зависит от маршрута и дат — применяется на этапе GET /hotels через query-параметр filters. ",
         tags = { "hotels" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "Available filters fetched successfully", content = {
+            @ApiResponse(responseCode = "200", description = "Filters catalog fetched successfully", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = HotelFiltersResponse.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             }),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
@@ -148,9 +150,7 @@ public interface HotelsApi {
     )
     
     ResponseEntity<HotelFiltersResponse> getHotelFilters(
-        @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
-        @NotNull @Size(min = 2, max = 2) @Parameter(name = "country", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "country", required = true) String country,
-        @NotNull @Size(min = 1) @Parameter(name = "city", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "city", required = true) String city
+        
     );
 
 
@@ -160,20 +160,20 @@ public interface HotelsApi {
      *
      * @param xAnonymousId Anonymous user identifier (required)
      * @param xGenerationId Travel generation identifier (required)
-     * @param xPackRevision Current pack revision number (required)
-     * @param xGenerationMode Generation mode (required)
      * @param xRequestId Request tracing identifier (required)
-     * @param country Country code ISO Alpha-2 (required)
-     * @param city City for hotels search (required)
-     * @param checkIn Check-in date (required)
-     * @param checkOut Check-out date (required)
-     * @param currency Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче) (required)
-     * @param guests Number of guests (required)
-     * @param xHotelsRevision Hotels revision number (optional)
-     * @param budget Доля бюджета на отель (в currency). price &lt;&#x3D; budget, сортировка по убыванию цены.  (optional)
-     * @param filters Фильтры из каталога (optional)
+     * @param originCountry Origin country ISO Alpha-2 (required)
+     * @param originCity Origin city IATA code (required)
+     * @param destinationCountry Destination country ISO Alpha-2 (required)
+     * @param destinationCity Destination city IATA code (required)
+     * @param dateFrom Trip start date (check-in / outbound departure) (required)
+     * @param dateTo Trip end date (check-out / return departure) (required)
+     * @param currency Response currency for the frontend (required)
+     * @param adults Number of adult travelers (required)
+     * @param children Number of child travelers (optional, default to 0)
+     * @param budget Optional trip budget in currency (optional)
+     * @param filters Filters from GET /hotels/filters catalog (optional)
      * @param limit  (optional, default to 20)
-     * @param cursor hotelId последнего отеля на предыдущей странице (nextCursor из ответа). При указанном budget — пагинация по (price desc, id desc).  (optional)
+     * @param cursor hotelId последнего отеля на предыдущей странице (nextCursor из ответа) (optional)
      * @return Hotels fetched successfully (status code 200)
      *         or Bad request (status code 400)
      *         or Internal server error (status code 500)
@@ -203,20 +203,94 @@ public interface HotelsApi {
     ResponseEntity<HotelsResponse> getHotels(
         @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
         @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
-        @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,
-        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) String xGenerationMode,
         @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
-        @NotNull @Size(min = 2, max = 2) @Parameter(name = "country", description = "Country code ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "country", required = true) String country,
-        @NotNull @Size(min = 1) @Parameter(name = "city", description = "City for hotels search", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "city", required = true) String city,
-        @NotNull @Parameter(name = "check_in", description = "Check-in date", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "check_in", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
-        @NotNull @Parameter(name = "check_out", description = "Check-out date", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "check_out", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
-        @NotNull @Size(min = 3, max = 3) @Parameter(name = "currency", description = "Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) String currency,
-        @NotNull @Min(1) @Parameter(name = "guests", description = "Number of guests", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "guests", required = true) Integer guests,
-        @Min(1) @Parameter(name = "X-Hotels-Revision", description = "Hotels revision number", in = ParameterIn.HEADER) @RequestHeader(value = "X-Hotels-Revision", required = false) @Nullable Integer xHotelsRevision,
-        @Min(0L) @Parameter(name = "budget", description = "Доля бюджета на отель (в currency). price <= budget, сортировка по убыванию цены. ", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
-        @Parameter(name = "filters", description = "Фильтры из каталога", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "origin_country", description = "Origin country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_country", required = true) String originCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "origin_city", description = "Origin city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_city", required = true) String originCity,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "destination_country", description = "Destination country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_country", required = true) String destinationCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "destination_city", description = "Destination city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_city", required = true) String destinationCity,
+        @NotNull @Parameter(name = "date_from", description = "Trip start date (check-in / outbound departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @NotNull @Parameter(name = "date_to", description = "Trip end date (check-out / return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) String currency,
+        @NotNull @Min(1) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
+        @Min(0) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
+        @Min(0L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
+        @Parameter(name = "filters", description = "Filters from GET /hotels/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters,
         @Min(1) @Max(100) @Parameter(name = "limit", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit,
-        @Parameter(name = "cursor", description = "hotelId последнего отеля на предыдущей странице (nextCursor из ответа). При указанном budget — пагинация по (price desc, id desc). ", in = ParameterIn.QUERY) @Valid @RequestParam(value = "cursor", required = false) @Nullable java.util.UUID cursor
+        @Parameter(name = "cursor", description = "hotelId последнего отеля на предыдущей странице (nextCursor из ответа)", in = ParameterIn.QUERY) @Valid @RequestParam(value = "cursor", required = false) @Nullable java.util.UUID cursor
+    );
+
+
+    public static final String PATH_SEARCH_HOTELS = "/hotels/search";
+    /**
+     * GET /hotels/search : Search hotels with pack context
+     * Те же headers и query-параметры search context, что и GET /hotels/{hotelId}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. 
+     *
+     * @param xAnonymousId Anonymous user identifier (required)
+     * @param xGenerationId Travel generation identifier (required)
+     * @param xPackRevision Current pack revision number (required)
+     * @param xGenerationMode Generation mode (required)
+     * @param xRequestId Request tracing identifier (required)
+     * @param originCountry Origin country ISO Alpha-2 (required)
+     * @param originCity Origin city IATA code (required)
+     * @param destinationCountry Destination country ISO Alpha-2 (required)
+     * @param destinationCity Destination city IATA code (required)
+     * @param dateFrom Trip start date (check-in / outbound departure) (required)
+     * @param dateTo Trip end date (check-out / return departure) (required)
+     * @param currency Response currency for the frontend (required)
+     * @param adults Number of adult travelers (required)
+     * @param xHotelsRevision Hotels revision number (optional)
+     * @param children Number of child travelers (optional, default to 0)
+     * @param budget Optional trip budget in currency (optional)
+     * @param filters Filters from GET /hotels/filters catalog (optional)
+     * @return First matching hotel details fetched successfully (status code 200)
+     *         or Bad request (status code 400)
+     *         or Not found (status code 404)
+     *         or Internal server error (status code 500)
+     */
+    @Operation(
+        operationId = "searchHotels",
+        summary = "Search hotels with pack context",
+        description = "Те же headers и query-параметры search context, что и GET /hotels/{hotelId}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. ",
+        tags = { "hotels" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "First matching hotel details fetched successfully", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = HotelDetails.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = HotelsApi.PATH_SEARCH_HOTELS,
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<HotelDetails> searchHotels(
+        @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
+        @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
+        @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,
+        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) GenerationMode xGenerationMode,
+        @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "origin_country", description = "Origin country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_country", required = true) String originCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "origin_city", description = "Origin city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_city", required = true) String originCity,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "destination_country", description = "Destination country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_country", required = true) String destinationCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "destination_city", description = "Destination city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_city", required = true) String destinationCity,
+        @NotNull @Parameter(name = "date_from", description = "Trip start date (check-in / outbound departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @NotNull @Parameter(name = "date_to", description = "Trip end date (check-out / return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) String currency,
+        @NotNull @Min(1) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
+        @Min(1) @Parameter(name = "X-Hotels-Revision", description = "Hotels revision number", in = ParameterIn.HEADER) @RequestHeader(value = "X-Hotels-Revision", required = false) @Nullable Integer xHotelsRevision,
+        @Min(0) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
+        @Min(0L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
+        @Parameter(name = "filters", description = "Filters from GET /hotels/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters
     );
 
 }

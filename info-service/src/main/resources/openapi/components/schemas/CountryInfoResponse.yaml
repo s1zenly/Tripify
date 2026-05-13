@@ -1,0 +1,30 @@
+type: object
+required:
+  - country_id
+  - country_name
+  - local_currency
+  - rates
+  - tabs
+properties:
+  country_id:
+    $ref: './IsoCountryAlpha2.yaml'
+  country_name:
+    type: string
+    example: ОАЭ
+  local_currency:
+    $ref: './IsoCurrencyCode.yaml'
+    description: |
+      ISO 4217 code of the country's local currency (e.g. CNY for China).
+      Used as base for the `rates` list below.
+    example: AED
+  rates:
+    type: array
+    description: |
+      Exchange rates into `local_currency`. Multiply amount in currency X by `rate`
+      to get amount in local currency.
+    items:
+      $ref: './CurrencyRateItem.yaml'
+  tabs:
+    type: array
+    items:
+      $ref: './CountryInfoTab.yaml'

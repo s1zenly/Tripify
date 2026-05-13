@@ -41,9 +41,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HotelPackViewPublishException.class)
     public ResponseEntity<ErrorResponse> handlePackViewPublish(HotelPackViewPublishException exception) {
-        log.error("Failed to enqueue hotel pack view event", exception);
+        log.error("Failed to publish hotel pack view event", exception);
         return ResponseEntity.internalServerError()
-                .body(errorResponse(ErrorCode.INTERNAL_ERROR, "Failed to record pack view event"));
+                .body(errorResponse(ErrorCode.INTERNAL_ERROR, "Failed to publish pack view event"));
     }
 
     @ExceptionHandler(Exception.class)

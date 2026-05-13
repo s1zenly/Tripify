@@ -12,6 +12,8 @@ import java.util.UUID;
 import com.tripify.hotels.generated.model.HotelCard;
 import com.tripify.hotels.generated.model.HotelDetails;
 import com.tripify.hotels.generated.model.HotelsResponse;
+import com.tripify.hotels.service.domain.City;
+import com.tripify.hotels.service.domain.Country;
 import com.tripify.hotels.service.exception.BadRequestException;
 import com.tripify.hotels.service.exception.HotelNotFoundException;
 import com.tripify.hotels.service.model.Hotel;
@@ -65,16 +67,21 @@ public class HotelQueryService {
             LocalDate checkIn,
             LocalDate checkOut,
             String currency,
-            Integer guests,
+            Integer adults,
+            Integer children,
             Long budget,
             Integer limit,
             UUID cursor,
             List<String> filters
     ) {
         String displayCurrency = normalizeCurrency(currency);
-        validateSearchParams(country, city, checkIn, checkOut, guests);
+        validateSearchParams(country, city, checkIn, checkOut, adults, children);
+
+        Country destinationCountry = Country.fromAlpha2(country);
+        City destinationCity = City.fromCode(city);
 
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
+        int minGuests = adults + (children != null ? children : 0);
 
         BigDecimal maxPricePerNightUsd = null;
         if (budget != null) {
@@ -83,16 +90,69 @@ public class HotelQueryService {
         }
 
         HotelSearchFilter filter = new HotelSearchFilter(
-                country,
-                city,
+                destinationCountry.alpha2(),
+                destinationCity.iataCode(),
                 maxPricePerNightUsd,
-                guests,
+                minGuests,
                 nights,
                 filterResolver.resolve(filters),
                 limit != null ? limit : 20,
-                cursor
+                cursor,
+                cursor == null
         );
 
+        return toHotelsResponse(filter, displayCurrency, nights);
+    }
+
+    public HotelDetails searchFirstHotelDetail(
+            String country,
+            String city,
+            LocalDate checkIn,
+            LocalDate checkOut,
+            String currency,
+            Integer adults,
+            Integer children,
+            Long budget,
+            List<String> filters
+    ) {
+        String displayCurrency = normalizeCurrency(currency);
+        validateSearchParams(country, city, checkIn, checkOut, adults, children);
+
+        Country destinationCountry = Country.fromAlpha2(country);
+        City destinationCity = City.fromCode(city);
+
+        long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
+        int minGuests = adults + (children != null ? children : 0);
+
+        BigDecimal maxPricePerNightUsd = null;
+        if (budget != null) {
+            BigDecimal budgetUsd = currencyConversion.toStorageCurrency(BigDecimal.valueOf(budget), displayCurrency);
+            maxPricePerNightUsd = budgetUsd.divide(BigDecimal.valueOf(nights), 2, RoundingMode.CEILING);
+        }
+
+        HotelSearchFilter filter = new HotelSearchFilter(
+                destinationCountry.alpha2(),
+                destinationCity.iataCode(),
+                maxPricePerNightUsd,
+                minGuests,
+                nights,
+                filterResolver.resolve(filters),
+                1,
+                null,
+                false
+        );
+
+        HotelsResponse searchResult = toHotelsResponse(filter, displayCurrency, nights);
+
+        if (searchResult.getHotels() == null || searchResult.getHotels().isEmpty()) {
+            throw HotelNotFoundException.forEmptySearch();
+        }
+
+        UUID hotelId = searchResult.getHotels().getFirst().getHotelId();
+        return getHotelById(hotelId, currency, checkIn, checkOut);
+    }
+
+    private HotelsResponse toHotelsResponse(HotelSearchFilter filter, String displayCurrency, long nights) {
         HotelSearchPage page = hotelRepository.search(filter);
 
         if (page.hotels().isEmpty()) {
@@ -125,7 +185,7 @@ public class HotelQueryService {
         String displayCurrency = normalizeCurrency(currency);
 
         if (checkIn == null || checkOut == null || !checkOut.isAfter(checkIn)) {
-            throw new BadRequestException("valid check_in and check_out dates are required");
+            throw new BadRequestException("valid date_from and date_to are required");
         }
 
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
@@ -168,26 +228,31 @@ public class HotelQueryService {
             String city,
             LocalDate checkIn,
             LocalDate checkOut,
-            Integer guests
+            Integer adults,
+            Integer children
     ) {
         if (country == null || country.isBlank()) {
-            throw new BadRequestException("country is required");
+            throw new BadRequestException("destination_country is required");
         }
 
         if (city == null || city.isBlank()) {
-            throw new BadRequestException("city is required");
+            throw new BadRequestException("destination_city is required");
         }
 
         if (checkIn == null || checkOut == null) {
-            throw new BadRequestException("check_in and check_out are required");
+            throw new BadRequestException("date_from and date_to are required");
         }
 
         if (!checkOut.isAfter(checkIn)) {
-            throw new BadRequestException("check_out must be after check_in");
+            throw new BadRequestException("date_to must be after date_from");
         }
 
-        if (guests == null || guests < 1) {
-            throw new BadRequestException("guests must be greater than 0");
+        if (adults == null || adults < 1) {
+            throw new BadRequestException("adults must be greater than 0");
+        }
+
+        if (children != null && children < 0) {
+            throw new BadRequestException("children must be greater than or equal to 0");
         }
     }
 

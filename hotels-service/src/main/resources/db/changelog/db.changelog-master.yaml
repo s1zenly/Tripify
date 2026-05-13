@@ -17,5 +17,3 @@ databaseChangeLog:
       file: db/changelog/changes/010-create-hotel-scores-table.sql
   - include:
       file: db/changelog/changes/012-create-hotel-search-facets-table.sql
-  - include:
-      file: db/changelog/changes/013-create-outbox-events-table.sql

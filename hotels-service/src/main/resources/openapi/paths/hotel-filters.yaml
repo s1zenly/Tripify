@@ -1,39 +1,19 @@
 get:
   tags:
     - hotels
-  summary: Get available hotel filters for city
+  summary: Get hotel search filters catalog
   operationId: getHotelFilters
-
-  parameters:
-    - $ref: '../components/parameters.yaml#/XRequestId'
-
-    - name: country
-      in: query
-      required: true
-      schema:
-        type: string
-        minLength: 2
-        maxLength: 2
-      example: AE
-
-    - name: city
-      in: query
-      required: true
-      schema:
-        type: string
-        minLength: 1
-      example: Dubai
+  description: >
+    Возвращает общий каталог фильтров для UI. Список не зависит от маршрута и дат —
+    применяется на этапе GET /hotels через query-параметр filters.
 
   responses:
     '200':
-      description: Available filters fetched successfully
+      description: Filters catalog fetched successfully
       content:
         application/json:
           schema:
             $ref: '../components/schemas/HotelFiltersResponse.yaml'
-
-    '400':
-      $ref: '../components/responses.yaml#/BadRequest'
 
     '500':
       $ref: '../components/responses.yaml#/InternalServerError'

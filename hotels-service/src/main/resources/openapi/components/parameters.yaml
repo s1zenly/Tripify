@@ -32,10 +32,7 @@ XGenerationMode:
   required: true
   description: Generation mode
   schema:
-    type: string
-    enum:
-      - FULL
-      - HOTELS
+    $ref: './schemas/enums/GenerationMode.yaml'
   example: FULL
 
 XRequestId:
@@ -57,85 +54,118 @@ XHotelsRevision:
     minimum: 1
   example: 1
 
-HotelsSearchCountry:
-  name: country
+SearchOriginCountry:
+  name: origin_country
   in: query
   required: true
-  description: Country code ISO Alpha-2
+  description: Origin country ISO Alpha-2
+  schema:
+    type: string
+    minLength: 2
+    maxLength: 2
+  example: RU
+
+SearchOriginCity:
+  name: origin_city
+  in: query
+  required: true
+  description: Origin city IATA code
+  schema:
+    type: string
+    minLength: 3
+    maxLength: 3
+  example: MOW
+
+SearchDestinationCountry:
+  name: destination_country
+  in: query
+  required: true
+  description: Destination country ISO Alpha-2
   schema:
     type: string
     minLength: 2
     maxLength: 2
   example: AE
 
-HotelsSearchCity:
-  name: city
+SearchDestinationCity:
+  name: destination_city
   in: query
   required: true
-  description: City for hotels search
+  description: Destination city IATA code
   schema:
     type: string
-    minLength: 1
-  example: Dubai
+    minLength: 3
+    maxLength: 3
+  example: DXB
 
-HotelsSearchCheckIn:
-  name: check_in
+SearchDateFrom:
+  name: date_from
   in: query
   required: true
-  description: Check-in date
+  description: Trip start date (check-in / outbound departure)
   schema:
     type: string
     format: date
   example: "2026-06-01"
 
-HotelsSearchCheckOut:
-  name: check_out
+SearchDateTo:
+  name: date_to
   in: query
   required: true
-  description: Check-out date
+  description: Trip end date (check-out / return departure)
   schema:
     type: string
     format: date
   example: "2026-06-10"
 
-HotelsSearchCurrency:
+SearchCurrency:
   name: currency
   in: query
   required: true
-  description: Валюта ответа для фронта (цены в БД в USD, конвертируются при отдаче)
+  description: Response currency for the frontend
   schema:
     type: string
     minLength: 3
     maxLength: 3
   example: RUB
 
-HotelsSearchGuests:
-  name: guests
+SearchAdults:
+  name: adults
   in: query
   required: true
-  description: Number of guests
+  description: Number of adult travelers
   schema:
     type: integer
     minimum: 1
   example: 2
 
-HotelsSearchBudget:
+SearchChildren:
+  name: children
+  in: query
+  required: false
+  description: Number of child travelers
+  schema:
+    type: integer
+    minimum: 0
+    default: 0
+  example: 0
+
+SearchBudget:
   name: budget
   in: query
   required: false
-  description: >
-    Доля бюджета на отель (в currency). price <= budget, сортировка по убыванию цены.
+  description: Optional trip budget in currency
   schema:
     type: integer
     format: int64
     minimum: 0
   example: 150000
 
-HotelsSearchFilters:
+SearchFilters:
   name: filters
   in: query
   required: false
-  description: Фильтры из каталога
+  description: Filters from GET /hotels/filters catalog
   schema:
     type: array
     items:

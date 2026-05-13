@@ -1,0 +1,14 @@
+type: object
+required:
+  - code
+  - title
+  - sections
+properties:
+  code:
+    $ref: './CountryInfoTabCode.yaml'
+  title:
+    type: string
+  sections:
+    type: array
+    items:
+      $ref: './CountryInfoSection.yaml'

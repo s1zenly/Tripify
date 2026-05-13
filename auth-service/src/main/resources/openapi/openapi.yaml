@@ -10,9 +10,6 @@ servers:
 tags:
   - name: OTP
   - name: Tokens
-  - name: Sessions
-  - name: Users
-
 
 paths:
   /auth/otp/request:
@@ -21,35 +18,22 @@ paths:
   /auth/otp/verify:
     $ref: './paths/otp.yaml#/verifyOtp'
 
-
   /auth/refresh:
     $ref: './paths/tokens.yaml#/refreshToken'
 
   /auth/logout:
     $ref: './paths/tokens.yaml#/logout'
 
-
-  /auth/sessions:
-    $ref: './paths/sessions.yaml#/sessions'
-
-  /auth/sessions/{sessionId}:
-    $ref: './paths/sessions.yaml#/sessionById'
-
-  /users/me:
-    $ref: './paths/users.yaml#/currentUser'
-
 components:
   securitySchemes:
-    bearerAuth:
-      $ref: './components/security-schemes.yaml#/bearerAuth'
+    cookieAuth:
+      $ref: './components/security-schemes.yaml#/cookieAuth'
 
   responses:
     BadRequest:
       $ref: './components/responses.yaml#/BadRequest'
     Unauthorized:
       $ref: './components/responses.yaml#/Unauthorized'
-    NotFound:
-      $ref: './components/responses.yaml#/NotFound'
     TooManyRequests:
       $ref: './components/responses.yaml#/TooManyRequests'
 
@@ -58,27 +42,6 @@ components:
       $ref: './components/schemas/otp.yaml#/OtpRequest'
     OtpVerifyRequest:
       $ref: './components/schemas/otp.yaml#/OtpVerifyRequest'
-
-    RefreshTokenRequest:
-      $ref: './components/schemas/tokens.yaml#/RefreshTokenRequest'
-    LogoutRequest:
-      $ref: './components/schemas/tokens.yaml#/LogoutRequest'
-    TokenResponse:
-      $ref: './components/schemas/tokens.yaml#/TokenResponse'
-
-    UserResponse:
-      $ref: './components/schemas/users.yaml#/UserResponse'
-    UpdateUserRequest:
-      $ref: './components/schemas/users.yaml#/UpdateUserRequest'
-    UserStatus:
-      $ref: './components/schemas/users.yaml#/UserStatus'
-    Role:
-      $ref: './components/schemas/users.yaml#/Role'
-
-    SessionListResponse:
-      $ref: './components/schemas/sessions.yaml#/SessionListResponse'
-    SessionResponse:
-      $ref: './components/schemas/sessions.yaml#/SessionResponse'
 
     ErrorResponse:
       $ref: './components/schemas/errors.yaml#/ErrorResponse'

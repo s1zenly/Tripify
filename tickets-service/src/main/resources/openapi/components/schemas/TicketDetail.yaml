@@ -1,35 +1,11 @@
-type: object
-required:
-  - tid
-  - deeplink
-  - price
-  - passengers
-  - journeys
-  - baggage
-  - fare
-  - seats_left
-properties:
-  tid:
-    type: string
-    example: ticket_8f3a1c2d
-  deeplink:
-    type: string
-    format: uri
-    example: https://example.com/buy
-  price:
-    $ref: './TicketPrice.yaml'
-  passengers:
-    $ref: './Passengers.yaml'
-  journeys:
-    type: array
-    minItems: 1
-    items:
-      $ref: './TicketJourneyDetail.yaml'
-  baggage:
-    $ref: './TicketBaggage.yaml'
-  fare:
-    $ref: './TicketDetailFare.yaml'
-  seats_left:
-    type: integer
-    minimum: 0
-    example: 3
+allOf:
+  - $ref: './TicketCard.yaml'
+  - type: object
+    properties:
+      journeys:
+        type: array
+        minItems: 1
+        items:
+          $ref: './TicketJourneyDetail.yaml'
+      fare:
+        $ref: './TicketDetailFare.yaml'

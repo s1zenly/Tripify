@@ -70,8 +70,7 @@ public class TicketSearchAnalyticsPublisher {
                 search.departureDate().toString(),
                 search.returnDate().toString(),
                 String.valueOf(search.adults()),
-                String.valueOf(search.children()),
-                String.valueOf(search.infants())
+                String.valueOf(search.children())
         );
     }
 

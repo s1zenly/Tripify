@@ -66,8 +66,7 @@ public class TicketDetailApiMapper {
     ) {
         return new com.tripify.tickets.generated.model.Passengers(
                 passengers.adults(),
-                passengers.children(),
-                passengers.infants()
+                passengers.children()
         );
     }
 
@@ -85,7 +84,7 @@ public class TicketDetailApiMapper {
     }
 
     private LocationDetail toLocationDetail(LocationPoint point) {
-        return new LocationDetail(point.cityCode(), point.cityName(), point.airportCode(), point.airportName())
+        return new LocationDetail(point.cityCode(), point.airportCode(), point.airportName())
                 .terminal(point.terminal());
     }
 

@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record Passengers(
         int adults,
-        int children,
-        int infants
+        int children
 ) {
 }

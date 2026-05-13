@@ -25,7 +25,7 @@ verifyOtp:
   post:
     tags: [OTP]
     operationId: verifyOtp
-    summary: Verify OTP and issue tokens
+    summary: Verify OTP and issue tokens via HttpOnly cookies
     requestBody:
       required: true
       content:
@@ -33,12 +33,13 @@ verifyOtp:
           schema:
             $ref: '../components/schemas/otp.yaml#/OtpVerifyRequest'
     responses:
-      '200':
-        description: Authenticated
-        content:
-          application/json:
+      '204':
+        description: Authenticated, tokens set in HttpOnly cookies
+        headers:
+          Set-Cookie:
+            description: access_token and refresh_token HttpOnly cookies
             schema:
-              $ref: '../components/schemas/tokens.yaml#/TokenResponse'
+              type: string
       '400':
         $ref: '../components/responses.yaml#/BadRequest'
       '401':

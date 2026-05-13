@@ -19,12 +19,10 @@ import jakarta.annotation.Generated;
  * LocationDetail
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-29T20:25:02.204846+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class LocationDetail {
 
-  private String cityCode;
-
-  private String cityName;
+  private String city;
 
   private String airportCode;
 
@@ -39,51 +37,30 @@ public class LocationDetail {
   /**
    * Constructor with only required parameters
    */
-  public LocationDetail(String cityCode, String cityName, String airportCode, String airportName) {
-    this.cityCode = cityCode;
-    this.cityName = cityName;
+  public LocationDetail(String city, String airportCode, String airportName) {
+    this.city = city;
     this.airportCode = airportCode;
     this.airportName = airportName;
   }
 
-  public LocationDetail cityCode(String cityCode) {
-    this.cityCode = cityCode;
+  public LocationDetail city(String city) {
+    this.city = city;
     return this;
   }
 
   /**
-   * Get cityCode
-   * @return cityCode
+   * City IATA code
+   * @return city
    */
   @NotNull @Size(min = 3, max = 3) 
-  @Schema(name = "city_code", example = "MOW", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city_code")
-  public String getCityCode() {
-    return cityCode;
+  @Schema(name = "city", example = "MOW", description = "City IATA code", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("city")
+  public String getCity() {
+    return city;
   }
 
-  public void setCityCode(String cityCode) {
-    this.cityCode = cityCode;
-  }
-
-  public LocationDetail cityName(String cityName) {
-    this.cityName = cityName;
-    return this;
-  }
-
-  /**
-   * Get cityName
-   * @return cityName
-   */
-  @NotNull 
-  @Schema(name = "city_name", example = "Moscow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city_name")
-  public String getCityName() {
-    return cityName;
-  }
-
-  public void setCityName(String cityName) {
-    this.cityName = cityName;
+  public void setCity(String city) {
+    this.city = city;
   }
 
   public LocationDetail airportCode(String airportCode) {
@@ -92,11 +69,11 @@ public class LocationDetail {
   }
 
   /**
-   * Get airportCode
+   * Airport IATA code
    * @return airportCode
    */
   @NotNull @Size(min = 3, max = 3) 
-  @Schema(name = "airport_code", example = "SVO", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "airport_code", example = "SVO", description = "Airport IATA code", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("airport_code")
   public String getAirportCode() {
     return airportCode;
@@ -155,8 +132,7 @@ public class LocationDetail {
       return false;
     }
     LocationDetail locationDetail = (LocationDetail) o;
-    return Objects.equals(this.cityCode, locationDetail.cityCode) &&
-        Objects.equals(this.cityName, locationDetail.cityName) &&
+    return Objects.equals(this.city, locationDetail.city) &&
         Objects.equals(this.airportCode, locationDetail.airportCode) &&
         Objects.equals(this.airportName, locationDetail.airportName) &&
         Objects.equals(this.terminal, locationDetail.terminal);
@@ -164,15 +140,14 @@ public class LocationDetail {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cityCode, cityName, airportCode, airportName, terminal);
+    return Objects.hash(city, airportCode, airportName, terminal);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class LocationDetail {\n");
-    sb.append("    cityCode: ").append(toIndentedString(cityCode)).append("\n");
-    sb.append("    cityName: ").append(toIndentedString(cityName)).append("\n");
+    sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    airportCode: ").append(toIndentedString(airportCode)).append("\n");
     sb.append("    airportName: ").append(toIndentedString(airportName)).append("\n");
     sb.append("    terminal: ").append(toIndentedString(terminal)).append("\n");

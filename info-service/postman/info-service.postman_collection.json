@@ -1,0 +1,288 @@
+{
+  "info": {
+    "_postman_id": "tripify-info-service-collection",
+    "name": "Tripify Info Service",
+    "description": "info-service (Docker: :8087, bootRun: :8080)\n\n**Обязательные заголовки на всех ручках:**\n- `X-Anonymous-Id`\n- `X-Request-Id`\n\n**JWT:** опционально (`Authorization: Bearer {{jwtToken}}`)\n\n**Страны (ISO alpha-2):** RU, CN, AE, TR, TH, ES, IT, FR, JP, EG\n\n**GET /countries/{id}/info:** обязательны `date_from`, `date_to`. Курсы в `rates[]` (base = `local_currency`), tab `weather` — при запросе.\n\n**Flow:** refresh → get country info.\n\nФормула: `сумма_в_local = сумма_в_X × rate`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8087",
+      "type": "string"
+    },
+    {
+      "key": "countryId",
+      "value": "CN",
+      "type": "string"
+    },
+    {
+      "key": "localCurrency",
+      "value": "CNY",
+      "type": "string"
+    },
+    {
+      "key": "baseCurrency",
+      "value": "CNY",
+      "type": "string"
+    },
+    {
+      "key": "xAnonymousId",
+      "value": "anon_postman_test_001",
+      "type": "string"
+    },
+    {
+      "key": "xRequestId",
+      "value": "req-postman-001",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "stayDateFrom",
+      "value": "2026-06-15",
+      "type": "string"
+    },
+    {
+      "key": "stayDateTo",
+      "value": "2026-06-22",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Flow — China (CN → CNY)",
+      "description": "Полный сценарий: refresh → info (включая currency.rates)",
+      "item": [
+        {
+          "name": "1. Refresh China",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/admin/countries/CN/refresh",
+            "description": "Парсит Tutu и сохраняет в Mongo. 10–30 сек."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get China info",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.test('Has local_currency', () => pm.expect(body.local_currency).to.be.a('string'));",
+                  "  const weatherTab = (body.tabs || []).find(t => t.code === 'weather');",
+                  "  pm.test('Has weather tab', () => pm.expect(weatherTab).to.be.an('object');",
+                  "  pm.test('Has weather days', () => pm.expect(weatherTab.sections[0].data).to.be.an('array').that.is.not.empty);",
+                  "  pm.test('Has rates', () => pm.expect(body.rates).to.be.an('array').that.is.not.empty);",
+                  "  if (body.local_currency) {",
+                  "    pm.collectionVariables.set('localCurrency', body.local_currency);",
+                  "    pm.collectionVariables.set('baseCurrency', body.local_currency);",
+                  "    console.log('local_currency saved:', body.local_currency);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/CN/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}",
+            "description": "Проверяет `local_currency`, `rates`, tab `weather`. Даты: {{stayDateFrom}} — {{stayDateTo}}."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "info (product)",
+      "item": [
+        {
+          "name": "Get country info",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.local_currency) {",
+                  "    pm.collectionVariables.set('localCurrency', body.local_currency);",
+                  "    pm.collectionVariables.set('baseCurrency', body.local_currency);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/{{countryId}}/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}",
+            "description": "Ответ: `country_id`, `country_name`, `local_currency`, **`rates`**, `tabs`.\n\n`rates` — курсы в local_currency. Tab `weather` — при успешной погоде.\n\nСтраны: RU, CN, AE, TR, TH, ES, IT, FR, JP, EG."
+          },
+          "response": []
+        },
+        {
+          "name": "Get country info (CN)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/CN/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get country info (AE)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/AE/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get country info — unsupported (expect 400)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/AM/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get country info — not in Mongo (expect 404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/countries/EG/info?date_from={{stayDateFrom}}&date_to={{stayDateTo}}",
+            "description": "404 если не делали refresh для этой страны."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "info-admin",
+      "item": [
+        {
+          "name": "Refresh country info",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/admin/countries/{{countryId}}/refresh"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh China (CN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/admin/countries/CN/refresh"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh UAE (AE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/admin/countries/AE/refresh"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

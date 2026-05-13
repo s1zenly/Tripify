@@ -1,6 +1,7 @@
 package org.openapitools.configuration;
 
 import com.tripify.hotels.generated.model.ErrorCode;
+import com.tripify.hotels.generated.model.GenerationMode;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,15 @@ public class EnumConverterConfiguration {
             @Override
             public ErrorCode convert(String source) {
                 return ErrorCode.fromValue(source);
+            }
+        };
+    }
+    @Bean(name = "org.openapitools.configuration.EnumConverterConfiguration.generationModeConverter")
+    Converter<String, GenerationMode> generationModeConverter() {
+        return new Converter<String, GenerationMode>() {
+            @Override
+            public GenerationMode convert(String source) {
+                return GenerationMode.fromValue(source);
             }
         };
     }

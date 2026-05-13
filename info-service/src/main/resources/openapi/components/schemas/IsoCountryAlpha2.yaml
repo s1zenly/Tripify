@@ -1,0 +1,6 @@
+type: string
+minLength: 2
+maxLength: 2
+pattern: '^[A-Za-z]{2}$'
+description: ISO 3166-1 alpha-2 country code (supported set validated in service via Country enum)
+example: CN

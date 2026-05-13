@@ -5,11 +5,18 @@ import com.tripify.tickets.generated.model.Currency;
 import com.tripify.tickets.generated.model.TicketDetailResponse;
 import com.tripify.tickets.generated.model.TicketFiltersResponse;
 import com.tripify.tickets.generated.model.TicketsResponse;
+import com.tripify.tickets.service.domain.ResolvedTripLocation;
+import com.tripify.tickets.service.domain.TripLocations;
+import com.tripify.tickets.service.exception.TicketNotFoundException;
+import com.tripify.tickets.service.kafka.model.GenerationMode;
+import com.tripify.tickets.service.kafka.model.PackHeadersEvent;
+import com.tripify.tickets.service.kafka.model.SearchContextEvent;
 import com.tripify.tickets.service.kafka.model.UserType;
 import com.tripify.tickets.service.mapper.TicketApiMapper;
 import com.tripify.tickets.service.mapper.TicketDetailApiMapper;
 import com.tripify.tickets.service.model.search.TicketSearchRequest;
 import com.tripify.tickets.service.model.unified.Passengers;
+import com.tripify.tickets.service.model.unified.UnifiedOffer;
 import com.tripify.tickets.service.service.TicketFilterQueryService;
 import com.tripify.tickets.service.service.TicketPackViewPublisher;
 import com.tripify.tickets.service.service.TicketsSearchService;
@@ -36,32 +43,109 @@ public class TicketsApiController implements TicketsApi {
 
     @Override
     public ResponseEntity<TicketsResponse> searchTickets(
-            String originCityCode,
-            String destinationCityCode,
-            LocalDate departureDate,
-            LocalDate returnDate,
+            String xAnonymousId,
+            String xGenerationId,
+            String xRequestId,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
             Currency currency,
             Integer adults,
-            @Nullable Long budgetMaxAmount,
             Integer children,
-            Integer infants,
+            @Nullable Long budget,
             @Nullable List<String> filters
     ) {
         TicketSearchRequest request = buildSearchRequest(
-                originCityCode,
-                destinationCityCode,
-                departureDate,
-                returnDate,
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
                 adults,
-                budgetMaxAmount,
+                budget,
                 currency,
                 children,
-                infants,
                 filters
         );
 
         var result = ticketsSearchService.search(request);
-        return ResponseEntity.ok(ticketApiMapper.toTicketsResponse(result.offers(), currency.getValue()));
+        return ResponseEntity.ok(ticketApiMapper.toTicketsResponse(result.offers(), currency.getValue(), true));
+    }
+
+    @Override
+    public ResponseEntity<TicketDetailResponse> searchTicket(
+            String xAnonymousId,
+            String xGenerationId,
+            Integer xPackRevision,
+            GenerationMode xGenerationMode,
+            String xRequestId,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Currency currency,
+            Integer adults,
+            @Nullable Integer xTicketsRevision,
+            Integer children,
+            @Nullable Long budget,
+            @Nullable List<String> filters
+    ) {
+        TripLocations.resolveOrBadRequest(originCountry, originCity);
+        TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
+
+        TicketSearchRequest request = buildSearchRequest(
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                adults,
+                budget,
+                currency,
+                children,
+                filters
+        );
+
+        var result = ticketsSearchService.search(request);
+        if (result.offers().isEmpty()) {
+            throw TicketNotFoundException.forEmptySearch();
+        }
+
+        UnifiedOffer firstOffer = result.offers().getFirst();
+        TicketDetailResponse response = ticketDetailApiMapper.toTicketDetailResponse(
+                firstOffer,
+                currency.getValue()
+        );
+
+        publishTicketPackView(
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xTicketsRevision,
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters,
+                response
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -74,77 +158,128 @@ public class TicketsApiController implements TicketsApi {
             String xAnonymousId,
             String xGenerationId,
             Integer xPackRevision,
-            String xGenerationMode,
+            GenerationMode xGenerationMode,
             String xRequestId,
             String id,
-            String originCityCode,
-            String destinationCityCode,
-            LocalDate departureDate,
-            LocalDate returnDate,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
             Currency currency,
             Integer adults,
             @Nullable Integer xTicketsRevision,
-            @Nullable Long budgetMaxAmount,
             Integer children,
-            Integer infants
+            @Nullable Long budget,
+            @Nullable List<String> filters
     ) {
+        TripLocations.resolveOrBadRequest(originCountry, originCity);
+        TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
+
         var offer = ticketsSearchService.getById(id);
         TicketDetailResponse response = ticketDetailApiMapper.toTicketDetailResponse(offer, currency.getValue());
 
-        String userId = extractUserIdOrNull();
-        UserType userType = userId != null ? UserType.AUTH : UserType.ANONYMOUS;
-
-        ticketPackViewPublisher.publishTicketDetailView(
-                TicketPackViewPublisher.toHeaders(
-                        userType,
-                        userId,
-                        xAnonymousId,
-                        xGenerationId,
-                        xPackRevision,
-                        xGenerationMode,
-                        xRequestId,
-                        xTicketsRevision
-                ),
-                TicketPackViewPublisher.toSearch(
-                        originCityCode,
-                        destinationCityCode,
-                        departureDate,
-                        returnDate,
-                        currency.getValue(),
-                        adults,
-                        children,
-                        infants,
-                        budgetMaxAmount
-                ),
-                response.getTicket()
+        publishTicketPackView(
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xTicketsRevision,
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency,
+                adults,
+                children,
+                budget,
+                filters,
+                response
         );
 
         return ResponseEntity.ok(response);
     }
 
-    private static TicketSearchRequest buildSearchRequest(
-            String originCityCode,
-            String destinationCityCode,
-            LocalDate departureDate,
-            LocalDate returnDate,
+    private void publishTicketPackView(
+            String xAnonymousId,
+            String xGenerationId,
+            Integer xPackRevision,
+            GenerationMode xGenerationMode,
+            String xRequestId,
+            Integer xTicketsRevision,
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Currency currency,
             Integer adults,
-            Long budgetMaxAmount,
+            Integer children,
+            Long budget,
+            List<String> filters,
+            TicketDetailResponse response
+    ) {
+        String userId = extractUserIdOrNull();
+        UserType userType = userId != null ? UserType.AUTH : UserType.ANONYMOUS;
+
+        PackHeadersEvent headers = TicketPackViewPublisher.toHeaders(
+                userType,
+                userId,
+                xAnonymousId,
+                xGenerationId,
+                xPackRevision,
+                xGenerationMode,
+                xRequestId,
+                xTicketsRevision
+        );
+        SearchContextEvent searchContext = TicketPackViewPublisher.toSearchContext(
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
+                currency.getValue(),
+                adults,
+                children,
+                budget,
+                filters
+        );
+
+        ticketPackViewPublisher.publishTicketDetailView(headers, searchContext, response.getTicket());
+    }
+
+    private static TicketSearchRequest buildSearchRequest(
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Integer adults,
+            Long budget,
             Currency currency,
             Integer children,
-            Integer infants,
             List<String> filters
     ) {
+        ResolvedTripLocation origin = TripLocations.resolveOrBadRequest(originCountry, originCity);
+        ResolvedTripLocation destination = TripLocations.resolveOrBadRequest(destinationCountry, destinationCity);
+
         return TicketSearchRequest.builder()
-                .originCityCode(originCityCode)
-                .destinationCityCode(destinationCityCode)
-                .departureDate(departureDate)
-                .returnDate(returnDate)
-                .budgetMaxAmount(budgetMaxAmount)
+                .originCityCode(origin.city().iataCode())
+                .destinationCityCode(destination.city().iataCode())
+                .departureDate(dateFrom)
+                .returnDate(dateTo)
+                .budgetMaxAmount(budget)
                 .currency(com.tripify.tickets.service.model.unified.Currency.fromCode(currency.getValue()))
                 .passengers(Passengers.builder()
                         .adults(adults)
                         .children(children)
-                        .infants(infants)
                         .build())
                 .filters(filters)
                 .build();

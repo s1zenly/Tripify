@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.tripify.tickets.generated.model.Ticket;
+import com.tripify.tickets.generated.model.TicketCard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +23,11 @@ import jakarta.annotation.Generated;
  * TicketsResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-29T20:25:02.204846+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class TicketsResponse {
 
   @Valid
-  private List<@Valid Ticket> tickets = new ArrayList<>();
+  private List<@Valid TicketCard> tickets = new ArrayList<>();
 
   public TicketsResponse() {
     super();
@@ -36,16 +36,16 @@ public class TicketsResponse {
   /**
    * Constructor with only required parameters
    */
-  public TicketsResponse(List<@Valid Ticket> tickets) {
+  public TicketsResponse(List<@Valid TicketCard> tickets) {
     this.tickets = tickets;
   }
 
-  public TicketsResponse tickets(List<@Valid Ticket> tickets) {
+  public TicketsResponse tickets(List<@Valid TicketCard> tickets) {
     this.tickets = tickets;
     return this;
   }
 
-  public TicketsResponse addTicketsItem(Ticket ticketsItem) {
+  public TicketsResponse addTicketsItem(TicketCard ticketsItem) {
     if (this.tickets == null) {
       this.tickets = new ArrayList<>();
     }
@@ -60,11 +60,11 @@ public class TicketsResponse {
   @NotNull @Valid 
   @Schema(name = "tickets", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("tickets")
-  public List<@Valid Ticket> getTickets() {
+  public List<@Valid TicketCard> getTickets() {
     return tickets;
   }
 
-  public void setTickets(List<@Valid Ticket> tickets) {
+  public void setTickets(List<@Valid TicketCard> tickets) {
     this.tickets = tickets;
   }
 

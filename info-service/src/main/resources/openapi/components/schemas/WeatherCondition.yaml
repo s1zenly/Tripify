@@ -1,0 +1,12 @@
+type: string
+description: Normalized daily weather condition for UI
+enum:
+  - clear
+  - partly_cloudy
+  - cloudy
+  - fog
+  - drizzle
+  - rain
+  - showers
+  - snow
+  - thunderstorm

@@ -18,6 +18,7 @@ public record KafkaHotelDto(
         TermsPlacementDto termsPlacement,
         List<FacilityDto> facilities,
         List<PhotoDto> photos,
-        List<RoomDto> rooms
+        List<RoomDto> rooms,
+        HotelScoreDto score
 ) {
 }

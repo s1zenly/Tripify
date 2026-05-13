@@ -10,7 +10,6 @@ public record TicketSearchContextEvent(
         String currency,
         int adults,
         int children,
-        int infants,
         Long budgetMaxAmount
 ) {
 }

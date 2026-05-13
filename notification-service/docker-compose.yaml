@@ -1,6 +1,8 @@
 services:
   notification-service:
-    build: .
+    build:
+      context: .
+      dockerfile: ../docker/local/Dockerfile
     container_name: tripify-notification-service
     ports:
       - "8081:8081"

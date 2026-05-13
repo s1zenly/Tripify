@@ -1,0 +1,21 @@
+type: object
+required:
+  - country_id
+  - country_name
+  - tabs_count
+  - sections_count
+  - updated_at
+properties:
+  country_id:
+    $ref: './IsoCountryAlpha2.yaml'
+  country_name:
+    type: string
+  tabs_count:
+    type: integer
+    minimum: 0
+  sections_count:
+    type: integer
+    minimum: 0
+  updated_at:
+    type: string
+    format: date-time

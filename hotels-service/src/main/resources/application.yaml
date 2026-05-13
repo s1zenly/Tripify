@@ -3,12 +3,6 @@ tripify:
     topics:
       hotels-parsed: hotels.parsed
       hotels-pack-viewed: hotels.pack.viewed
-  outbox:
-    worker:
-      enabled: true
-      fixed-delay-ms: 3000
-      batch-size: 50
-      max-attempts: 5
   s3:
     endpoint: https://storage.yandexcloud.net
     region: ru-central1

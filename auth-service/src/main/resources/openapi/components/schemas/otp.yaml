@@ -1,22 +1,21 @@
 OtpRequest:
   type: object
   required:
-    - phoneNumber
+    - phone_number
   properties:
-    phoneNumber:
+    phone_number:
       type: string
       description: Phone number in E.164 format
       example: "+4915123456789"
       pattern: '^\+[1-9]\d{1,14}$'
 
-
 OtpVerifyRequest:
   type: object
   required:
-    - phoneNumber
+    - phone_number
     - code
   properties:
-    phoneNumber:
+    phone_number:
       type: string
       description: Phone number in E.164 format
       example: "+4915123456789"
@@ -26,8 +25,3 @@ OtpVerifyRequest:
       description: 4-digit one-time verification code
       example: "1234"
       pattern: '^\d{4}$'
-    deviceName:
-      type: string
-      description: Human-readable device name
-      maxLength: 255
-      example: "Chrome on macOS"

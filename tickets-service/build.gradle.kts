@@ -41,7 +41,6 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.7")
 
     implementation("io.swagger.core.v3:swagger-annotations:2.2.36")
-    // JAXB removed from JDK 11+, required by swagger-core when serializing OpenAPI models
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.9")
 
@@ -83,6 +82,12 @@ openApiGenerate {
             "skipDefaultInterface" to "true",
             "useBeanValidation" to "true",
             "performBeanValidation" to "true"
+        )
+    )
+
+    importMappings.set(
+        mapOf(
+            "GenerationMode" to "com.tripify.tickets.service.kafka.model.GenerationMode"
         )
     )
 }

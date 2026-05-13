@@ -23,12 +23,8 @@ import jakarta.annotation.Generated;
  * HotelFiltersResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:24:42.207813975Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class HotelFiltersResponse {
-
-  private String country;
-
-  private String city;
 
   @Valid
   private List<@Valid HotelFilterOption> filters = new ArrayList<>();
@@ -40,50 +36,8 @@ public class HotelFiltersResponse {
   /**
    * Constructor with only required parameters
    */
-  public HotelFiltersResponse(String country, String city, List<@Valid HotelFilterOption> filters) {
-    this.country = country;
-    this.city = city;
+  public HotelFiltersResponse(List<@Valid HotelFilterOption> filters) {
     this.filters = filters;
-  }
-
-  public HotelFiltersResponse country(String country) {
-    this.country = country;
-    return this;
-  }
-
-  /**
-   * Get country
-   * @return country
-   */
-  @NotNull @Size(min = 2, max = 2) 
-  @Schema(name = "country", example = "AE", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("country")
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public HotelFiltersResponse city(String city) {
-    this.city = city;
-    return this;
-  }
-
-  /**
-   * Get city
-   * @return city
-   */
-  @NotNull @Size(min = 1) 
-  @Schema(name = "city", example = "Dubai", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city")
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
   }
 
   public HotelFiltersResponse filters(List<@Valid HotelFilterOption> filters) {
@@ -100,11 +54,11 @@ public class HotelFiltersResponse {
   }
 
   /**
-   * Доступные фильтры с количеством отелей (только с count > 0)
+   * Общий каталог фильтров для поиска отелей (не зависит от маршрута)
    * @return filters
    */
   @NotNull @Valid 
-  @Schema(name = "filters", description = "Доступные фильтры с количеством отелей (только с count > 0)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "filters", description = "Общий каталог фильтров для поиска отелей (не зависит от маршрута)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("filters")
   public List<@Valid HotelFilterOption> getFilters() {
     return filters;
@@ -123,22 +77,18 @@ public class HotelFiltersResponse {
       return false;
     }
     HotelFiltersResponse hotelFiltersResponse = (HotelFiltersResponse) o;
-    return Objects.equals(this.country, hotelFiltersResponse.country) &&
-        Objects.equals(this.city, hotelFiltersResponse.city) &&
-        Objects.equals(this.filters, hotelFiltersResponse.filters);
+    return Objects.equals(this.filters, hotelFiltersResponse.filters);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(country, city, filters);
+    return Objects.hash(filters);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class HotelFiltersResponse {\n");
-    sb.append("    country: ").append(toIndentedString(country)).append("\n");
-    sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    filters: ").append(toIndentedString(filters)).append("\n");
     sb.append("}");
     return sb.toString();

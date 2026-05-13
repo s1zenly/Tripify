@@ -40,6 +40,8 @@ import com.tripify.hotels.generated.model.Room;
 import com.tripify.hotels.generated.model.RoomArea;
 import com.tripify.hotels.generated.model.RoomPhoto;
 import com.tripify.hotels.generated.model.TermsPlacement;
+import com.tripify.hotels.service.domain.City;
+import com.tripify.hotels.service.domain.Country;
 import com.tripify.hotels.service.model.Hotel;
 import com.tripify.hotels.service.model.HotelFacility;
 import com.tripify.hotels.service.model.HotelNearbyPlace;
@@ -91,8 +93,8 @@ public class HotelReadMapper {
                 .description(emptyToNull(hotel.description()))
                 .address(emptyToNull(hotel.address()))
                 .gpsCoordinates(toGpsCoordinates(hotel))
-                .city(hotel.city())
-                .country(hotel.country())
+                .city(toApiCity(hotel.city()))
+                .country(toApiCountry(hotel.country()))
                 .currency(displayCurrency)
                 .price(toLongPrice(currencyConversion.fromStorageCurrency(totalPrice, displayCurrency)))
                 .hotelClass(normalizeHotelClass(hotel.hotelClass()))
@@ -125,8 +127,8 @@ public class HotelReadMapper {
                 .description(emptyToNull(hotel.description()))
                 .address(emptyToNull(hotel.address()))
                 .gpsCoordinates(toGpsCoordinates(hotel))
-                .city(hotel.city())
-                .country(hotel.country())
+                .city(toApiCity(hotel.city()))
+                .country(toApiCountry(hotel.country()))
                 .currency(displayCurrency)
                 .price(toLongPrice(currencyConversion.fromStorageCurrency(totalPrice, displayCurrency)))
                 .hotelClass(normalizeHotelClass(hotel.hotelClass()))
@@ -476,5 +478,13 @@ public class HotelReadMapper {
 
     private static Double toDouble(BigDecimal value) {
         return value != null ? value.doubleValue() : null;
+    }
+
+    private static String toApiCity(String storedCity) {
+        return City.fromCode(storedCity).iataCode();
+    }
+
+    private static String toApiCountry(String storedCountry) {
+        return Country.fromAlpha2(storedCountry).alpha2();
     }
 }

@@ -1,5 +1,6 @@
 package com.tripify.tickets.service.service;
 
+import com.tripify.tickets.service.kafka.model.GenerationMode;
 import com.tripify.tickets.service.kafka.model.PackHeadersEvent;
 import com.tripify.tickets.service.kafka.model.ProviderSearchAnalytics;
 import com.tripify.tickets.service.kafka.model.TicketOfferSnapshot;
@@ -22,9 +23,9 @@ final class TicketKafkaEventFactory {
             String anonymousId,
             String generationId,
             int packRevision,
-            String generationMode,
+            GenerationMode generationMode,
             String requestId,
-            Integer ticketsRevision
+            Integer serviceRevision
     ) {
         return new PackHeadersEvent(
                 userType,
@@ -34,7 +35,7 @@ final class TicketKafkaEventFactory {
                 packRevision,
                 generationMode,
                 requestId,
-                ticketsRevision
+                serviceRevision
         );
     }
 
@@ -47,7 +48,6 @@ final class TicketKafkaEventFactory {
                 request.currency().getCode(),
                 request.passengers().adults(),
                 request.passengers().children(),
-                request.passengers().infants(),
                 request.budgetMaxAmount()
         );
     }
@@ -60,7 +60,6 @@ final class TicketKafkaEventFactory {
             String currency,
             int adults,
             int children,
-            int infants,
             Long budgetMaxAmount
     ) {
         return new TicketSearchContextEvent(
@@ -71,7 +70,6 @@ final class TicketKafkaEventFactory {
                 currency,
                 adults,
                 children,
-                infants,
                 budgetMaxAmount
         );
     }

@@ -59,18 +59,18 @@ public class HotelsParserService {
                 .thenAccept(hotelDto -> {
                     if (hotelDto == null) {
                         logger.warn("Provider returned null: provider={}, city={}, country={}",
-                                provider, city.getDisplayName(), city.getCountry().getAlpha3());
+                                provider, city.getIataCode(), city.getCountry().getAlpha2());
                         return;
                     }
 
                     hotelsKafkaProducer.sendHotels(hotelDto);
                     logger.info("Parsed successfully: provider={}, city={}, country={}, hotels={}",
-                            provider, city.getDisplayName(), city.getCountry().getAlpha3(),
+                            provider, city.getIataCode(), city.getCountry().getAlpha2(),
                             hotelDto.getTotalHotels());
                 })
                 .exceptionally(exception -> {
                     logger.error("Failed to parse: provider={}, city={}, country={}",
-                            provider, city.getDisplayName(), city.getCountry().getAlpha3(), exception);
+                            provider, city.getIataCode(), city.getCountry().getAlpha2(), exception);
                     return null;
                 });
     }

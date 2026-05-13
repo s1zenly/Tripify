@@ -2,17 +2,12 @@ type: object
 required:
   - adults
   - children
-  - infants
 properties:
   adults:
     type: integer
     minimum: 0
     example: 2
   children:
-    type: integer
-    minimum: 0
-    example: 0
-  infants:
     type: integer
     minimum: 0
     example: 0

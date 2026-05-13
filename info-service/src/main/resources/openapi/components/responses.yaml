@@ -1,0 +1,27 @@
+NotFound:
+  description: Resource not found
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+BadRequest:
+  description: Invalid request
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+BadGateway:
+  description: Upstream scraping or parsing failed
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'
+
+InternalServerError:
+  description: Internal server error
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/errors.yaml#/ErrorResponse'

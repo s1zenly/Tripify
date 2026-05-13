@@ -3,12 +3,9 @@ package com.tripify.auth.service.scenario;
 import java.time.Instant;
 
 import com.tripify.auth.generated.model.ErrorCode;
-import com.tripify.auth.generated.model.RefreshTokenRequest;
-import com.tripify.auth.generated.model.TokenResponse;
 import com.tripify.auth.service.Service.RefreshTokenService;
 import com.tripify.auth.service.Service.SessionService;
 import com.tripify.auth.service.Service.UserService;
-import com.tripify.auth.service.client.ConverterModelToDTO;
 import com.tripify.auth.service.domain.model.RefreshToken;
 import com.tripify.auth.service.domain.model.SessionTokens;
 import com.tripify.auth.service.domain.model.User;
@@ -25,7 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RefreshTokenScenario implements Scenario<RefreshTokenRequest, TokenResponse> {
+public class RefreshTokenScenario implements Scenario<String, SessionTokens> {
 
     private final Hasher hasher;
     private final TimeProvider timeProvider;
@@ -35,14 +32,17 @@ public class RefreshTokenScenario implements Scenario<RefreshTokenRequest, Token
     private final RefreshTokenService refreshTokenService;
 
     @Override
-    public TokenResponse run(RefreshTokenRequest request) {
+    public SessionTokens run(String rawRefreshToken) {
+        if (rawRefreshToken == null || rawRefreshToken.isBlank()) {
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH, "Refresh token cookie is missing");
+        }
+
         Instant now = timeProvider.nowUtc();
-        String oldRawRefreshToken = request.getRefreshToken();
-        String tokenHash = hasher.hashSHA256(oldRawRefreshToken);
+        String tokenHash = hasher.hashSHA256(rawRefreshToken);
 
         RefreshToken oldRefreshToken = refreshTokenService.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH, "Invalid refresh token"));
-        ;
+
         if (!oldRefreshToken.isActive(now)) {
             throw new UnauthorizedException(ErrorCode.BAD_REFRESH, "Token revoked or expired");
         }
@@ -56,10 +56,10 @@ public class RefreshTokenScenario implements Scenario<RefreshTokenRequest, Token
                 refreshTokenService.saveRefreshToken(sessionTokens.refreshToken());
             });
         } catch (DataAccessException exception) {
-            log.error("Failed execute refresh token transaction for token = {}", oldRawRefreshToken, exception);
+            log.error("Failed execute refresh token transaction for token = {}", rawRefreshToken, exception);
             throw new InternalServerException("Failed to create refresh tokens");
         }
 
-        return ConverterModelToDTO.createTokenResponse(sessionTokens);
+        return sessionTokens;
     }
 }

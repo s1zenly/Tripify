@@ -1,0 +1,9 @@
+type: object
+required:
+  - label
+  - value
+properties:
+  label:
+    type: string
+  value:
+    type: string

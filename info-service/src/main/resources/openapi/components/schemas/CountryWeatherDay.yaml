@@ -1,0 +1,23 @@
+type: object
+required:
+  - date
+  - temperature_avg_c
+  - condition
+  - precipitation_mm
+properties:
+  date:
+    type: string
+    format: date
+    example: '2026-06-15'
+  temperature_avg_c:
+    type: number
+    format: double
+    description: Average daily air temperature at 2m, °C
+    example: 24.5
+  condition:
+    $ref: './WeatherCondition.yaml'
+  precipitation_mm:
+    type: number
+    format: double
+    description: Total daily precipitation, mm
+    example: 2.4

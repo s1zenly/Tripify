@@ -19,12 +19,10 @@ import jakarta.annotation.Generated;
  * LocationSummary
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-29T20:25:02.204846+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class LocationSummary {
 
-  private String cityCode;
-
-  private String cityName;
+  private String city;
 
   private String airportCode;
 
@@ -35,50 +33,29 @@ public class LocationSummary {
   /**
    * Constructor with only required parameters
    */
-  public LocationSummary(String cityCode, String cityName, String airportCode) {
-    this.cityCode = cityCode;
-    this.cityName = cityName;
+  public LocationSummary(String city, String airportCode) {
+    this.city = city;
     this.airportCode = airportCode;
   }
 
-  public LocationSummary cityCode(String cityCode) {
-    this.cityCode = cityCode;
+  public LocationSummary city(String city) {
+    this.city = city;
     return this;
   }
 
   /**
-   * Get cityCode
-   * @return cityCode
+   * City IATA code
+   * @return city
    */
   @NotNull @Size(min = 3, max = 3) 
-  @Schema(name = "city_code", example = "MOW", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city_code")
-  public String getCityCode() {
-    return cityCode;
+  @Schema(name = "city", example = "MOW", description = "City IATA code", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("city")
+  public String getCity() {
+    return city;
   }
 
-  public void setCityCode(String cityCode) {
-    this.cityCode = cityCode;
-  }
-
-  public LocationSummary cityName(String cityName) {
-    this.cityName = cityName;
-    return this;
-  }
-
-  /**
-   * Get cityName
-   * @return cityName
-   */
-  @NotNull 
-  @Schema(name = "city_name", example = "Moscow", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("city_name")
-  public String getCityName() {
-    return cityName;
-  }
-
-  public void setCityName(String cityName) {
-    this.cityName = cityName;
+  public void setCity(String city) {
+    this.city = city;
   }
 
   public LocationSummary airportCode(String airportCode) {
@@ -87,11 +64,11 @@ public class LocationSummary {
   }
 
   /**
-   * Get airportCode
+   * Airport IATA code
    * @return airportCode
    */
   @NotNull @Size(min = 3, max = 3) 
-  @Schema(name = "airport_code", example = "SVO", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "airport_code", example = "SVO", description = "Airport IATA code", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("airport_code")
   public String getAirportCode() {
     return airportCode;
@@ -110,22 +87,20 @@ public class LocationSummary {
       return false;
     }
     LocationSummary locationSummary = (LocationSummary) o;
-    return Objects.equals(this.cityCode, locationSummary.cityCode) &&
-        Objects.equals(this.cityName, locationSummary.cityName) &&
+    return Objects.equals(this.city, locationSummary.city) &&
         Objects.equals(this.airportCode, locationSummary.airportCode);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cityCode, cityName, airportCode);
+    return Objects.hash(city, airportCode);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class LocationSummary {\n");
-    sb.append("    cityCode: ").append(toIndentedString(cityCode)).append("\n");
-    sb.append("    cityName: ").append(toIndentedString(cityName)).append("\n");
+    sb.append("    city: ").append(toIndentedString(city)).append("\n");
     sb.append("    airportCode: ").append(toIndentedString(airportCode)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -13,6 +13,7 @@ public record HotelSearchFilter(
         long nights,
         ResolvedSearchFilters resolvedFilters,
         int limit,
-        UUID lastId
+        UUID lastId,
+        boolean skipFirstResult
 ) {
 }

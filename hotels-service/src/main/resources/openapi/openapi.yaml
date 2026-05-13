@@ -19,6 +19,9 @@ paths:
   /hotels:
     $ref: './paths/hotels.yaml'
 
+  /hotels/search:
+    $ref: './paths/hotel-search.yaml'
+
   /hotels/filters:
     $ref: './paths/hotel-filters.yaml'
 

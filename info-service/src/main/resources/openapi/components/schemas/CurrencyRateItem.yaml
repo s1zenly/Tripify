@@ -1,0 +1,12 @@
+type: object
+required:
+  - currency
+  - rate
+properties:
+  currency:
+    $ref: './IsoCurrencyCode.yaml'
+  rate:
+    type: number
+    format: double
+    description: How many units of base_currency equal 1 unit of this currency
+    example: 90

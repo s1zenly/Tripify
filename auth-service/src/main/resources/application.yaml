@@ -50,6 +50,18 @@ redis:
   min-idle: 2
 
 
+security:
+  cors:
+    allowed-origins:
+      - http://tripifysite-pavelt1.amvera.io
+  cookies:
+    access-token-name: access_token
+    refresh-token-name: refresh_token
+    secure: true
+    same-site: None
+    access-max-age-seconds: 900
+    refresh-max-age-seconds: 2592000
+
 app:
   kafka:
     topics:

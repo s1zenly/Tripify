@@ -68,7 +68,7 @@ public class EmulationProviderClient implements TicketsProviderClient<EmulationR
         EmulationRawPassengers pax = EmulationRawPassengers.builder()
                 .adt(passengers.adults())
                 .chd(passengers.children())
-                .inf(passengers.infants())
+                .inf(0)
                 .build();
 
         Currency currency = Currency.RUB;

@@ -7,19 +7,19 @@ get:
   parameters:
     - $ref: '../components/parameters.yaml#/XAnonymousId'
     - $ref: '../components/parameters.yaml#/XGenerationId'
-    - $ref: '../components/parameters.yaml#/XPackRevision'
-    - $ref: '../components/parameters.yaml#/XGenerationMode'
     - $ref: '../components/parameters.yaml#/XRequestId'
-    - $ref: '../components/parameters.yaml#/XHotelsRevision'
 
-    - $ref: '../components/parameters.yaml#/HotelsSearchCountry'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCity'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCheckIn'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCheckOut'
-    - $ref: '../components/parameters.yaml#/HotelsSearchCurrency'
-    - $ref: '../components/parameters.yaml#/HotelsSearchGuests'
-    - $ref: '../components/parameters.yaml#/HotelsSearchBudget'
-    - $ref: '../components/parameters.yaml#/HotelsSearchFilters'
+    - $ref: '../components/parameters.yaml#/SearchOriginCountry'
+    - $ref: '../components/parameters.yaml#/SearchOriginCity'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCountry'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCity'
+    - $ref: '../components/parameters.yaml#/SearchDateFrom'
+    - $ref: '../components/parameters.yaml#/SearchDateTo'
+    - $ref: '../components/parameters.yaml#/SearchCurrency'
+    - $ref: '../components/parameters.yaml#/SearchAdults'
+    - $ref: '../components/parameters.yaml#/SearchChildren'
+    - $ref: '../components/parameters.yaml#/SearchBudget'
+    - $ref: '../components/parameters.yaml#/SearchFilters'
 
     - name: limit
       in: query

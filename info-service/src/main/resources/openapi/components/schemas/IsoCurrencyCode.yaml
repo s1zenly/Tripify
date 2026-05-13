@@ -1,0 +1,6 @@
+type: string
+minLength: 3
+maxLength: 3
+pattern: '^[A-Za-z]{3}$'
+description: ISO 4217 currency code (supported set validated in service)
+example: CNY

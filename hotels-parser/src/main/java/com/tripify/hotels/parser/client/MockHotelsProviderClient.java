@@ -182,7 +182,7 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
                 .url("https://mock-provider.example.com/hotels/" + alpha2.toLowerCase() + "/" + city.name().toLowerCase() + "/" + (1000 + idx))
                 .summary(summary)
                 .street(pick(STREETS) + " " + (1 + RND.nextInt(120)))
-                .locality(city.getDisplayName())
+                .locality(city.getIataCode())
                 .countryCode(alpha2)
                 .stars(stars)
                 .lat(round(lat, 6))

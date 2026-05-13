@@ -1,0 +1,44 @@
+tripify:
+  info:
+    scraping:
+      countries:
+        - alpha2: RU
+          name: Россия
+          local-currency: RUB
+          source-url: https://www.tutu.ru/geo/strana/rossiya/
+        - alpha2: CN
+          name: Китай
+          local-currency: CNY
+          source-url: https://www.tutu.ru/geo/strana/china/
+        - alpha2: AE
+          name: ОАЭ
+          local-currency: AED
+          source-url: https://www.tutu.ru/geo/strana/united_arab_emirates/
+        - alpha2: TR
+          name: Турция
+          local-currency: TRY
+          source-url: https://www.tutu.ru/geo/strana/turkey/
+        - alpha2: TH
+          name: Таиланд
+          local-currency: THB
+          source-url: https://www.tutu.ru/geo/strana/thailand/
+        - alpha2: ES
+          name: Испания
+          local-currency: EUR
+          source-url: https://www.tutu.ru/geo/strana/spain/
+        - alpha2: IT
+          name: Италия
+          local-currency: EUR
+          source-url: https://www.tutu.ru/geo/strana/italy/
+        - alpha2: FR
+          name: Франция
+          local-currency: EUR
+          source-url: https://www.tutu.ru/geo/strana/france/
+        - alpha2: JP
+          name: Япония
+          local-currency: JPY
+          source-url: https://www.tutu.ru/geo/strana/japan/
+        - alpha2: EG
+          name: Египет
+          local-currency: EGP
+          source-url: https://www.tutu.ru/geo/strana/egypt/

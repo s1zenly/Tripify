@@ -1,0 +1,34 @@
+get:
+  tags: [info]
+  summary: Get country guide info
+  description: |
+    Returns normalized country guide tabs. When `date_from` and `date_to` are provided,
+    a **weather** tab is appended (not stored in Mongo): daily forecast from Open-Meteo
+    for the country's reference location (capital). If the weather provider fails,
+    the response is still returned without the weather tab.
+
+    JWT in Authorization is optional; when present, subject is used as user_id.
+    X-Anonymous-Id is always required.
+  operationId: getCountryInfo
+  parameters:
+    - $ref: '../components/parameters.yaml#/XAnonymousId'
+    - $ref: '../components/parameters.yaml#/XRequestId'
+    - $ref: '../components/parameters.yaml#/CountryId'
+    - $ref: '../components/parameters.yaml#/StayDateFrom'
+    - $ref: '../components/parameters.yaml#/StayDateTo'
+  security:
+    - bearerAuth: []
+    - {}
+  responses:
+    '200':
+      description: Country guide info
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CountryInfoResponse.yaml'
+    '400':
+      $ref: '../components/responses.yaml#/BadRequest'
+    '404':
+      $ref: '../components/responses.yaml#/NotFound'
+    '500':
+      $ref: '../components/responses.yaml#/InternalServerError'

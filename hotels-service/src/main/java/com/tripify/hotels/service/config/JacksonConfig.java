@@ -19,4 +19,12 @@ public class JacksonConfig {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
+
+    @Bean
+    public ObjectMapper kafkaInboundObjectMapper() {
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
 }

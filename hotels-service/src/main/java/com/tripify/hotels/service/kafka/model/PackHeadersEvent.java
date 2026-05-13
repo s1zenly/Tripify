@@ -6,8 +6,8 @@ public record PackHeadersEvent(
         String anonymousId,
         String generationId,
         int packRevision,
-        String generationMode,
+        GenerationMode generationMode,
         String requestId,
-        Integer hotelsRevision
+        Integer serviceRevision
 ) {
 }

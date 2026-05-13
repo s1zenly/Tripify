@@ -3,6 +3,7 @@ package org.openapitools.configuration;
 import com.tripify.tickets.generated.model.CabinClass;
 import com.tripify.tickets.generated.model.Currency;
 import com.tripify.tickets.generated.model.ErrorCode;
+import com.tripify.tickets.generated.model.GenerationMode;
 import com.tripify.tickets.generated.model.JourneyType;
 
 import org.springframework.context.annotation.Bean;
@@ -43,6 +44,15 @@ public class EnumConverterConfiguration {
             @Override
             public ErrorCode convert(String source) {
                 return ErrorCode.fromValue(source);
+            }
+        };
+    }
+    @Bean(name = "org.openapitools.configuration.EnumConverterConfiguration.generationModeConverter")
+    Converter<String, GenerationMode> generationModeConverter() {
+        return new Converter<String, GenerationMode>() {
+            @Override
+            public GenerationMode convert(String source) {
+                return GenerationMode.fromValue(source);
             }
         };
     }

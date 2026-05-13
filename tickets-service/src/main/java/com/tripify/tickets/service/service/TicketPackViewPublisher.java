@@ -1,13 +1,15 @@
 package com.tripify.tickets.service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripify.tickets.generated.model.TicketDetail;
 import com.tripify.tickets.service.config.property.KafkaTopicsProperties;
 import com.tripify.tickets.service.exception.TicketKafkaPublishException;
+import com.tripify.tickets.service.kafka.model.GenerationMode;
 import com.tripify.tickets.service.kafka.model.PackHeadersEvent;
-import com.tripify.tickets.service.kafka.model.TicketPackViewEvent;
-import com.tripify.tickets.service.kafka.model.TicketSearchContextEvent;
+import com.tripify.tickets.service.kafka.model.PackViewEvent;
+import com.tripify.tickets.service.kafka.model.SearchContextEvent;
 import com.tripify.tickets.service.kafka.model.UserType;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +33,15 @@ public class TicketPackViewPublisher {
 
     public void publishTicketDetailView(
             PackHeadersEvent headers,
-            TicketSearchContextEvent search,
+            SearchContextEvent searchContext,
             TicketDetail ticketDetail
     ) {
-        TicketPackViewEvent event = new TicketPackViewEvent(
+        JsonNode entity = objectMapper.valueToTree(ticketDetail);
+        PackViewEvent event = new PackViewEvent(
                 Instant.now(),
                 headers,
-                search,
-                ticketDetail
+                searchContext,
+                entity
         );
 
         String payload = serialize(event);
@@ -69,9 +73,9 @@ public class TicketPackViewPublisher {
             String anonymousId,
             String generationId,
             int packRevision,
-            String generationMode,
+            GenerationMode generationMode,
             String requestId,
-            Integer ticketsRevision
+            Integer serviceRevision
     ) {
         return TicketKafkaEventFactory.toHeaders(
                 userType,
@@ -81,35 +85,39 @@ public class TicketPackViewPublisher {
                 packRevision,
                 generationMode,
                 requestId,
-                ticketsRevision
+                serviceRevision
         );
     }
 
-    public static TicketSearchContextEvent toSearch(
-            String originCityCode,
-            String destinationCityCode,
-            LocalDate departureDate,
-            LocalDate returnDate,
+    public static SearchContextEvent toSearchContext(
+            String originCountry,
+            String originCity,
+            String destinationCountry,
+            String destinationCity,
+            LocalDate dateFrom,
+            LocalDate dateTo,
             String currency,
             int adults,
-            int children,
-            int infants,
-            Long budgetMaxAmount
+            Integer children,
+            Long budget,
+            List<String> filters
     ) {
-        return TicketKafkaEventFactory.toSearch(
-                originCityCode,
-                destinationCityCode,
-                departureDate,
-                returnDate,
+        return SearchContextEvent.of(
+                originCountry,
+                originCity,
+                destinationCountry,
+                destinationCity,
+                dateFrom,
+                dateTo,
                 currency,
                 adults,
                 children,
-                infants,
-                budgetMaxAmount
+                budget,
+                filters
         );
     }
 
-    private String serialize(TicketPackViewEvent event) {
+    private String serialize(PackViewEvent event) {
         try {
             return objectMapper.writeValueAsString(event);
         } catch (JsonProcessingException exception) {

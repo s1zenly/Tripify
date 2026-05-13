@@ -3,7 +3,6 @@ required:
   - id
   - type
   - label
-  - count
 properties:
   id:
     type: string
@@ -25,8 +24,3 @@ properties:
     type: string
     description: Подпись для UI
     example: У моря
-
-  count:
-    type: integer
-    minimum: 0
-    description: Число отелей в выбранном городе

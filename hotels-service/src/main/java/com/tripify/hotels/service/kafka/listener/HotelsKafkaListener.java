@@ -5,20 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripify.hotels.service.kafka.handler.HotelsParsedEventHandler;
 import com.tripify.hotels.service.kafka.model.HotelsParsedEvent;
 import com.tripify.hotels.service.service.dto.HotelsPersistenceResult;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class HotelsKafkaListener {
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper kafkaInboundObjectMapper;
     private final HotelsParsedEventHandler hotelsParsedEventHandler;
+
+    public HotelsKafkaListener(
+            @Qualifier("kafkaInboundObjectMapper") ObjectMapper kafkaInboundObjectMapper,
+            HotelsParsedEventHandler hotelsParsedEventHandler
+    ) {
+        this.kafkaInboundObjectMapper = kafkaInboundObjectMapper;
+        this.hotelsParsedEventHandler = hotelsParsedEventHandler;
+    }
 
     @KafkaListener(
             topics = "${tripify.kafka.topics.hotels-parsed}",
@@ -26,7 +33,7 @@ public class HotelsKafkaListener {
     )
     public void listen(ConsumerRecord<String, String> record, Acknowledgment acknowledgment) {
         try {
-            HotelsParsedEvent event = objectMapper.readValue(record.value(), HotelsParsedEvent.class);
+            HotelsParsedEvent event = kafkaInboundObjectMapper.readValue(record.value(), HotelsParsedEvent.class);
             HotelsPersistenceResult result = hotelsParsedEventHandler.handle(event);
 
             if (result.hasFailures()) {

@@ -5,4 +5,4 @@ properties:
   tickets:
     type: array
     items:
-      $ref: './Ticket.yaml'
+      $ref: './TicketCard.yaml'

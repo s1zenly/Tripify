@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * HotelFilterOption
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:24:42.207813975Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class HotelFilterOption {
 
   private String id;
@@ -66,8 +66,6 @@ public class HotelFilterOption {
 
   private String label;
 
-  private Integer count;
-
   public HotelFilterOption() {
     super();
   }
@@ -75,11 +73,10 @@ public class HotelFilterOption {
   /**
    * Constructor with only required parameters
    */
-  public HotelFilterOption(String id, TypeEnum type, String label, Integer count) {
+  public HotelFilterOption(String id, TypeEnum type, String label) {
     this.id = id;
     this.type = type;
     this.label = label;
-    this.count = count;
   }
 
   public HotelFilterOption id(String id) {
@@ -142,27 +139,6 @@ public class HotelFilterOption {
     this.label = label;
   }
 
-  public HotelFilterOption count(Integer count) {
-    this.count = count;
-    return this;
-  }
-
-  /**
-   * Число отелей в выбранном городе
-   * minimum: 0
-   * @return count
-   */
-  @NotNull @Min(0) 
-  @Schema(name = "count", description = "Число отелей в выбранном городе", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("count")
-  public Integer getCount() {
-    return count;
-  }
-
-  public void setCount(Integer count) {
-    this.count = count;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -174,13 +150,12 @@ public class HotelFilterOption {
     HotelFilterOption hotelFilterOption = (HotelFilterOption) o;
     return Objects.equals(this.id, hotelFilterOption.id) &&
         Objects.equals(this.type, hotelFilterOption.type) &&
-        Objects.equals(this.label, hotelFilterOption.label) &&
-        Objects.equals(this.count, hotelFilterOption.count);
+        Objects.equals(this.label, hotelFilterOption.label);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, type, label, count);
+    return Objects.hash(id, type, label);
   }
 
   @Override
@@ -190,7 +165,6 @@ public class HotelFilterOption {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    label: ").append(toIndentedString(label)).append("\n");
-    sb.append("    count: ").append(toIndentedString(count)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -41,7 +41,7 @@ ErrorDetail:
   properties:
     field:
       type: string
-      example: phoneNumber
+      example: phone_number
     message:
       type: string
       example: must be a valid phone number

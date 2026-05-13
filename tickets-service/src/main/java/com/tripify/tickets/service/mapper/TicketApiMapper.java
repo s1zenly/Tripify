@@ -6,8 +6,9 @@ import com.tripify.tickets.generated.model.DateTimePoint;
 import com.tripify.tickets.generated.model.Duration;
 import com.tripify.tickets.generated.model.JourneyType;
 import com.tripify.tickets.generated.model.LocationSummary;
-import com.tripify.tickets.generated.model.Ticket;
+import com.tripify.tickets.generated.model.Passengers;
 import com.tripify.tickets.generated.model.TicketBaggage;
+import com.tripify.tickets.generated.model.TicketCard;
 import com.tripify.tickets.generated.model.TicketFare;
 import com.tripify.tickets.generated.model.TicketJourney;
 import com.tripify.tickets.generated.model.TicketPrice;
@@ -37,11 +38,18 @@ public class TicketApiMapper {
     private final TicketOfferCurrencyService ticketOfferCurrencyService;
 
     public TicketsResponse toTicketsResponse(List<UnifiedOffer> offers, String displayCurrency) {
-        return new TicketsResponse(offers.stream().map(offer -> toTicket(offer, displayCurrency)).toList());
+        return toTicketsResponse(offers, displayCurrency, false);
     }
 
-    private Ticket toTicket(UnifiedOffer offer, String displayCurrency) {
-        return new Ticket(
+    public TicketsResponse toTicketsResponse(List<UnifiedOffer> offers, String displayCurrency, boolean skipFirst) {
+        List<UnifiedOffer> pageOffers = skipFirst
+                ? (offers.size() > 1 ? offers.subList(1, offers.size()) : List.of())
+                : offers;
+        return new TicketsResponse(pageOffers.stream().map(offer -> toTicketCard(offer, displayCurrency)).toList());
+    }
+
+    public TicketCard toTicketCard(UnifiedOffer offer, String displayCurrency) {
+        return new TicketCard(
                 offer.unifiedOfferId(),
                 URI.create(offer.deeplink()),
                 toPrice(offer.price(), displayCurrency),
@@ -53,21 +61,30 @@ public class TicketApiMapper {
         );
     }
 
-    private TicketPrice toPrice(Price price, String displayCurrency) {
+    protected TicketPrice toPrice(Price price, String displayCurrency) {
         return new TicketPrice(
                 ticketOfferCurrencyService.fromStorageAmount(price.amount(), displayCurrency),
                 Currency.fromValue(displayCurrency)
         );
     }
 
-    private com.tripify.tickets.generated.model.Passengers toApiPassengers(
-            com.tripify.tickets.service.model.unified.Passengers passengers
-    ) {
-        return new com.tripify.tickets.generated.model.Passengers(
-                passengers.adults(),
-                passengers.children(),
-                passengers.infants()
+    protected Passengers toApiPassengers(com.tripify.tickets.service.model.unified.Passengers passengers) {
+        return new Passengers(passengers.adults(), passengers.children());
+    }
+
+    protected TicketBaggage toBaggage(Baggage baggage) {
+        return new TicketBaggage(
+                toApiBaggageAllowance(baggage.checked()),
+                toApiBaggageAllowance(baggage.handLuggage())
         );
+    }
+
+    private com.tripify.tickets.generated.model.BaggageAllowance toApiBaggageAllowance(
+            com.tripify.tickets.service.model.unified.BaggageAllowance allowance
+    ) {
+        return new com.tripify.tickets.generated.model.BaggageAllowance(allowance.included())
+                .pieces(allowance.pieces())
+                .weightKg(allowance.weightKg());
     }
 
     private TicketJourney toJourney(Journey journey) {
@@ -85,8 +102,8 @@ public class TicketApiMapper {
         );
     }
 
-    private LocationSummary toLocation(LocationPoint point) {
-        return new LocationSummary(point.cityCode(), point.cityName(), point.airportCode());
+    protected LocationSummary toLocation(LocationPoint point) {
+        return new LocationSummary(point.cityCode(), point.airportCode());
     }
 
     private DateTimePoint toDateTimePoint(SchedulePoint schedule) {
@@ -99,21 +116,6 @@ public class TicketApiMapper {
 
     private AirlineSummary toAirline(Airline airline) {
         return new AirlineSummary(airline.code(), airline.name(), URI.create(airline.logoUrl()));
-    }
-
-    private TicketBaggage toBaggage(Baggage baggage) {
-        return new TicketBaggage(
-                toApiBaggageAllowance(baggage.checked()),
-                toApiBaggageAllowance(baggage.handLuggage())
-        );
-    }
-
-    private com.tripify.tickets.generated.model.BaggageAllowance toApiBaggageAllowance(
-            com.tripify.tickets.service.model.unified.BaggageAllowance allowance
-    ) {
-        return new com.tripify.tickets.generated.model.BaggageAllowance(allowance.included())
-                .pieces(allowance.pieces())
-                .weightKg(allowance.weightKg());
     }
 
     private TicketFare toFare(Fare fare) {

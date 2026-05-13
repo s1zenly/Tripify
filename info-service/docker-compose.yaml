@@ -1,0 +1,11 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: tripify-info-mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - info_mongo_data:/data/db
+
+volumes:
+  info_mongo_data:

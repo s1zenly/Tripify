@@ -1,0 +1,25 @@
+spring:
+  config:
+    import: classpath:info-countries.yaml
+
+  mongodb:
+    uri: mongodb://localhost:27017/tripify_info_test
+
+tripify:
+  jwt:
+    secret: test-secret-test-secret-test-secret-test-secret-test
+
+  info:
+    scraping:
+      enabled: false
+      cron: "0 0 3 ? * MON"
+      connect-timeout-ms: 1000
+      read-timeout-ms: 1000
+      user-agent: "TripifyInfoServiceBot/test"
+    weather:
+      enabled: true
+      provider: stub
+      api-url: https://api.open-meteo.com/v1/forecast
+      connect-timeout-ms: 1000
+      read-timeout-ms: 1000
+      max-days: 16

@@ -19,13 +19,6 @@ Forbidden:
       schema:
         $ref: './schemas/errors.yaml#/ErrorResponse'
 
-NotFound:
-  description: Not found
-  content:
-    application/json:
-      schema:
-        $ref: './schemas/errors.yaml#/ErrorResponse'
-
 TooManyRequests:
   description: Too many requests
   content:

@@ -39,11 +39,17 @@ properties:
 
   city:
     type: string
-    example: New York City
+    minLength: 3
+    maxLength: 3
+    description: Destination city IATA code
+    example: DXB
 
   country:
     type: string
-    example: US
+    minLength: 2
+    maxLength: 2
+    description: Destination country ISO Alpha-2
+    example: AE
 
   currency:
     type: string

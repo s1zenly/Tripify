@@ -4,7 +4,7 @@ get:
   summary: Get ticket details by id
   operationId: getTicketById
   description: >
-    Те же query-параметры поиска билетов, что и в GET /tickets (контекст tickets-service).
+    Единые query-параметры search context, что и в GET /tickets.
     Фронт повторяет их при открытии карточки для PackService и аналитики.
     JWT в Authorization опционален: при валидном токене в Kafka уходит user_type=AUTH и user_id.
 
@@ -27,15 +27,17 @@ get:
         type: string
       example: ticket_8f3a1c2d
 
-    - $ref: '../components/parameters.yaml#/OriginCityCode'
-    - $ref: '../components/parameters.yaml#/DestinationCityCode'
-    - $ref: '../components/parameters.yaml#/DepartureDate'
-    - $ref: '../components/parameters.yaml#/ReturnDate'
-    - $ref: '../components/parameters.yaml#/Currency'
-    - $ref: '../components/parameters.yaml#/Adults'
-    - $ref: '../components/parameters.yaml#/BudgetMaxAmount'
-    - $ref: '../components/parameters.yaml#/Children'
-    - $ref: '../components/parameters.yaml#/Infants'
+    - $ref: '../components/parameters.yaml#/SearchOriginCountry'
+    - $ref: '../components/parameters.yaml#/SearchOriginCity'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCountry'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCity'
+    - $ref: '../components/parameters.yaml#/SearchDateFrom'
+    - $ref: '../components/parameters.yaml#/SearchDateTo'
+    - $ref: '../components/parameters.yaml#/SearchCurrency'
+    - $ref: '../components/parameters.yaml#/SearchAdults'
+    - $ref: '../components/parameters.yaml#/SearchChildren'
+    - $ref: '../components/parameters.yaml#/SearchBudget'
+    - $ref: '../components/parameters.yaml#/SearchFilters'
 
   responses:
     '200':

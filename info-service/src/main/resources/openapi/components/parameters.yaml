@@ -1,0 +1,48 @@
+XAnonymousId:
+  name: X-Anonymous-Id
+  in: header
+  required: true
+  description: Anonymous user identifier
+  schema:
+    type: string
+    minLength: 1
+  example: anona8f91d_f445g4d3_rev1
+
+XRequestId:
+  name: X-Request-Id
+  in: header
+  required: true
+  description: Request tracing identifier
+  schema:
+    type: string
+    minLength: 1
+  example: req-123
+
+CountryId:
+  name: country_id
+  in: path
+  required: true
+  description: Supported destination country ISO Alpha-2
+  schema:
+    $ref: './schemas/IsoCountryAlpha2.yaml'
+  example: CN
+
+StayDateFrom:
+  name: date_from
+  in: query
+  required: true
+  description: Stay start date (inclusive)
+  schema:
+    type: string
+    format: date
+  example: '2026-06-15'
+
+StayDateTo:
+  name: date_to
+  in: query
+  required: true
+  description: Stay end date (inclusive)
+  schema:
+    type: string
+    format: date
+  example: '2026-06-22'

@@ -1,0 +1,6 @@
+type: string
+enum:
+  - text
+  - facts
+  - table
+  - list

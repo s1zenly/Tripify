@@ -1,9 +1,0 @@
-type: object
-required:
-  - checked
-  - hand_luggage
-properties:
-  checked:
-    $ref: './BaggageAllowance.yaml'
-  hand_luggage:
-    $ref: './BaggageAllowance.yaml'

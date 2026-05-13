@@ -1,6 +1,8 @@
 services:
   hotels-parser:
-    build: .
+    build:
+      context: .
+      dockerfile: ../docker/local/Dockerfile
     container_name: hotels-parser
     depends_on:
       kafka:

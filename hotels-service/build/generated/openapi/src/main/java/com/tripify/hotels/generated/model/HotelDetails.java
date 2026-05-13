@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * HotelDetails
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-25T20:44:55.035359+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:24:42.207813975Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class HotelDetails {
 
   private java.util.UUID hotelId;
@@ -229,11 +229,11 @@ public class HotelDetails {
   }
 
   /**
-   * Get city
+   * Destination city IATA code
    * @return city
    */
-  @NotNull 
-  @Schema(name = "city", example = "New York City", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Size(min = 3, max = 3) 
+  @Schema(name = "city", example = "DXB", description = "Destination city IATA code", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("city")
   public String getCity() {
     return city;
@@ -249,11 +249,11 @@ public class HotelDetails {
   }
 
   /**
-   * Get country
+   * Destination country ISO Alpha-2
    * @return country
    */
-  @NotNull 
-  @Schema(name = "country", example = "US", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Size(min = 2, max = 2) 
+  @Schema(name = "country", example = "AE", description = "Destination country ISO Alpha-2", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("country")
   public String getCountry() {
     return country;

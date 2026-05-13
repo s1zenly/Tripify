@@ -1,0 +1,268 @@
+{
+  "info": {
+    "_postman_id": "tripify-auth-cookie-auth",
+    "name": "Tripify Auth Service - HttpOnly Cookie Auth",
+    "description": "Postman collection for testing auth-service with HttpOnly cookie authentication.\n\nSetup:\n1. Import this collection into Postman.\n2. Set collection variables `baseUrl` (default: http://localhost:8080) and `phone_number`.\n3. For local HTTP testing set `security.cookies.secure=false` in application.yml (Secure cookies are not stored over HTTP).\n4. Postman automatically stores and sends cookies from responses.\n\nFlow:\n1. Request OTP\n2. Verify OTP (sets access_token and refresh_token cookies)\n3. Refresh tokens\n4. Logout (clears cookies)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "phone_number",
+      "value": "+79001234567"
+    },
+    {
+      "key": "otp_code",
+      "value": "123456"
+    }
+  ],
+  "item": [
+    {
+      "name": "OTP",
+      "item": [
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{phone_number}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/otp/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "otp",
+                "request"
+              ]
+            },
+            "description": "Sends OTP code to the phone number. Returns 204 No Content."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test('Auth cookies are set', function () {",
+                  "    const cookies = pm.cookies.toObject();",
+                  "    pm.expect(cookies).to.have.property('access_token');",
+                  "    pm.expect(cookies).to.have.property('refresh_token');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{phone_number}}\",\n  \"code\": \"{{otp_code}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/otp/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "otp",
+                "verify"
+              ]
+            },
+            "description": "Verifies OTP and sets HttpOnly cookies:\n- access_token (Path=/, Max-Age=900)\n- refresh_token (Path=/auth/refresh, Max-Age=2592000)\n\nResponse body is empty (204). Tokens are NOT returned in JSON."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tokens",
+      "item": [
+        {
+          "name": "Refresh Tokens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test('New auth cookies are set', function () {",
+                  "    const cookies = pm.cookies.toObject();",
+                  "    pm.expect(cookies).to.have.property('access_token');",
+                  "    pm.expect(cookies).to.have.property('refresh_token');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Rotates refresh token and issues new access/refresh cookies.\n\nNo request body. refresh_token cookie is sent automatically (Path=/auth/refresh)."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logs out current session. Clears access_token and refresh_token cookies (Max-Age=0).\n\nRequires access_token cookie (authenticated request). No request body."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative cases",
+      "item": [
+        {
+          "name": "Refresh without cookie",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.cookies.clear();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Clears cookies before request. Expects 401 INVALID_REFRESH."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout without cookie",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.cookies.clear();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Clears cookies before request. Expects 403 from Spring Security."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

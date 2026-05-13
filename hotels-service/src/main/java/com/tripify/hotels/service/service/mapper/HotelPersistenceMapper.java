@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.tripify.hotels.service.domain.City;
+import com.tripify.hotels.service.domain.Country;
 import com.tripify.hotels.service.kafka.model.FacilityDto;
 import com.tripify.hotels.service.kafka.model.GpsCoordinatesDto;
+import com.tripify.hotels.service.kafka.model.HotelScoreDto;
 import com.tripify.hotels.service.kafka.model.HotelsParsedEvent;
 import com.tripify.hotels.service.kafka.model.KafkaHotelDto;
 import com.tripify.hotels.service.kafka.model.MoneyDto;
@@ -22,6 +25,7 @@ import com.tripify.hotels.service.model.Hotel;
 import com.tripify.hotels.service.model.HotelFacility;
 import com.tripify.hotels.service.model.HotelNearbyPlace;
 import com.tripify.hotels.service.model.HotelReviewsSummary;
+import com.tripify.hotels.service.model.HotelScore;
 import com.tripify.hotels.service.model.HotelTermsPlacement;
 import com.tripify.hotels.service.service.currency.CurrencyConversionService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,8 @@ public class HotelPersistenceMapper {
     ) {
         ReviewsDto reviews = hotelDto.reviews();
         GpsCoordinatesDto gps = hotelDto.gpsCoordinates();
+        City city = City.fromCode(defaultString(hotelDto.city()));
+        Country country = Country.fromAlpha2(defaultString(hotelDto.country()));
 
         BigDecimal minPriceUsd = computeMinPriceUsd(hotelDto.rooms());
         int maxGuests = computeMaxGuests(hotelDto.rooms());
@@ -53,8 +59,8 @@ public class HotelPersistenceMapper {
                 defaultString(hotelDto.link()),
                 defaultString(hotelDto.description()),
                 defaultString(hotelDto.address()),
-                defaultString(hotelDto.city()),
-                defaultString(hotelDto.country()),
+                city.iataCode(),
+                country.alpha2(),
                 currencyConversion.storageCurrency(),
                 minPriceUsd,
                 maxGuests,
@@ -162,6 +168,25 @@ public class HotelPersistenceMapper {
                 toBigDecimal(reviewsClasses, "priceQuality"),
                 toBigDecimal(reviewsClasses, "room"),
                 toBigDecimal(reviewsClasses, "location"),
+                now,
+                now
+        );
+    }
+
+    public HotelScore toHotelScore(UUID hotelId, HotelScoreDto score, Instant now) {
+        if (score == null || score.finalScore() == null) {
+            return null;
+        }
+
+        var breakdown = score.breakdown();
+
+        return new HotelScore(
+                hotelId,
+                score.finalScore(),
+                breakdown != null ? breakdown.price() : null,
+                breakdown != null ? breakdown.rating() : null,
+                breakdown != null ? breakdown.location() : null,
+                breakdown != null ? breakdown.facilities() : null,
                 now,
                 now
         );

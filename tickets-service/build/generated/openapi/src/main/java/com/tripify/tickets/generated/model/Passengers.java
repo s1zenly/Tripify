@@ -19,14 +19,12 @@ import jakarta.annotation.Generated;
  * Passengers
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-29T20:25:02.204846+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
 public class Passengers {
 
   private Integer adults;
 
   private Integer children;
-
-  private Integer infants;
 
   public Passengers() {
     super();
@@ -35,10 +33,9 @@ public class Passengers {
   /**
    * Constructor with only required parameters
    */
-  public Passengers(Integer adults, Integer children, Integer infants) {
+  public Passengers(Integer adults, Integer children) {
     this.adults = adults;
     this.children = children;
-    this.infants = infants;
   }
 
   public Passengers adults(Integer adults) {
@@ -83,27 +80,6 @@ public class Passengers {
     this.children = children;
   }
 
-  public Passengers infants(Integer infants) {
-    this.infants = infants;
-    return this;
-  }
-
-  /**
-   * Get infants
-   * minimum: 0
-   * @return infants
-   */
-  @NotNull @Min(0) 
-  @Schema(name = "infants", example = "0", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("infants")
-  public Integer getInfants() {
-    return infants;
-  }
-
-  public void setInfants(Integer infants) {
-    this.infants = infants;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -114,13 +90,12 @@ public class Passengers {
     }
     Passengers passengers = (Passengers) o;
     return Objects.equals(this.adults, passengers.adults) &&
-        Objects.equals(this.children, passengers.children) &&
-        Objects.equals(this.infants, passengers.infants);
+        Objects.equals(this.children, passengers.children);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(adults, children, infants);
+    return Objects.hash(adults, children);
   }
 
   @Override
@@ -129,7 +104,6 @@ public class Passengers {
     sb.append("class Passengers {\n");
     sb.append("    adults: ").append(toIndentedString(adults)).append("\n");
     sb.append("    children: ").append(toIndentedString(children)).append("\n");
-    sb.append("    infants: ").append(toIndentedString(infants)).append("\n");
     sb.append("}");
     return sb.toString();
   }

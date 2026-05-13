@@ -176,7 +176,11 @@ public class HotelRepositoryImpl implements HotelRepository {
             sql.append(" and h.id > :lastId");
             params.addValue("lastId", filter.lastId());
         }
-        sql.append(" order by h.id asc limit :limit");
+        sql.append(" order by h.id asc");
+        if (filter.skipFirstResult() && filter.lastId() == null) {
+            sql.append(" offset 1");
+        }
+        sql.append(" limit :limit");
 
         params.addValue("limit", fetchLimit);
 
