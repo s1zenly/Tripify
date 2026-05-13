@@ -1,0 +1,45 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: users-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: users-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users_db
+    username: users_user
+    password: users_password
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 2000
+      max-lifetime: 1800000
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+  logging:
+    level:
+      liquibase: DEBUG
+      org.springframework.boot.autoconfigure.liquibase: DEBUG
+
+
+app:
+  kafka:
+    topics:
+      user-registered: auth.user.registered
+  jwt:
+    secret: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc

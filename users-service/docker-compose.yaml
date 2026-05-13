@@ -1,0 +1,46 @@
+services:
+  users-postgres:
+    image: postgres:16
+    container_name: tripify-users-postgres
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: users_user
+      POSTGRES_PASSWORD: users_password
+    ports:
+      - "6543:5432"
+    volumes:
+      - users_postgres_data:/var/lib/postgresql/data
+    networks:
+      - tripify-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U users_user -d users_db" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  users-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tripify-users-service
+    depends_on:
+      users-postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://users-postgres:5432/users_db
+      SPRING_DATASOURCE_USERNAME: users_user
+      SPRING_DATASOURCE_PASSWORD: users_password
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:db/changelog/db.changelog-master.yaml
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    ports:
+      - "8082:8082"
+    networks:
+      - tripify-network
+
+volumes:
+  users_postgres_data:
+
+networks:
+  tripify-network:
+    external: true
+    name: auth-service_default

@@ -48,6 +48,7 @@ app:
   kafka:
     topics:
       otp-requested: auth.otp.requested
+      user-registered: auth.user.registered
 
   outbox:
     worker:

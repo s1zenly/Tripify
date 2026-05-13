@@ -30,7 +30,7 @@ public class JwtService {
                 .claim("phone", user.phone())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiresAt))
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
 
         return new AccessToken(accessToken, expiresAt);

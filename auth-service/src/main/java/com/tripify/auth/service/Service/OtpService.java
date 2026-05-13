@@ -58,7 +58,7 @@ public class OtpService {
         OtpRequestedEvent eventPayload = new OtpRequestedEvent(otpRequestId.toString(), phone, rawOtp, now, expiredAt);
         OutboxEvent outboxEvent = new OutboxEvent(
                 UUID.randomUUID(),
-                AggregateType.OTP_REQUEST,
+                AggregateType.OTP,
                 otpRequestId.toString(),
                 OutboxEventType.OTP_REQUESTED,
                 kafkaTopics.otpRequested(),

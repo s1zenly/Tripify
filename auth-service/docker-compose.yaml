@@ -1,5 +1,5 @@
 services:
-  postgres:
+  auth-postgres:
     image: postgres:16
     container_name: tripify-auth-postgres
     environment:
@@ -59,14 +59,14 @@ services:
       dockerfile: Dockerfile
     container_name: tripify-auth-service
     depends_on:
-      postgres:
+      auth-postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       kafka:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-postgres:5432/auth_db
       SPRING_DATASOURCE_USERNAME: auth_user
       SPRING_DATASOURCE_PASSWORD: auth_password
       SPRING_LIQUIBASE_CHANGE_LOG: classpath:db/changelog/db.changelog-master.yaml

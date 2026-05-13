@@ -2,6 +2,7 @@ package com.tripify.auth.service.scenario;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 import com.tripify.auth.generated.model.ErrorCode;
 import com.tripify.auth.generated.model.OtpVerifyRequest;
@@ -13,18 +14,26 @@ import com.tripify.auth.service.Service.RefreshTokenService;
 import com.tripify.auth.service.Service.SessionService;
 import com.tripify.auth.service.Service.UserService;
 import com.tripify.auth.service.client.ConverterModelToDTO;
+import com.tripify.auth.service.config.property.KafkaTopics;
+import com.tripify.auth.service.domain.enums.AggregateType;
+import com.tripify.auth.service.domain.enums.OtpPurpose;
 import com.tripify.auth.service.domain.enums.OtpStatus;
+import com.tripify.auth.service.domain.enums.OutboxEventStatus;
+import com.tripify.auth.service.domain.enums.OutboxEventType;
 import com.tripify.auth.service.domain.model.OtpRequest;
+import com.tripify.auth.service.domain.model.OutboxEvent;
 import com.tripify.auth.service.domain.model.SessionTokens;
 import com.tripify.auth.service.domain.model.User;
+import com.tripify.auth.service.domain.model.UserRegisteredEvent;
 import com.tripify.auth.service.exception.BadRequestException;
 import com.tripify.auth.service.exception.InternalServerException;
 import com.tripify.auth.service.exception.UnauthorizedException;
 import com.tripify.auth.service.infra.TimeProvider;
 import com.tripify.auth.service.helper.Hasher;
-import com.tripify.auth.service.repository.contracts.OtpRequestRepository;
+import com.tripify.auth.service.repository.contracts.OutboxEventRepository;
 import com.tripify.auth.service.utils.Constants;
 import com.tripify.auth.service.utils.Headers;
+import com.tripify.auth.service.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -43,10 +52,12 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
     private final PhoneValidationService phoneValidationService;
     private final RefreshTokenService refreshTokenService;
     private final OtpService otpService;
+    private final OutboxEventRepository outboxEventRepository;
 
     private final TransactionTemplate transactionTemplate;
     private final OtpRateLimiter otpRateLimiter;
     private final TimeProvider timeProvider;
+    private final KafkaTopics kafkaTopics;
     private final Hasher hasher;
 
     @Override
@@ -77,6 +88,11 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
                 otpService.changeOtpStatus(otpRequest.id(), OtpStatus.VERIFIED, now);
                 User user = userService.createOrActivateUser(otpRequest.phone(), now);
 
+                if (otpRequest.purpose() == OtpPurpose.REGISTER) {
+                    OutboxEvent userRegisteredEvent = createUserRegisteredEvent(user, now);
+                    outboxEventRepository.saveEvent(userRegisteredEvent);
+                }
+
                 SessionTokens tokens = sessionService.createSession(user, now);
                 refreshTokenService.saveRefreshToken(tokens.refreshToken());
 
@@ -105,6 +121,23 @@ public class VerifyCodeScenario implements Scenario<OtpVerifyRequest, TokenRespo
                         Map.of(Headers.REMAINING_ATTEMPTS_HEADER, String.valueOf(remainingAttempts))
                 )),
                 "Invalid OTP"
+        );
+    }
+
+    private OutboxEvent createUserRegisteredEvent(User user, Instant now) {
+        return new OutboxEvent(
+                UUID.randomUUID(),
+                AggregateType.OTP,
+                user.id().toString(),
+                OutboxEventType.USER_REGISTERED,
+                kafkaTopics.userRegistered(),
+                JsonUtils.toJson(new UserRegisteredEvent(user.id(), user.phone(), now)),
+                OutboxEventStatus.PENDING,
+                0,
+                null,
+                now,
+                now,
+                null
         );
     }
 }
