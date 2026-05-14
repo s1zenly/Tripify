@@ -1,0 +1,13 @@
+type: object
+required:
+  - adults
+  - children
+properties:
+  adults:
+    type: integer
+    minimum: 0
+    example: 2
+  children:
+    type: integer
+    minimum: 0
+    example: 0

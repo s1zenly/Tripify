@@ -1,0 +1,22 @@
+PackErrorCode:
+  type: string
+  enum:
+    - PACK_NOT_FOUND
+    - VALIDATION_ERROR
+    - INTERNAL_ERROR
+
+ErrorResponse:
+  type: object
+  required:
+    - code
+    - message
+    - timestamp
+  properties:
+    code:
+      $ref: '#/PackErrorCode'
+    message:
+      type: string
+      example: Pack not found
+    timestamp:
+      type: string
+      format: date-time

@@ -1,0 +1,9 @@
+www.tripify.fun {
+	reverse_proxy kong:8000
+}
+
+# Если на apex-домен (tripify.fun) тоже добавишь A-запись на 62.113.36.71,
+# раскомментируй блок ниже — Caddy выпустит сертификат и сделает редирект на www.
+# tripify.fun {
+# 	redir https://www.tripify.fun{uri} permanent
+# }

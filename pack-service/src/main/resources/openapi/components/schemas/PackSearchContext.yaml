@@ -1,0 +1,61 @@
+type: object
+required:
+  - origin_country
+  - origin_city
+  - destination_country
+  - destination_city
+  - date_from
+  - date_to
+  - currency
+  - adults
+properties:
+  origin_country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    example: RU
+  origin_city:
+    type: string
+    minLength: 3
+    maxLength: 3
+    example: MOW
+  destination_country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    example: TH
+  destination_city:
+    type: string
+    minLength: 3
+    maxLength: 3
+    example: KBV
+  date_from:
+    type: string
+    format: date
+    example: '2026-06-04'
+  date_to:
+    type: string
+    format: date
+    example: '2026-06-26'
+  currency:
+    type: string
+    example: RUB
+  adults:
+    type: integer
+    minimum: 1
+    maximum: 9
+    example: 1
+  children:
+    type: integer
+    minimum: 0
+    maximum: 9
+    example: 0
+  budget:
+    type: integer
+    format: int64
+    example: 1233333
+  filters:
+    type: array
+    items:
+      type: string
+    example: []

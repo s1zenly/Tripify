@@ -40,6 +40,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
+                "https://tripify.tech",
                 "http://tripifysite-pavelt1.amvera.io"
         ));
 

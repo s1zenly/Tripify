@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-01T01:47:04.875924+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 @Validated
 @Tag(name = "tickets", description = "Flight tickets search API")
 public interface TicketsApi {
@@ -154,6 +154,83 @@ public interface TicketsApi {
     );
 
 
+    public static final String PATH_SEARCH_TICKET = "/tickets/search";
+    /**
+     * GET /tickets/search : Search ticket
+     * Те же headers и query-параметры, что и GET /tickets/{id}, но без id. Возвращает первый подходящий билет как TicketDetail. JWT в Authorization опционален. 
+     *
+     * @param xAnonymousId Anonymous user identifier (required)
+     * @param xGenerationId Travel generation identifier (required)
+     * @param xPackRevision Current pack revision number (required)
+     * @param xGenerationMode Generation mode (required)
+     * @param xRequestId Request tracing identifier (required)
+     * @param originCountry Origin country ISO Alpha-2 (required)
+     * @param originCity Origin city IATA code (required)
+     * @param destinationCountry Destination country ISO Alpha-2 (required)
+     * @param destinationCity Destination city IATA code (required)
+     * @param dateFrom Trip start date (outbound departure) (required)
+     * @param dateTo Trip end date (return departure) (required)
+     * @param currency Response currency for the frontend (required)
+     * @param adults Number of adult travelers (required)
+     * @param xTicketsRevision Tickets revision number (optional)
+     * @param children Number of child travelers (optional, default to 0)
+     * @param budget Optional trip budget in currency (optional)
+     * @param filters Filters from GET /tickets/filters catalog (optional)
+     * @return First matching ticket details fetched successfully (status code 200)
+     *         or Bad request (status code 400)
+     *         or Ticket not found (status code 404)
+     *         or Internal server error (status code 500)
+     */
+    @Operation(
+        operationId = "searchTicket",
+        summary = "Search ticket",
+        description = "Те же headers и query-параметры, что и GET /tickets/{id}, но без id. Возвращает первый подходящий билет как TicketDetail. JWT в Authorization опционален. ",
+        tags = { "tickets" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "First matching ticket details fetched successfully", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = TicketDetailResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Ticket not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = TicketsApi.PATH_SEARCH_TICKET,
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<TicketDetailResponse> searchTicket(
+        @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
+        @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
+        @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,
+        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) GenerationMode xGenerationMode,
+        @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "origin_country", description = "Origin country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_country", required = true) String originCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "origin_city", description = "Origin city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_city", required = true) String originCity,
+        @NotNull @Size(min = 2, max = 2) @Parameter(name = "destination_country", description = "Destination country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_country", required = true) String destinationCountry,
+        @NotNull @Size(min = 3, max = 3) @Parameter(name = "destination_city", description = "Destination city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_city", required = true) String destinationCity,
+        @NotNull @Parameter(name = "date_from", description = "Trip start date (outbound departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @NotNull @Parameter(name = "date_to", description = "Trip end date (return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+        @NotNull @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) Currency currency,
+        @NotNull @Min(1) @Max(9) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
+        @Min(1) @Parameter(name = "X-Tickets-Revision", description = "Tickets revision number", in = ParameterIn.HEADER) @RequestHeader(value = "X-Tickets-Revision", required = false) @Nullable Integer xTicketsRevision,
+        @Min(0) @Max(9) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
+        @Min(1L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
+        @Parameter(name = "filters", description = "Filters from GET /tickets/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters
+    );
+
+
     public static final String PATH_SEARCH_TICKETS = "/tickets";
     /**
      * GET /tickets : Search flight tickets
@@ -210,83 +287,6 @@ public interface TicketsApi {
         @NotNull @Parameter(name = "date_to", description = "Trip end date (return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
         @NotNull @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) Currency currency,
         @NotNull @Min(1) @Max(9) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
-        @Min(0) @Max(9) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
-        @Min(1L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
-        @Parameter(name = "filters", description = "Filters from GET /tickets/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters
-    );
-
-
-    public static final String PATH_SEARCH_TICKETS_WITH_PACK_CONTEXT = "/tickets/search";
-    /**
-     * GET /tickets/search : Search tickets with pack context
-     * Те же headers и query-параметры search context, что и GET /tickets/{id}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. JWT в Authorization опционален. 
-     *
-     * @param xAnonymousId Anonymous user identifier (required)
-     * @param xGenerationId Travel generation identifier (required)
-     * @param xPackRevision Current pack revision number (required)
-     * @param xGenerationMode Generation mode (required)
-     * @param xRequestId Request tracing identifier (required)
-     * @param originCountry Origin country ISO Alpha-2 (required)
-     * @param originCity Origin city IATA code (required)
-     * @param destinationCountry Destination country ISO Alpha-2 (required)
-     * @param destinationCity Destination city IATA code (required)
-     * @param dateFrom Trip start date (outbound departure) (required)
-     * @param dateTo Trip end date (return departure) (required)
-     * @param currency Response currency for the frontend (required)
-     * @param adults Number of adult travelers (required)
-     * @param xTicketsRevision Tickets revision number (optional)
-     * @param children Number of child travelers (optional, default to 0)
-     * @param budget Optional trip budget in currency (optional)
-     * @param filters Filters from GET /tickets/filters catalog (optional)
-     * @return First matching ticket details fetched successfully (status code 200)
-     *         or Bad request (status code 400)
-     *         or Ticket not found (status code 404)
-     *         or Internal server error (status code 500)
-     */
-    @Operation(
-        operationId = "searchTicketsWithPackContext",
-        summary = "Search tickets with pack context",
-        description = "Те же headers и query-параметры search context, что и GET /tickets/{id}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. JWT в Authorization опционален. ",
-        tags = { "tickets" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "First matching ticket details fetched successfully", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = TicketDetailResponse.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Ticket not found", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-            })
-        },
-        security = {
-            @SecurityRequirement(name = "bearerAuth")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = TicketsApi.PATH_SEARCH_TICKETS_WITH_PACK_CONTEXT,
-        produces = { "application/json" }
-    )
-    
-    ResponseEntity<TicketDetailResponse> searchTicketsWithPackContext(
-        @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
-        @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
-        @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,
-        @NotNull @Parameter(name = "X-Generation-Mode", description = "Generation mode", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Mode", required = true) GenerationMode xGenerationMode,
-        @NotNull @Parameter(name = "X-Request-Id", description = "Request tracing identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Request-Id", required = true) String xRequestId,
-        @NotNull @Size(min = 2, max = 2) @Parameter(name = "origin_country", description = "Origin country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_country", required = true) String originCountry,
-        @NotNull @Size(min = 3, max = 3) @Parameter(name = "origin_city", description = "Origin city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "origin_city", required = true) String originCity,
-        @NotNull @Size(min = 2, max = 2) @Parameter(name = "destination_country", description = "Destination country ISO Alpha-2", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_country", required = true) String destinationCountry,
-        @NotNull @Size(min = 3, max = 3) @Parameter(name = "destination_city", description = "Destination city IATA code", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "destination_city", required = true) String destinationCity,
-        @NotNull @Parameter(name = "date_from", description = "Trip start date (outbound departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-        @NotNull @Parameter(name = "date_to", description = "Trip end date (return departure)", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
-        @NotNull @Parameter(name = "currency", description = "Response currency for the frontend", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "currency", required = true) Currency currency,
-        @NotNull @Min(1) @Max(9) @Parameter(name = "adults", description = "Number of adult travelers", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "adults", required = true) Integer adults,
-        @Min(1) @Parameter(name = "X-Tickets-Revision", description = "Tickets revision number", in = ParameterIn.HEADER) @RequestHeader(value = "X-Tickets-Revision", required = false) @Nullable Integer xTicketsRevision,
         @Min(0) @Max(9) @Parameter(name = "children", description = "Number of child travelers", in = ParameterIn.QUERY) @Valid @RequestParam(value = "children", required = false, defaultValue = "0") Integer children,
         @Min(1L) @Parameter(name = "budget", description = "Optional trip budget in currency", in = ParameterIn.QUERY) @Valid @RequestParam(value = "budget", required = false) @Nullable Long budget,
         @Parameter(name = "filters", description = "Filters from GET /tickets/filters catalog", in = ParameterIn.QUERY) @Valid @RequestParam(value = "filters", required = false) @Nullable List<String> filters

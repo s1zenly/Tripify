@@ -1,0 +1,32 @@
+openapi: 3.0.3
+
+info:
+  title: Tripify Pack Service API
+  description: Pack assembly read API — user selection history and pack snapshots
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8088
+    description: Local environment
+
+tags:
+  - name: packs
+    description: Pack snapshots and user view history
+
+paths:
+  /v1/packs:
+    $ref: './paths/packs.yaml'
+
+  /v1/packs/popular:
+    $ref: './paths/packs-popular.yaml'
+
+  /v1/packs/{pack_id}:
+    $ref: './paths/pack-by-id.yaml'
+
+  /v1/packs/user-view:
+    $ref: './paths/user-view-history.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      $ref: './components/security-schemes.yaml#/bearerAuth'

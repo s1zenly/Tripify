@@ -1,0 +1,48 @@
+type: object
+required:
+  - id
+  - country
+  - city
+  - hotel
+  - date
+  - duration_days
+  - price
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Pack revision identifier from PostgreSQL
+    example: 01977f2e-29a2-7df4-bdb7-89f54a1d9d2c
+
+  country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    description: Destination country ISO Alpha-2
+    example: RU
+
+  city:
+    type: string
+    minLength: 3
+    maxLength: 3
+    description: Destination city IATA code
+    example: MOW
+
+  hotel:
+    $ref: './PackCardHotel.yaml'
+
+  image_pack_url:
+    type: string
+    format: uri
+    example: https://cdn.example.com/packs/preview.jpg
+
+  date:
+    $ref: './PackCardDate.yaml'
+
+  duration_days:
+    type: integer
+    minimum: 1
+    example: 16
+
+  price:
+    $ref: './PackCardPrice.yaml'

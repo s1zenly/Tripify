@@ -1,0 +1,24 @@
+type: object
+required:
+  - id
+  - type
+  - label
+properties:
+  id:
+    type: string
+    description: Идентификатор для query-параметра filters
+    example: direct
+
+  type:
+    type: string
+    enum:
+      - facet
+      - terms
+    description: |
+      facet — характеристики перелёта (пересадки, layover),
+      terms — условия тарифа и багажа
+
+  label:
+    type: string
+    description: Подпись для UI
+    example: Без пересадок

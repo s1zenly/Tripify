@@ -246,6 +246,71 @@ services:
     networks:
       - tripify
 
+  pack-service:
+    build:
+      context: ../../pack-service
+      dockerfile: ../docker/local/Dockerfile
+    container_name: tripify-pack-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tripify_db
+      SPRING_DATASOURCE_USERNAME: tripify
+      SPRING_DATASOURCE_PASSWORD: tripify
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:/db/changelog/db.changelog-master.yaml
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_MONGODB_URI: mongodb://mongo:27017/tripify_pack
+      TRIPIFY_JWT_SECRET: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+    ports:
+      - "8088:8080"
+    networks:
+      - tripify
+
+  kong:
+    image: kong:3.9
+    container_name: tripify-kong
+    depends_on:
+      - auth-service
+      - hotels-service
+      - tickets-service
+      - users-service
+      - info-service
+      - pack-service
+    environment:
+      KONG_DATABASE: "off"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      TRIPIFY_JWT_SECRET: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+      TRIPIFY_JWT_ISSUER: tripify-auth
+      TRIPIFY_ACCESS_COOKIE_NAME: access_token
+    volumes:
+      - ../kong/kong.template.yaml:/kong/kong.template.yaml:ro
+      - ../kong/prepare-auth.lua.tmpl:/kong/prepare-auth.lua.tmpl:ro
+      - ../kong/inject-user-id.lua.tmpl:/kong/inject-user-id.lua.tmpl:ro
+      - ../kong/docker-entrypoint.sh:/kong/docker-entrypoint.sh:ro
+    entrypoint: ["/bin/sh", "/kong/docker-entrypoint.sh"]
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    healthcheck:
+      test: [ "CMD", "kong", "health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - tripify
+
 volumes:
   postgres_data:
   mongo_data:

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.tripify.info.config.CountryInfoProperties;
 import com.tripify.info.currency.ExchangeRateService;
 import com.tripify.info.generated.model.CountryInfoFactItem;
 import com.tripify.info.generated.model.CountryInfoResponse;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 public class CountryInfoMapper {
 
     private final ExchangeRateService exchangeRateService;
+    private final CountryInfoProperties countryInfoProperties;
 
     public CountryInfoResponse toApiResponse(CountryInfoQueryResult result) {
         CountryInfoDocument document = result.document();
@@ -39,8 +41,17 @@ public class CountryInfoMapper {
                 document.countryName(),
                 document.localCurrency(),
                 toApiRates(document.localCurrency()),
-                tabs
+                tabs,
+                photosFor(document.countryId())
         );
+    }
+
+    private List<String> photosFor(String countryId) {
+        return countryInfoProperties.scraping().countries().stream()
+                .filter(country -> country.alpha2().equalsIgnoreCase(countryId))
+                .findFirst()
+                .map(CountryInfoProperties.CountryConfig::photos)
+                .orElse(List.of());
     }
 
     private List<CurrencyRateItem> toApiRates(String localCurrency) {

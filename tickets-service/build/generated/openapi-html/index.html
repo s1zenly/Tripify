@@ -1416,11 +1416,11 @@ ul.nav-tabs {
                     <li data-group="Tickets" data-name="getTicketFilters" class="">
                       <a href="#api-Tickets-getTicketFilters">getTicketFilters</a>
                     </li>
+                    <li data-group="Tickets" data-name="searchTicket" class="">
+                      <a href="#api-Tickets-searchTicket">searchTicket</a>
+                    </li>
                     <li data-group="Tickets" data-name="searchTickets" class="">
                       <a href="#api-Tickets-searchTickets">searchTickets</a>
-                    </li>
-                    <li data-group="Tickets" data-name="searchTicketsWithPackContext" class="">
-                      <a href="#api-Tickets-searchTicketsWithPackContext">searchTicketsWithPackContext</a>
                     </li>
           </ul>
         </nav>
@@ -2988,6 +2988,1179 @@ pub fn main() {
                         </article>
                       </div>
                       <hr>
+                    <div id="api-Tickets-searchTicket">
+                      <article id="api-Tickets-searchTicket-0" data-group="User" data-name="searchTicket" data-version="0">
+                        <div class="pull-left">
+                          <h1>searchTicket</h1>
+                          <p>Search ticket</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Те же headers и query-параметры, что и GET /tickets/{id}, но без id. Возвращает первый подходящий билет как TicketDetail. JWT в Authorization опционален.
+</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tickets/search</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Tickets-searchTicket-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Tickets-searchTicket-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Tickets-searchTicket-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Tickets-searchTicket-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Tickets-searchTicket-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://localhost:8080/tickets/search?origin_country=RU&origin_city=MOW&destination_country=AE&destination_city=DXB&date_from=2026-06-01&date_to=2026-06-10&currency=RUB&adults=2&children=0&budget=50000&filters=[direct, refundable]"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Tickets-searchTicket-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.TicketsApi;
+
+import java.io.File;
+import java.util.*;
+
+public class TicketsApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        TicketsApi apiInstance = new TicketsApi();
+        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+        Integer xPackRevision = 1; // Integer | Current pack revision number
+        GenerationMode xGenerationMode = FULL; // GenerationMode | Generation mode
+        String xRequestId = req-123; // String | Request tracing identifier
+        String originCountry = RU; // String | Origin country ISO Alpha-2
+        String originCity = MOW; // String | Origin city IATA code
+        String destinationCountry = AE; // String | Destination country ISO Alpha-2
+        String destinationCity = DXB; // String | Destination city IATA code
+        date dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
+        date dateTo = 2026-06-10; // date | Trip end date (return departure)
+        Currency currency = RUB; // Currency | Response currency for the frontend
+        Integer adults = 2; // Integer | Number of adult travelers
+        Integer xTicketsRevision = 1; // Integer | Tickets revision number
+        Integer children = 0; // Integer | Number of child travelers
+        Long budget = 50000; // Long | Optional trip budget in currency
+        array[String] filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
+
+        try {
+            TicketDetailResponse result = apiInstance.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling TicketsApi#searchTicket");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Tickets-searchTicket-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final String xAnonymousId = new String(); // String | Anonymous user identifier
+final String xGenerationId = new String(); // String | Travel generation identifier
+final Integer xPackRevision = new Integer(); // Integer | Current pack revision number
+final GenerationMode xGenerationMode = new GenerationMode(); // GenerationMode | Generation mode
+final String xRequestId = new String(); // String | Request tracing identifier
+final String originCountry = new String(); // String | Origin country ISO Alpha-2
+final String originCity = new String(); // String | Origin city IATA code
+final String destinationCountry = new String(); // String | Destination country ISO Alpha-2
+final String destinationCity = new String(); // String | Destination city IATA code
+final date dateFrom = new date(); // date | Trip start date (outbound departure)
+final date dateTo = new date(); // date | Trip end date (return departure)
+final Currency currency = new Currency(); // Currency | Response currency for the frontend
+final Integer adults = new Integer(); // Integer | Number of adult travelers
+final Integer xTicketsRevision = new Integer(); // Integer | Tickets revision number
+final Integer children = new Integer(); // Integer | Number of child travelers
+final Long budget = new Long(); // Long | Optional trip budget in currency
+final array[String] filters = new array[String](); // array[String] | Filters from GET /tickets/filters catalog
+
+try {
+    final result = await api_instance.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->searchTicket: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Tickets-searchTicket-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.TicketsApi;
+
+public class TicketsApiExample {
+    public static void main(String[] args) {
+        TicketsApi apiInstance = new TicketsApi();
+        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+        Integer xPackRevision = 1; // Integer | Current pack revision number
+        GenerationMode xGenerationMode = FULL; // GenerationMode | Generation mode
+        String xRequestId = req-123; // String | Request tracing identifier
+        String originCountry = RU; // String | Origin country ISO Alpha-2
+        String originCity = MOW; // String | Origin city IATA code
+        String destinationCountry = AE; // String | Destination country ISO Alpha-2
+        String destinationCity = DXB; // String | Destination city IATA code
+        date dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
+        date dateTo = 2026-06-10; // date | Trip end date (return departure)
+        Currency currency = RUB; // Currency | Response currency for the frontend
+        Integer adults = 2; // Integer | Number of adult travelers
+        Integer xTicketsRevision = 1; // Integer | Tickets revision number
+        Integer children = 0; // Integer | Number of child travelers
+        Long budget = 50000; // Long | Optional trip budget in currency
+        array[String] filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
+
+        try {
+            TicketDetailResponse result = apiInstance.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling TicketsApi#searchTicket");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Tickets-searchTicket-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+TicketsApi *apiInstance = [[TicketsApi alloc] init];
+String *xAnonymousId = anona8f91d_f445g4d3_rev1; // Anonymous user identifier (default to null)
+String *xGenerationId = anon_a8f91d_ab91ff23_rev1; // Travel generation identifier (default to null)
+Integer *xPackRevision = 1; // Current pack revision number (default to null)
+GenerationMode *xGenerationMode = FULL; // Generation mode (default to null)
+String *xRequestId = req-123; // Request tracing identifier (default to null)
+String *originCountry = RU; // Origin country ISO Alpha-2 (default to null)
+String *originCity = MOW; // Origin city IATA code (default to null)
+String *destinationCountry = AE; // Destination country ISO Alpha-2 (default to null)
+String *destinationCity = DXB; // Destination city IATA code (default to null)
+date *dateFrom = 2026-06-01; // Trip start date (outbound departure) (default to null)
+date *dateTo = 2026-06-10; // Trip end date (return departure) (default to null)
+Currency *currency = RUB; // Response currency for the frontend (default to null)
+Integer *adults = 2; // Number of adult travelers (default to null)
+Integer *xTicketsRevision = 1; // Tickets revision number (optional) (default to null)
+Integer *children = 0; // Number of child travelers (optional) (default to 0)
+Long *budget = 50000; // Optional trip budget in currency (optional) (default to null)
+array[String] *filters = [direct, refundable]; // Filters from GET /tickets/filters catalog (optional) (default to null)
+
+// Search ticket
+[apiInstance searchTicketWith:xAnonymousId
+    xGenerationId:xGenerationId
+    xPackRevision:xPackRevision
+    xGenerationMode:xGenerationMode
+    xRequestId:xRequestId
+    originCountry:originCountry
+    originCity:originCity
+    destinationCountry:destinationCountry
+    destinationCity:destinationCity
+    dateFrom:dateFrom
+    dateTo:dateTo
+    currency:currency
+    adults:adults
+    xTicketsRevision:xTicketsRevision
+    children:children
+    budget:budget
+    filters:filters
+              completionHandler: ^(TicketDetailResponse output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var TripifyTicketsServiceApi = require('tripify_tickets_service_api');
+var defaultClient = TripifyTicketsServiceApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new TripifyTicketsServiceApi.TicketsApi()
+var xAnonymousId = anona8f91d_f445g4d3_rev1; // {String} Anonymous user identifier
+var xGenerationId = anon_a8f91d_ab91ff23_rev1; // {String} Travel generation identifier
+var xPackRevision = 1; // {Integer} Current pack revision number
+var xGenerationMode = FULL; // {GenerationMode} Generation mode
+var xRequestId = req-123; // {String} Request tracing identifier
+var originCountry = RU; // {String} Origin country ISO Alpha-2
+var originCity = MOW; // {String} Origin city IATA code
+var destinationCountry = AE; // {String} Destination country ISO Alpha-2
+var destinationCity = DXB; // {String} Destination city IATA code
+var dateFrom = 2026-06-01; // {date} Trip start date (outbound departure)
+var dateTo = 2026-06-10; // {date} Trip end date (return departure)
+var currency = RUB; // {Currency} Response currency for the frontend
+var adults = 2; // {Integer} Number of adult travelers
+var opts = {
+  'xTicketsRevision': 1, // {Integer} Tickets revision number
+  'children': 0, // {Integer} Number of child travelers
+  'budget': 50000, // {Long} Optional trip budget in currency
+  'filters': [direct, refundable] // {array[String]} Filters from GET /tickets/filters catalog
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Tickets-searchTicket-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class searchTicketExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new TicketsApi();
+            var xAnonymousId = anona8f91d_f445g4d3_rev1;  // String | Anonymous user identifier (default to null)
+            var xGenerationId = anon_a8f91d_ab91ff23_rev1;  // String | Travel generation identifier (default to null)
+            var xPackRevision = 1;  // Integer | Current pack revision number (default to null)
+            var xGenerationMode = new GenerationMode(); // GenerationMode | Generation mode (default to null)
+            var xRequestId = req-123;  // String | Request tracing identifier (default to null)
+            var originCountry = RU;  // String | Origin country ISO Alpha-2 (default to null)
+            var originCity = MOW;  // String | Origin city IATA code (default to null)
+            var destinationCountry = AE;  // String | Destination country ISO Alpha-2 (default to null)
+            var destinationCity = DXB;  // String | Destination city IATA code (default to null)
+            var dateFrom = 2026-06-01;  // date | Trip start date (outbound departure) (default to null)
+            var dateTo = 2026-06-10;  // date | Trip end date (return departure) (default to null)
+            var currency = new Currency(); // Currency | Response currency for the frontend (default to null)
+            var adults = 2;  // Integer | Number of adult travelers (default to null)
+            var xTicketsRevision = 1;  // Integer | Tickets revision number (optional)  (default to null)
+            var children = 0;  // Integer | Number of child travelers (optional)  (default to 0)
+            var budget = 50000;  // Long | Optional trip budget in currency (optional)  (default to null)
+            var filters = new array[String](); // array[String] | Filters from GET /tickets/filters catalog (optional)  (default to null)
+
+            try {
+                // Search ticket
+                TicketDetailResponse result = apiInstance.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling TicketsApi.searchTicket: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\TicketsApi();
+$xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
+$xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
+$xPackRevision = 1; // Integer | Current pack revision number
+$xGenerationMode = FULL; // GenerationMode | Generation mode
+$xRequestId = req-123; // String | Request tracing identifier
+$originCountry = RU; // String | Origin country ISO Alpha-2
+$originCity = MOW; // String | Origin city IATA code
+$destinationCountry = AE; // String | Destination country ISO Alpha-2
+$destinationCity = DXB; // String | Destination city IATA code
+$dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
+$dateTo = 2026-06-10; // date | Trip end date (return departure)
+$currency = RUB; // Currency | Response currency for the frontend
+$adults = 2; // Integer | Number of adult travelers
+$xTicketsRevision = 1; // Integer | Tickets revision number
+$children = 0; // Integer | Number of child travelers
+$budget = 50000; // Long | Optional trip budget in currency
+$filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
+
+try {
+    $result = $api_instance->searchTicket($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $originCountry, $originCity, $destinationCountry, $destinationCity, $dateFrom, $dateTo, $currency, $adults, $xTicketsRevision, $children, $budget, $filters);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling TicketsApi->searchTicket: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::TicketsApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::TicketsApi->new();
+my $xAnonymousId = anona8f91d_f445g4d3_rev1; # String | Anonymous user identifier
+my $xGenerationId = anon_a8f91d_ab91ff23_rev1; # String | Travel generation identifier
+my $xPackRevision = 1; # Integer | Current pack revision number
+my $xGenerationMode = FULL; # GenerationMode | Generation mode
+my $xRequestId = req-123; # String | Request tracing identifier
+my $originCountry = RU; # String | Origin country ISO Alpha-2
+my $originCity = MOW; # String | Origin city IATA code
+my $destinationCountry = AE; # String | Destination country ISO Alpha-2
+my $destinationCity = DXB; # String | Destination city IATA code
+my $dateFrom = 2026-06-01; # date | Trip start date (outbound departure)
+my $dateTo = 2026-06-10; # date | Trip end date (return departure)
+my $currency = RUB; # Currency | Response currency for the frontend
+my $adults = 2; # Integer | Number of adult travelers
+my $xTicketsRevision = 1; # Integer | Tickets revision number
+my $children = 0; # Integer | Number of child travelers
+my $budget = 50000; # Long | Optional trip budget in currency
+my $filters = [[direct, refundable]]; # array[String] | Filters from GET /tickets/filters catalog
+
+eval {
+    my $result = $api_instance->searchTicket(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, originCountry => $originCountry, originCity => $originCity, destinationCountry => $destinationCountry, destinationCity => $destinationCity, dateFrom => $dateFrom, dateTo => $dateTo, currency => $currency, adults => $adults, xTicketsRevision => $xTicketsRevision, children => $children, budget => $budget, filters => $filters);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling TicketsApi->searchTicket: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.TicketsApi()
+xAnonymousId = anona8f91d_f445g4d3_rev1 # String | Anonymous user identifier (default to null)
+xGenerationId = anon_a8f91d_ab91ff23_rev1 # String | Travel generation identifier (default to null)
+xPackRevision = 1 # Integer | Current pack revision number (default to null)
+xGenerationMode = FULL # GenerationMode | Generation mode (default to null)
+xRequestId = req-123 # String | Request tracing identifier (default to null)
+originCountry = RU # String | Origin country ISO Alpha-2 (default to null)
+originCity = MOW # String | Origin city IATA code (default to null)
+destinationCountry = AE # String | Destination country ISO Alpha-2 (default to null)
+destinationCity = DXB # String | Destination city IATA code (default to null)
+dateFrom = 2026-06-01 # date | Trip start date (outbound departure) (default to null)
+dateTo = 2026-06-10 # date | Trip end date (return departure) (default to null)
+currency = RUB # Currency | Response currency for the frontend (default to null)
+adults = 2 # Integer | Number of adult travelers (default to null)
+xTicketsRevision = 1 # Integer | Tickets revision number (optional) (default to null)
+children = 0 # Integer | Number of child travelers (optional) (default to 0)
+budget = 50000 # Long | Optional trip budget in currency (optional) (default to null)
+filters = [direct, refundable] # array[String] | Filters from GET /tickets/filters catalog (optional) (default to null)
+
+try:
+    # Search ticket
+    api_response = api_instance.search_ticket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision=xTicketsRevision, children=children, budget=budget, filters=filters)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling TicketsApi->searchTicket: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tickets-searchTicket-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate TicketsApi;
+
+pub fn main() {
+    let xAnonymousId = anona8f91d_f445g4d3_rev1; // String
+    let xGenerationId = anon_a8f91d_ab91ff23_rev1; // String
+    let xPackRevision = 1; // Integer
+    let xGenerationMode = FULL; // GenerationMode
+    let xRequestId = req-123; // String
+    let originCountry = RU; // String
+    let originCity = MOW; // String
+    let destinationCountry = AE; // String
+    let destinationCity = DXB; // String
+    let dateFrom = 2026-06-01; // date
+    let dateTo = 2026-06-10; // date
+    let currency = RUB; // Currency
+    let adults = 2; // Integer
+    let xTicketsRevision = 1; // Integer
+    let children = 0; // Integer
+    let budget = 50000; // Long
+    let filters = [direct, refundable]; // array[String]
+
+    let mut context = TicketsApi::Context::default();
+    let result = client.searchTicket(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">X-Anonymous-Id*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xAnonymousId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Anonymous user identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Generation-Id*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xGenerationId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Travel generation identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Pack-Revision*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xPackRevision">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Current pack revision number
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Generation-Mode*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xGenerationMode">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    GenerationMode
+                </span>
+
+                    <div class="inner description marked">
+Generation mode
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Request-Id*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xRequestId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Request tracing identifier
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                  <tr><td style="width:150px;">X-Tickets-Revision</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_xTicketsRevision">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Tickets revision number
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">origin_country*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_originCountry">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Origin country ISO Alpha-2
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">origin_city*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_originCity">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Origin city IATA code
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">destination_country*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_destinationCountry">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Destination country ISO Alpha-2
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">destination_city*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_destinationCity">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Destination city IATA code
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">date_from*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_dateFrom">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    date
+                </span>
+                    <span class="format">
+                        (date)
+                    </span>
+
+                    <div class="inner description marked">
+Trip start date (outbound departure)
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">date_to*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_dateTo">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    date
+                </span>
+                    <span class="format">
+                        (date)
+                    </span>
+
+                    <div class="inner description marked">
+Trip end date (return departure)
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">currency*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_currency">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Currency
+                </span>
+
+                    <div class="inner description marked">
+Response currency for the frontend
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">adults*</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_adults">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Number of adult travelers
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">children</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_children">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Number of child travelers
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">budget</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_budget">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Long
+                </span>
+                    <span class="format">
+                        (int64)
+                    </span>
+
+                    <div class="inner description marked">
+Optional trip budget in currency
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">filters</td>
+<td>
+
+
+    <div id="d2e199_searchTicket_filters">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    array[String]
+                </span>
+
+                    <div class="inner description marked">
+Filters from GET /tickets/filters catalog
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Tickets-searchTicket-title-200"></h3>
+                            <p id="examples-Tickets-searchTicket-description-200" class="marked"></p>
+                            <script>
+                              var responseTickets200_description = `First matching ticket details fetched successfully`;
+                              var responseTickets200_description_break = responseTickets200_description.indexOf('\n');
+                              if (responseTickets200_description_break == -1) {
+                                $("#examples-Tickets-searchTicket-title-200").text("Status: 200 - " + responseTickets200_description);
+                              } else {
+                                $("#examples-Tickets-searchTicket-title-200").text("Status: 200 - " + responseTickets200_description.substring(0, responseTickets200_description_break));
+                                $("#examples-Tickets-searchTicket-description-200").html(responseTickets200_description.substring(responseTickets200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Tickets-searchTicket-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Tickets-searchTicket-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Tickets-searchTicket-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Tickets-searchTicket-200-schema">
+                                <div id="responses-Tickets-searchTicket-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "First matching ticket details fetched successfully",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/TicketDetailResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Tickets-searchTicket-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Tickets-searchTicket-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Tickets-searchTicket-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Tickets-searchTicket-title-400"></h3>
+                            <p id="examples-Tickets-searchTicket-description-400" class="marked"></p>
+                            <script>
+                              var responseTickets400_description = `Bad request`;
+                              var responseTickets400_description_break = responseTickets400_description.indexOf('\n');
+                              if (responseTickets400_description_break == -1) {
+                                $("#examples-Tickets-searchTicket-title-400").text("Status: 400 - " + responseTickets400_description);
+                              } else {
+                                $("#examples-Tickets-searchTicket-title-400").text("Status: 400 - " + responseTickets400_description.substring(0, responseTickets400_description_break));
+                                $("#examples-Tickets-searchTicket-description-400").html(responseTickets400_description.substring(responseTickets400_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Tickets-searchTicket-400" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Tickets-searchTicket-400-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Tickets-searchTicket-400-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Tickets-searchTicket-400-schema">
+                                <div id="responses-Tickets-searchTicket-schema-400" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Bad request",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ErrorResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Tickets-searchTicket-400-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Tickets-searchTicket-schema-400');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Tickets-searchTicket-400-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Tickets-searchTicket-title-404"></h3>
+                            <p id="examples-Tickets-searchTicket-description-404" class="marked"></p>
+                            <script>
+                              var responseTickets404_description = `Ticket not found`;
+                              var responseTickets404_description_break = responseTickets404_description.indexOf('\n');
+                              if (responseTickets404_description_break == -1) {
+                                $("#examples-Tickets-searchTicket-title-404").text("Status: 404 - " + responseTickets404_description);
+                              } else {
+                                $("#examples-Tickets-searchTicket-title-404").text("Status: 404 - " + responseTickets404_description.substring(0, responseTickets404_description_break));
+                                $("#examples-Tickets-searchTicket-description-404").html(responseTickets404_description.substring(responseTickets404_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Tickets-searchTicket-404" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Tickets-searchTicket-404-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Tickets-searchTicket-404-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Tickets-searchTicket-404-schema">
+                                <div id="responses-Tickets-searchTicket-schema-404" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Ticket not found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ErrorResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Tickets-searchTicket-404-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Tickets-searchTicket-schema-404');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Tickets-searchTicket-404-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Tickets-searchTicket-title-500"></h3>
+                            <p id="examples-Tickets-searchTicket-description-500" class="marked"></p>
+                            <script>
+                              var responseTickets500_description = `Internal server error`;
+                              var responseTickets500_description_break = responseTickets500_description.indexOf('\n');
+                              if (responseTickets500_description_break == -1) {
+                                $("#examples-Tickets-searchTicket-title-500").text("Status: 500 - " + responseTickets500_description);
+                              } else {
+                                $("#examples-Tickets-searchTicket-title-500").text("Status: 500 - " + responseTickets500_description.substring(0, responseTickets500_description_break));
+                                $("#examples-Tickets-searchTicket-description-500").html(responseTickets500_description.substring(responseTickets500_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Tickets-searchTicket-500" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Tickets-searchTicket-500-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Tickets-searchTicket-500-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Tickets-searchTicket-500-schema">
+                                <div id="responses-Tickets-searchTicket-schema-500" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Internal server error",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/ErrorResponse"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Tickets-searchTicket-500-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Tickets-searchTicket-schema-500');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Tickets-searchTicket-500-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Tickets-searchTickets">
                       <article id="api-Tickets-searchTickets-0" data-group="User" data-name="searchTickets" data-version="0">
                         <div class="pull-left">
@@ -3955,1179 +5128,6 @@ Filters from GET /tickets/filters catalog
                                   </script>
                                 </div>
                                 <input id='responses-Tickets-searchTickets-500-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                        </article>
-                      </div>
-                      <hr>
-                    <div id="api-Tickets-searchTicketsWithPackContext">
-                      <article id="api-Tickets-searchTicketsWithPackContext-0" data-group="User" data-name="searchTicketsWithPackContext" data-version="0">
-                        <div class="pull-left">
-                          <h1>searchTicketsWithPackContext</h1>
-                          <p>Search tickets with pack context</p>
-                        </div>
-                        <div class="pull-right"></div>
-                        <div class="clearfix"></div>
-                        <p></p>
-                        <p class="marked">Те же headers и query-параметры search context, что и GET /tickets/{id}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. JWT в Authorization опционален.
-</p>
-                        <p></p>
-                        <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tickets/search</span></code></pre>
-                        <p>
-                          <h3>Usage and SDK Samples</h3>
-                        </p>
-                        <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Tickets-searchTicketsWithPackContext-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-dart">Dart</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-python">Python</a></li>
-                          <li class=""><a href="#examples-Tickets-searchTicketsWithPackContext-0-rust">Rust</a></li>
-                        </ul>
-
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Tickets-searchTicketsWithPackContext-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
- -H "Authorization: Bearer [[accessToken]]" \
- -H "Accept: application/json" \
- "http://localhost:8080/tickets/search?origin_country=RU&origin_city=MOW&destination_country=AE&destination_city=DXB&date_from=2026-06-01&date_to=2026-06-10&currency=RUB&adults=2&children=0&budget=50000&filters=[direct, refundable]"
-</code></pre>
-                          </div>
-                          <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-java">
-                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
-import org.openapitools.client.auth.*;
-import org.openapitools.client.model.*;
-import org.openapitools.client.api.TicketsApi;
-
-import java.io.File;
-import java.util.*;
-
-public class TicketsApiExample {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-
-        // Configure Bearer (JWT) access token for authorization: bearerAuth
-        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
-        bearerAuth.setBearerToken("BEARER TOKEN");
-
-        // Create an instance of the API class
-        TicketsApi apiInstance = new TicketsApi();
-        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
-        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
-        Integer xPackRevision = 1; // Integer | Current pack revision number
-        GenerationMode xGenerationMode = FULL; // GenerationMode | Generation mode
-        String xRequestId = req-123; // String | Request tracing identifier
-        String originCountry = RU; // String | Origin country ISO Alpha-2
-        String originCity = MOW; // String | Origin city IATA code
-        String destinationCountry = AE; // String | Destination country ISO Alpha-2
-        String destinationCity = DXB; // String | Destination city IATA code
-        date dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
-        date dateTo = 2026-06-10; // date | Trip end date (return departure)
-        Currency currency = RUB; // Currency | Response currency for the frontend
-        Integer adults = 2; // Integer | Number of adult travelers
-        Integer xTicketsRevision = 1; // Integer | Tickets revision number
-        Integer children = 0; // Integer | Number of child travelers
-        Long budget = 50000; // Long | Optional trip budget in currency
-        array[String] filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
-
-        try {
-            TicketDetailResponse result = apiInstance.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling TicketsApi#searchTicketsWithPackContext");
-            e.printStackTrace();
-        }
-    }
-}
-</code></pre>
-                          </div>
-
-                          <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-dart">
-                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
-
-final api_instance = DefaultApi();
-
-final String xAnonymousId = new String(); // String | Anonymous user identifier
-final String xGenerationId = new String(); // String | Travel generation identifier
-final Integer xPackRevision = new Integer(); // Integer | Current pack revision number
-final GenerationMode xGenerationMode = new GenerationMode(); // GenerationMode | Generation mode
-final String xRequestId = new String(); // String | Request tracing identifier
-final String originCountry = new String(); // String | Origin country ISO Alpha-2
-final String originCity = new String(); // String | Origin city IATA code
-final String destinationCountry = new String(); // String | Destination country ISO Alpha-2
-final String destinationCity = new String(); // String | Destination city IATA code
-final date dateFrom = new date(); // date | Trip start date (outbound departure)
-final date dateTo = new date(); // date | Trip end date (return departure)
-final Currency currency = new Currency(); // Currency | Response currency for the frontend
-final Integer adults = new Integer(); // Integer | Number of adult travelers
-final Integer xTicketsRevision = new Integer(); // Integer | Tickets revision number
-final Integer children = new Integer(); // Integer | Number of child travelers
-final Long budget = new Long(); // Long | Optional trip budget in currency
-final array[String] filters = new array[String](); // array[String] | Filters from GET /tickets/filters catalog
-
-try {
-    final result = await api_instance.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
-    print(result);
-} catch (e) {
-    print('Exception when calling DefaultApi->searchTicketsWithPackContext: $e\n');
-}
-
-</code></pre>
-                          </div>
-
-                          <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-android">
-                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.TicketsApi;
-
-public class TicketsApiExample {
-    public static void main(String[] args) {
-        TicketsApi apiInstance = new TicketsApi();
-        String xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
-        String xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
-        Integer xPackRevision = 1; // Integer | Current pack revision number
-        GenerationMode xGenerationMode = FULL; // GenerationMode | Generation mode
-        String xRequestId = req-123; // String | Request tracing identifier
-        String originCountry = RU; // String | Origin country ISO Alpha-2
-        String originCity = MOW; // String | Origin city IATA code
-        String destinationCountry = AE; // String | Destination country ISO Alpha-2
-        String destinationCity = DXB; // String | Destination city IATA code
-        date dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
-        date dateTo = 2026-06-10; // date | Trip end date (return departure)
-        Currency currency = RUB; // Currency | Response currency for the frontend
-        Integer adults = 2; // Integer | Number of adult travelers
-        Integer xTicketsRevision = 1; // Integer | Tickets revision number
-        Integer children = 0; // Integer | Number of child travelers
-        Long budget = 50000; // Long | Optional trip budget in currency
-        array[String] filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
-
-        try {
-            TicketDetailResponse result = apiInstance.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling TicketsApi#searchTicketsWithPackContext");
-            e.printStackTrace();
-        }
-    }
-}</code></pre>
-                          </div>
-  <!--
-  <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-groovy">
-  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-  </div> -->
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
-
-// Configure Bearer (JWT) access token for authorization: bearerAuth
-[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
-
-// Create an instance of the API class
-TicketsApi *apiInstance = [[TicketsApi alloc] init];
-String *xAnonymousId = anona8f91d_f445g4d3_rev1; // Anonymous user identifier (default to null)
-String *xGenerationId = anon_a8f91d_ab91ff23_rev1; // Travel generation identifier (default to null)
-Integer *xPackRevision = 1; // Current pack revision number (default to null)
-GenerationMode *xGenerationMode = FULL; // Generation mode (default to null)
-String *xRequestId = req-123; // Request tracing identifier (default to null)
-String *originCountry = RU; // Origin country ISO Alpha-2 (default to null)
-String *originCity = MOW; // Origin city IATA code (default to null)
-String *destinationCountry = AE; // Destination country ISO Alpha-2 (default to null)
-String *destinationCity = DXB; // Destination city IATA code (default to null)
-date *dateFrom = 2026-06-01; // Trip start date (outbound departure) (default to null)
-date *dateTo = 2026-06-10; // Trip end date (return departure) (default to null)
-Currency *currency = RUB; // Response currency for the frontend (default to null)
-Integer *adults = 2; // Number of adult travelers (default to null)
-Integer *xTicketsRevision = 1; // Tickets revision number (optional) (default to null)
-Integer *children = 0; // Number of child travelers (optional) (default to 0)
-Long *budget = 50000; // Optional trip budget in currency (optional) (default to null)
-array[String] *filters = [direct, refundable]; // Filters from GET /tickets/filters catalog (optional) (default to null)
-
-// Search tickets with pack context
-[apiInstance searchTicketsWithPackContextWith:xAnonymousId
-    xGenerationId:xGenerationId
-    xPackRevision:xPackRevision
-    xGenerationMode:xGenerationMode
-    xRequestId:xRequestId
-    originCountry:originCountry
-    originCity:originCity
-    destinationCountry:destinationCountry
-    destinationCity:destinationCity
-    dateFrom:dateFrom
-    dateTo:dateTo
-    currency:currency
-    adults:adults
-    xTicketsRevision:xTicketsRevision
-    children:children
-    budget:budget
-    filters:filters
-              completionHandler: ^(TicketDetailResponse output, NSError* error) {
-    if (output) {
-        NSLog(@"%@", output);
-    }
-    if (error) {
-        NSLog(@"Error: %@", error);
-    }
-}];
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-javascript">
-                              <pre class="prettyprint"><code class="language-js">var TripifyTicketsServiceApi = require('tripify_tickets_service_api');
-var defaultClient = TripifyTicketsServiceApi.ApiClient.instance;
-
-// Configure Bearer (JWT) access token for authorization: bearerAuth
-var bearerAuth = defaultClient.authentications['bearerAuth'];
-bearerAuth.accessToken = "YOUR ACCESS TOKEN";
-
-// Create an instance of the API class
-var api = new TripifyTicketsServiceApi.TicketsApi()
-var xAnonymousId = anona8f91d_f445g4d3_rev1; // {String} Anonymous user identifier
-var xGenerationId = anon_a8f91d_ab91ff23_rev1; // {String} Travel generation identifier
-var xPackRevision = 1; // {Integer} Current pack revision number
-var xGenerationMode = FULL; // {GenerationMode} Generation mode
-var xRequestId = req-123; // {String} Request tracing identifier
-var originCountry = RU; // {String} Origin country ISO Alpha-2
-var originCity = MOW; // {String} Origin city IATA code
-var destinationCountry = AE; // {String} Destination country ISO Alpha-2
-var destinationCity = DXB; // {String} Destination city IATA code
-var dateFrom = 2026-06-01; // {date} Trip start date (outbound departure)
-var dateTo = 2026-06-10; // {date} Trip end date (return departure)
-var currency = RUB; // {Currency} Response currency for the frontend
-var adults = 2; // {Integer} Number of adult travelers
-var opts = {
-  'xTicketsRevision': 1, // {Integer} Tickets revision number
-  'children': 0, // {Integer} Number of child travelers
-  'budget': 50000, // {Long} Optional trip budget in currency
-  'filters': [direct, refundable] // {array[String]} Filters from GET /tickets/filters catalog
-};
-
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-};
-api.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, opts, callback);
-</code></pre>
-                            </div>
-
-                            <!--<div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-angular">
-              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
-            </div>-->
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-csharp">
-                              <pre class="prettyprint"><code class="language-cs">using System;
-using System.Diagnostics;
-using Org.OpenAPITools.Api;
-using Org.OpenAPITools.Client;
-using Org.OpenAPITools.Model;
-
-namespace Example
-{
-    public class searchTicketsWithPackContextExample
-    {
-        public void main()
-        {
-            // Configure Bearer (JWT) access token for authorization: bearerAuth
-            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
-
-            // Create an instance of the API class
-            var apiInstance = new TicketsApi();
-            var xAnonymousId = anona8f91d_f445g4d3_rev1;  // String | Anonymous user identifier (default to null)
-            var xGenerationId = anon_a8f91d_ab91ff23_rev1;  // String | Travel generation identifier (default to null)
-            var xPackRevision = 1;  // Integer | Current pack revision number (default to null)
-            var xGenerationMode = new GenerationMode(); // GenerationMode | Generation mode (default to null)
-            var xRequestId = req-123;  // String | Request tracing identifier (default to null)
-            var originCountry = RU;  // String | Origin country ISO Alpha-2 (default to null)
-            var originCity = MOW;  // String | Origin city IATA code (default to null)
-            var destinationCountry = AE;  // String | Destination country ISO Alpha-2 (default to null)
-            var destinationCity = DXB;  // String | Destination city IATA code (default to null)
-            var dateFrom = 2026-06-01;  // date | Trip start date (outbound departure) (default to null)
-            var dateTo = 2026-06-10;  // date | Trip end date (return departure) (default to null)
-            var currency = new Currency(); // Currency | Response currency for the frontend (default to null)
-            var adults = 2;  // Integer | Number of adult travelers (default to null)
-            var xTicketsRevision = 1;  // Integer | Tickets revision number (optional)  (default to null)
-            var children = 0;  // Integer | Number of child travelers (optional)  (default to 0)
-            var budget = 50000;  // Long | Optional trip budget in currency (optional)  (default to null)
-            var filters = new array[String](); // array[String] | Filters from GET /tickets/filters catalog (optional)  (default to null)
-
-            try {
-                // Search tickets with pack context
-                TicketDetailResponse result = apiInstance.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters);
-                Debug.WriteLine(result);
-            } catch (Exception e) {
-                Debug.Print("Exception when calling TicketsApi.searchTicketsWithPackContext: " + e.Message );
-            }
-        }
-    }
-}
-</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-php">
-                              <pre class="prettyprint"><code class="language-php"><&#63;php
-require_once(__DIR__ . '/vendor/autoload.php');
-
-// Configure Bearer (JWT) access token for authorization: bearerAuth
-OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
-
-// Create an instance of the API class
-$api_instance = new OpenAPITools\Client\Api\TicketsApi();
-$xAnonymousId = anona8f91d_f445g4d3_rev1; // String | Anonymous user identifier
-$xGenerationId = anon_a8f91d_ab91ff23_rev1; // String | Travel generation identifier
-$xPackRevision = 1; // Integer | Current pack revision number
-$xGenerationMode = FULL; // GenerationMode | Generation mode
-$xRequestId = req-123; // String | Request tracing identifier
-$originCountry = RU; // String | Origin country ISO Alpha-2
-$originCity = MOW; // String | Origin city IATA code
-$destinationCountry = AE; // String | Destination country ISO Alpha-2
-$destinationCity = DXB; // String | Destination city IATA code
-$dateFrom = 2026-06-01; // date | Trip start date (outbound departure)
-$dateTo = 2026-06-10; // date | Trip end date (return departure)
-$currency = RUB; // Currency | Response currency for the frontend
-$adults = 2; // Integer | Number of adult travelers
-$xTicketsRevision = 1; // Integer | Tickets revision number
-$children = 0; // Integer | Number of child travelers
-$budget = 50000; // Long | Optional trip budget in currency
-$filters = [direct, refundable]; // array[String] | Filters from GET /tickets/filters catalog
-
-try {
-    $result = $api_instance->searchTicketsWithPackContext($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $originCountry, $originCity, $destinationCountry, $destinationCity, $dateFrom, $dateTo, $currency, $adults, $xTicketsRevision, $children, $budget, $filters);
-    print_r($result);
-} catch (Exception $e) {
-    echo 'Exception when calling TicketsApi->searchTicketsWithPackContext: ', $e->getMessage(), PHP_EOL;
-}
-?></code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-perl">
-                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
-use WWW::OPenAPIClient::Configuration;
-use WWW::OPenAPIClient::TicketsApi;
-
-# Configure Bearer (JWT) access token for authorization: bearerAuth
-$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
-
-# Create an instance of the API class
-my $api_instance = WWW::OPenAPIClient::TicketsApi->new();
-my $xAnonymousId = anona8f91d_f445g4d3_rev1; # String | Anonymous user identifier
-my $xGenerationId = anon_a8f91d_ab91ff23_rev1; # String | Travel generation identifier
-my $xPackRevision = 1; # Integer | Current pack revision number
-my $xGenerationMode = FULL; # GenerationMode | Generation mode
-my $xRequestId = req-123; # String | Request tracing identifier
-my $originCountry = RU; # String | Origin country ISO Alpha-2
-my $originCity = MOW; # String | Origin city IATA code
-my $destinationCountry = AE; # String | Destination country ISO Alpha-2
-my $destinationCity = DXB; # String | Destination city IATA code
-my $dateFrom = 2026-06-01; # date | Trip start date (outbound departure)
-my $dateTo = 2026-06-10; # date | Trip end date (return departure)
-my $currency = RUB; # Currency | Response currency for the frontend
-my $adults = 2; # Integer | Number of adult travelers
-my $xTicketsRevision = 1; # Integer | Tickets revision number
-my $children = 0; # Integer | Number of child travelers
-my $budget = 50000; # Long | Optional trip budget in currency
-my $filters = [[direct, refundable]]; # array[String] | Filters from GET /tickets/filters catalog
-
-eval {
-    my $result = $api_instance->searchTicketsWithPackContext(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, originCountry => $originCountry, originCity => $originCity, destinationCountry => $destinationCountry, destinationCity => $destinationCity, dateFrom => $dateFrom, dateTo => $dateTo, currency => $currency, adults => $adults, xTicketsRevision => $xTicketsRevision, children => $children, budget => $budget, filters => $filters);
-    print Dumper($result);
-};
-if ($@) {
-    warn "Exception when calling TicketsApi->searchTicketsWithPackContext: $@\n";
-}</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-python">
-                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
-import time
-import openapi_client
-from openapi_client.rest import ApiException
-from pprint import pprint
-
-# Configure Bearer (JWT) access token for authorization: bearerAuth
-openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
-
-# Create an instance of the API class
-api_instance = openapi_client.TicketsApi()
-xAnonymousId = anona8f91d_f445g4d3_rev1 # String | Anonymous user identifier (default to null)
-xGenerationId = anon_a8f91d_ab91ff23_rev1 # String | Travel generation identifier (default to null)
-xPackRevision = 1 # Integer | Current pack revision number (default to null)
-xGenerationMode = FULL # GenerationMode | Generation mode (default to null)
-xRequestId = req-123 # String | Request tracing identifier (default to null)
-originCountry = RU # String | Origin country ISO Alpha-2 (default to null)
-originCity = MOW # String | Origin city IATA code (default to null)
-destinationCountry = AE # String | Destination country ISO Alpha-2 (default to null)
-destinationCity = DXB # String | Destination city IATA code (default to null)
-dateFrom = 2026-06-01 # date | Trip start date (outbound departure) (default to null)
-dateTo = 2026-06-10 # date | Trip end date (return departure) (default to null)
-currency = RUB # Currency | Response currency for the frontend (default to null)
-adults = 2 # Integer | Number of adult travelers (default to null)
-xTicketsRevision = 1 # Integer | Tickets revision number (optional) (default to null)
-children = 0 # Integer | Number of child travelers (optional) (default to 0)
-budget = 50000 # Long | Optional trip budget in currency (optional) (default to null)
-filters = [direct, refundable] # array[String] | Filters from GET /tickets/filters catalog (optional) (default to null)
-
-try:
-    # Search tickets with pack context
-    api_response = api_instance.search_tickets_with_pack_context(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision=xTicketsRevision, children=children, budget=budget, filters=filters)
-    pprint(api_response)
-except ApiException as e:
-    print("Exception when calling TicketsApi->searchTicketsWithPackContext: %s\n" % e)</code></pre>
-                            </div>
-
-                            <div class="tab-pane" id="examples-Tickets-searchTicketsWithPackContext-0-rust">
-                              <pre class="prettyprint"><code class="language-rust">extern crate TicketsApi;
-
-pub fn main() {
-    let xAnonymousId = anona8f91d_f445g4d3_rev1; // String
-    let xGenerationId = anon_a8f91d_ab91ff23_rev1; // String
-    let xPackRevision = 1; // Integer
-    let xGenerationMode = FULL; // GenerationMode
-    let xRequestId = req-123; // String
-    let originCountry = RU; // String
-    let originCity = MOW; // String
-    let destinationCountry = AE; // String
-    let destinationCity = DXB; // String
-    let dateFrom = 2026-06-01; // date
-    let dateTo = 2026-06-10; // date
-    let currency = RUB; // Currency
-    let adults = 2; // Integer
-    let xTicketsRevision = 1; // Integer
-    let children = 0; // Integer
-    let budget = 50000; // Long
-    let filters = [direct, refundable]; // array[String]
-
-    let mut context = TicketsApi::Context::default();
-    let result = client.searchTicketsWithPackContext(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xTicketsRevision, children, budget, filters, &context).wait();
-
-    println!("{:?}", result);
-}
-</code></pre>
-                            </div>
-                          </div>
-
-                          <h2>Scopes</h2>
-                          <table>
-                            
-                          </table>
-
-                          <h2>Parameters</h2>
-
-
-                            <div class="methodsubtabletitle">Header parameters</div>
-                            <table id="methodsubtable">
-                              <tr>
-                                <th width="150px">Name</th>
-                                <th>Description</th>
-                              </tr>
-                                  <tr><td style="width:150px;">X-Anonymous-Id*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xAnonymousId">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Anonymous user identifier
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                  <tr><td style="width:150px;">X-Generation-Id*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xGenerationId">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Travel generation identifier
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                  <tr><td style="width:150px;">X-Pack-Revision*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xPackRevision">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Integer
-                </span>
-
-                    <div class="inner description marked">
-Current pack revision number
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                  <tr><td style="width:150px;">X-Generation-Mode*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xGenerationMode">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    GenerationMode
-                </span>
-
-                    <div class="inner description marked">
-Generation mode
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                  <tr><td style="width:150px;">X-Request-Id*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xRequestId">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Request tracing identifier
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                  <tr><td style="width:150px;">X-Tickets-Revision</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_xTicketsRevision">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Integer
-                </span>
-
-                    <div class="inner description marked">
-Tickets revision number
-                    </div>
-            </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                            </table>
-
-
-
-                            <div class="methodsubtabletitle">Query parameters</div>
-                            <table id="methodsubtable">
-                              <tr>
-                                <th width="150px">Name</th>
-                                <th>Description</th>
-                              </tr>
-                                <tr><td style="width:150px;">origin_country*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_originCountry">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Origin country ISO Alpha-2
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">origin_city*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_originCity">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Origin city IATA code
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">destination_country*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_destinationCountry">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Destination country ISO Alpha-2
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">destination_city*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_destinationCity">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    String
-                </span>
-
-                    <div class="inner description marked">
-Destination city IATA code
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">date_from*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_dateFrom">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    date
-                </span>
-                    <span class="format">
-                        (date)
-                    </span>
-
-                    <div class="inner description marked">
-Trip start date (outbound departure)
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">date_to*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_dateTo">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    date
-                </span>
-                    <span class="format">
-                        (date)
-                    </span>
-
-                    <div class="inner description marked">
-Trip end date (return departure)
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">currency*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_currency">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Currency
-                </span>
-
-                    <div class="inner description marked">
-Response currency for the frontend
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">adults*</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_adults">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Integer
-                </span>
-
-                    <div class="inner description marked">
-Number of adult travelers
-                    </div>
-            </div>
-                <div class="inner required">
-                    Required
-                </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">children</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_children">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Integer
-                </span>
-
-                    <div class="inner description marked">
-Number of child travelers
-                    </div>
-            </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">budget</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_budget">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    Long
-                </span>
-                    <span class="format">
-                        (int64)
-                    </span>
-
-                    <div class="inner description marked">
-Optional trip budget in currency
-                    </div>
-            </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                                <tr><td style="width:150px;">filters</td>
-<td>
-
-
-    <div id="d2e199_searchTicketsWithPackContext_filters">
-        <div class="json-schema-view">
-            <div class="primitive">
-                <span class="type">
-                    array[String]
-                </span>
-
-                    <div class="inner description marked">
-Filters from GET /tickets/filters catalog
-                    </div>
-            </div>
-        </div>
-    </div>
-</td>
-</tr>
-
-                            </table>
-
-                          <h2>Responses</h2>
-                            <h3 id="examples-Tickets-searchTicketsWithPackContext-title-200"></h3>
-                            <p id="examples-Tickets-searchTicketsWithPackContext-description-200" class="marked"></p>
-                            <script>
-                              var responseTickets200_description = `First matching ticket details fetched successfully`;
-                              var responseTickets200_description_break = responseTickets200_description.indexOf('\n');
-                              if (responseTickets200_description_break == -1) {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-200").text("Status: 200 - " + responseTickets200_description);
-                              } else {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-200").text("Status: 200 - " + responseTickets200_description.substring(0, responseTickets200_description_break));
-                                $("#examples-Tickets-searchTicketsWithPackContext-description-200").html(responseTickets200_description.substring(responseTickets200_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-Tickets-searchTicketsWithPackContext-200" class="nav nav-tabs nav-tabs-examples" >
-                                <li class="active">
-                                  <a data-toggle="tab" href="#responses-Tickets-searchTicketsWithPackContext-200-schema">Schema</a>
-                                </li>
-
-
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-Tickets-searchTicketsWithPackContext-200-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Tickets-searchTicketsWithPackContext-200-schema">
-                                <div id="responses-Tickets-searchTicketsWithPackContext-schema-200" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "First matching ticket details fetched successfully",
-  "content" : {
-    "application/json" : {
-      "schema" : {
-        "$ref" : "#/components/schemas/TicketDetailResponse"
-      }
-    }
-  }
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Tickets-searchTicketsWithPackContext-200-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Tickets-searchTicketsWithPackContext-schema-200');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-Tickets-searchTicketsWithPackContext-200-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-Tickets-searchTicketsWithPackContext-title-400"></h3>
-                            <p id="examples-Tickets-searchTicketsWithPackContext-description-400" class="marked"></p>
-                            <script>
-                              var responseTickets400_description = `Bad request`;
-                              var responseTickets400_description_break = responseTickets400_description.indexOf('\n');
-                              if (responseTickets400_description_break == -1) {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-400").text("Status: 400 - " + responseTickets400_description);
-                              } else {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-400").text("Status: 400 - " + responseTickets400_description.substring(0, responseTickets400_description_break));
-                                $("#examples-Tickets-searchTicketsWithPackContext-description-400").html(responseTickets400_description.substring(responseTickets400_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-Tickets-searchTicketsWithPackContext-400" class="nav nav-tabs nav-tabs-examples" >
-                                <li class="active">
-                                  <a data-toggle="tab" href="#responses-Tickets-searchTicketsWithPackContext-400-schema">Schema</a>
-                                </li>
-
-
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-Tickets-searchTicketsWithPackContext-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Tickets-searchTicketsWithPackContext-400-schema">
-                                <div id="responses-Tickets-searchTicketsWithPackContext-schema-400" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "Bad request",
-  "content" : {
-    "application/json" : {
-      "schema" : {
-        "$ref" : "#/components/schemas/ErrorResponse"
-      }
-    }
-  }
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Tickets-searchTicketsWithPackContext-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Tickets-searchTicketsWithPackContext-schema-400');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-Tickets-searchTicketsWithPackContext-400-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-Tickets-searchTicketsWithPackContext-title-404"></h3>
-                            <p id="examples-Tickets-searchTicketsWithPackContext-description-404" class="marked"></p>
-                            <script>
-                              var responseTickets404_description = `Ticket not found`;
-                              var responseTickets404_description_break = responseTickets404_description.indexOf('\n');
-                              if (responseTickets404_description_break == -1) {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-404").text("Status: 404 - " + responseTickets404_description);
-                              } else {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-404").text("Status: 404 - " + responseTickets404_description.substring(0, responseTickets404_description_break));
-                                $("#examples-Tickets-searchTicketsWithPackContext-description-404").html(responseTickets404_description.substring(responseTickets404_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-Tickets-searchTicketsWithPackContext-404" class="nav nav-tabs nav-tabs-examples" >
-                                <li class="active">
-                                  <a data-toggle="tab" href="#responses-Tickets-searchTicketsWithPackContext-404-schema">Schema</a>
-                                </li>
-
-
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-Tickets-searchTicketsWithPackContext-404-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Tickets-searchTicketsWithPackContext-404-schema">
-                                <div id="responses-Tickets-searchTicketsWithPackContext-schema-404" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "Ticket not found",
-  "content" : {
-    "application/json" : {
-      "schema" : {
-        "$ref" : "#/components/schemas/ErrorResponse"
-      }
-    }
-  }
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Tickets-searchTicketsWithPackContext-404-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Tickets-searchTicketsWithPackContext-schema-404');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-Tickets-searchTicketsWithPackContext-404-schema-data' type='hidden' value=''></input>
-                              </div>
-                            </div>
-                            <h3 id="examples-Tickets-searchTicketsWithPackContext-title-500"></h3>
-                            <p id="examples-Tickets-searchTicketsWithPackContext-description-500" class="marked"></p>
-                            <script>
-                              var responseTickets500_description = `Internal server error`;
-                              var responseTickets500_description_break = responseTickets500_description.indexOf('\n');
-                              if (responseTickets500_description_break == -1) {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-500").text("Status: 500 - " + responseTickets500_description);
-                              } else {
-                                $("#examples-Tickets-searchTicketsWithPackContext-title-500").text("Status: 500 - " + responseTickets500_description.substring(0, responseTickets500_description_break));
-                                $("#examples-Tickets-searchTicketsWithPackContext-description-500").html(responseTickets500_description.substring(responseTickets500_description_break));
-                              }
-                            </script>
-
-
-                            <ul id="responses-detail-Tickets-searchTicketsWithPackContext-500" class="nav nav-tabs nav-tabs-examples" >
-                                <li class="active">
-                                  <a data-toggle="tab" href="#responses-Tickets-searchTicketsWithPackContext-500-schema">Schema</a>
-                                </li>
-
-
-
-
-                            </ul>
-
-
-                            <div class="tab-content" id="responses-Tickets-searchTicketsWithPackContext-500-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Tickets-searchTicketsWithPackContext-500-schema">
-                                <div id="responses-Tickets-searchTicketsWithPackContext-schema-500" class="exampleStyle">
-                                  <script>
-                                    $(document).ready(function() {
-                                      var schemaWrapper = {
-  "description" : "Internal server error",
-  "content" : {
-    "application/json" : {
-      "schema" : {
-        "$ref" : "#/components/schemas/ErrorResponse"
-      }
-    }
-  }
-};
-                                      var schema = findNode('schema',schemaWrapper).schema;
-                                      if (!schema) {
-                                        schema = schemaWrapper.schema;
-                                      }
-                                      if (schema == null) {
-                                        return;
-                                      }
-                                      if (schema.$ref != null) {
-                                        schema = defsParser.$refs.get(schema.$ref);
-                                        if (schema.properties != null) {
-                                          Object.keys(schema.properties).forEach( (item) => {
-                                            if (schema.properties[item].$ref != null) {
-                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
-                                            }
-                                          });
-                                        }
-                                      } else if (schema.items != null && schema.items.$ref != null) {
-                                        schema.items = defsParser.$refs.get(schema.items.$ref);
-                                      } else {
-                                        schemaWrapper.definitions = Object.assign({}, defs);
-                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
-                                          console.log(err);
-                                        });
-                                      }
-
-                                      var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Tickets-searchTicketsWithPackContext-500-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Tickets-searchTicketsWithPackContext-schema-500');
-                                      result.empty();
-                                      result.append(view.render());
-                                    });
-                                  </script>
-                                </div>
-                                <input id='responses-Tickets-searchTicketsWithPackContext-500-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>

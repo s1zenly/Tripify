@@ -1,0 +1,403 @@
+{
+  "info": {
+    "_postman_id": "tripify-pack-service-collection",
+    "name": "Tripify Pack Service",
+    "description": "pack-service (Docker / bootRun: :8088)\n\n**GET /v1/packs** — публичная вкладка: search context для всех.\n**GET /v1/packs/popular** — 6 случайных completed паков (только заголовок X-Request-Id).\n**GET /v1/packs/{pack_id}** — детали по id.\n**GET /v1/packs/user-view** — история текущего пользователя (JWT → user_id, иначе X-Anonymous-Id).\n\n**Swagger:** {{baseUrl}}/v3/swagger-ui.html",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8088",
+      "type": "string"
+    },
+    {
+      "key": "xAnonymousId",
+      "value": "anon_postman_test_001",
+      "type": "string"
+    },
+    {
+      "key": "originCountry",
+      "value": "RU",
+      "type": "string"
+    },
+    {
+      "key": "originCity",
+      "value": "MOW",
+      "type": "string"
+    },
+    {
+      "key": "destinationCountry",
+      "value": "TH",
+      "type": "string"
+    },
+    {
+      "key": "destinationCity",
+      "value": "KBV",
+      "type": "string"
+    },
+    {
+      "key": "dateFrom",
+      "value": "2026-06-04",
+      "type": "string"
+    },
+    {
+      "key": "dateTo",
+      "value": "2026-06-26",
+      "type": "string"
+    },
+    {
+      "key": "adults",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "children",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "budget",
+      "value": "1233333",
+      "type": "string"
+    },
+    {
+      "key": "xRequestId",
+      "value": "req-postman-001",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "packId",
+      "value": "01977f2e-29a2-7df4-bdb7-89f54a1d9d2c",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Flow — packs",
+      "description": "Список pack-карточек → детали по id",
+      "item": [
+        {
+          "name": "1. Get packs",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.test('Has items array', () => pm.expect(body.items).to.be.an('array'));",
+                  "  if (body.items && body.items.length > 0) {",
+                  "    const first = body.items[0];",
+                  "    pm.test('PackCard has id', () => pm.expect(first.id).to.be.a('string');",
+                  "    pm.test('PackCard has hotel.name', () => pm.expect(first.hotel).to.have.property('name');",
+                  "    pm.collectionVariables.set('packId', first.id);",
+                  "    console.log('Saved packId:', first.id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/packs?origin_country={{originCountry}}&origin_city={{originCity}}&destination_country={{destinationCountry}}&destination_city={{destinationCity}}&date_from={{dateFrom}}&date_to={{dateTo}}&adults={{adults}}&children={{children}}&budget={{budget}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "packs"],
+              "query": [
+                { "key": "origin_country", "value": "{{originCountry}}" },
+                { "key": "origin_city", "value": "{{originCity}}" },
+                { "key": "destination_country", "value": "{{destinationCountry}}" },
+                { "key": "destination_city", "value": "{{destinationCity}}" },
+                { "key": "date_from", "value": "{{dateFrom}}" },
+                { "key": "date_to", "value": "{{dateTo}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "budget", "value": "{{budget}}" }
+              ]
+            },
+            "description": "Поиск completed PackCard по search context."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get pack by id",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.test('Has hotel details', () => pm.expect(body.hotel).to.be.an('object'));",
+                  "  pm.test('Has ticket details', () => pm.expect(body.ticket).to.be.an('object'));",
+                  "  pm.test('Id matches packId', () => pm.expect(body.id).to.eql(pm.collectionVariables.get('packId')));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/packs/{{packId}}",
+            "description": "Полный Pack: HotelDetails + TicketDetail."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "packs",
+      "item": [
+        {
+          "name": "Get packs",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/packs?origin_country={{originCountry}}&origin_city={{originCity}}&destination_country={{destinationCountry}}&destination_city={{destinationCity}}&date_from={{dateFrom}}&date_to={{dateTo}}&adults={{adults}}&children={{children}}&budget={{budget}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "packs"],
+              "query": [
+                { "key": "origin_country", "value": "{{originCountry}}" },
+                { "key": "origin_city", "value": "{{originCity}}" },
+                { "key": "destination_country", "value": "{{destinationCountry}}" },
+                { "key": "destination_city", "value": "{{destinationCity}}" },
+                { "key": "date_from", "value": "{{dateFrom}}" },
+                { "key": "date_to", "value": "{{dateTo}}" },
+                { "key": "adults", "value": "{{adults}}" },
+                { "key": "children", "value": "{{children}}" },
+                { "key": "budget", "value": "{{budget}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get popular packs",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.test('Has items array', () => pm.expect(body.items).to.be.an('array'));",
+                  "  pm.test('At most 6 items', () => pm.expect(body.items.length).to.be.at.most(6));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/packs/popular",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "packs", "popular"]
+            },
+            "description": "6 случайных completed PackCard. Единственный параметр — заголовок X-Request-Id. Ответ идентичен GET /v1/packs."
+          },
+          "response": []
+        },
+        {
+          "name": "Get pack by id",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/packs/{{packId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Get pack by id — not found (expect 404)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/packs/00000000-0000-0000-0000-000000000000"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user-view",
+      "item": [
+        {
+          "name": "Get packs user view",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('xRequestId', 'req-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.test('Has items array', () => pm.expect(body.items).to.be.an('array'));",
+                  "  pm.test('No user_id field', () => pm.expect(body).to.not.have.property('user_id'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Anonymous-Id", "value": "{{xAnonymousId}}" },
+              { "key": "X-Request-Id", "value": "{{xRequestId}}" }
+            ],
+            "url": "{{baseUrl}}/v1/packs/user-view",
+            "description": "Completed PackCard текущего пользователя. JWT → user_id, иначе X-Anonymous-Id. Без query-параметров."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "docs",
+      "item": [
+        {
+          "name": "Swagger UI",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/v3/swagger-ui.html"
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/v3/api-docs"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

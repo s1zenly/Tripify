@@ -1,0 +1,9 @@
+type: object
+properties:
+  count:
+    type: integer
+    example: 1
+
+  private:
+    type: boolean
+    example: true

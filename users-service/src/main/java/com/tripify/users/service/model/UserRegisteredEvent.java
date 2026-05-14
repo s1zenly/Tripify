@@ -3,12 +3,13 @@ package com.tripify.users.service.model;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tripify.users.service.exception.app.InvalidUserRegisteredEventException;
 
 public record UserRegisteredEvent(
-        UUID userId,
-        String phoneNumber,
-        Instant registeredAt
+        @JsonProperty("userId") UUID userId,
+        @JsonProperty("phoneNumber") String phoneNumber,
+        @JsonProperty("registeredAt") Instant registeredAt
 ) {
 
     public void validate() {

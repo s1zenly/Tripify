@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:24:42.207813975Z[Etc/UTC]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-01T01:20:13.365045+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 @Validated
 @Tag(name = "hotels", description = "Hotels search and details API")
 public interface HotelsApi {
@@ -220,10 +220,10 @@ public interface HotelsApi {
     );
 
 
-    public static final String PATH_SEARCH_HOTELS = "/hotels/search";
+    public static final String PATH_SEARCH_HOTEL = "/hotels/search";
     /**
-     * GET /hotels/search : Search hotels with pack context
-     * Те же headers и query-параметры search context, что и GET /hotels/{hotelId}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. 
+     * GET /hotels/search : Search hotel
+     * Те же headers и query-параметры, что и GET /hotels/{hotelId}, но без id. Возвращает первый подходящий отель как HotelDetails. 
      *
      * @param xAnonymousId Anonymous user identifier (required)
      * @param xGenerationId Travel generation identifier (required)
@@ -248,9 +248,9 @@ public interface HotelsApi {
      *         or Internal server error (status code 500)
      */
     @Operation(
-        operationId = "searchHotels",
-        summary = "Search hotels with pack context",
-        description = "Те же headers и query-параметры search context, что и GET /hotels/{hotelId}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом. ",
+        operationId = "searchHotel",
+        summary = "Search hotel",
+        description = "Те же headers и query-параметры, что и GET /hotels/{hotelId}, но без id. Возвращает первый подходящий отель как HotelDetails. ",
         tags = { "hotels" },
         responses = {
             @ApiResponse(responseCode = "200", description = "First matching hotel details fetched successfully", content = {
@@ -269,11 +269,11 @@ public interface HotelsApi {
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = HotelsApi.PATH_SEARCH_HOTELS,
+        value = HotelsApi.PATH_SEARCH_HOTEL,
         produces = { "application/json" }
     )
     
-    ResponseEntity<HotelDetails> searchHotels(
+    ResponseEntity<HotelDetails> searchHotel(
         @NotNull @Parameter(name = "X-Anonymous-Id", description = "Anonymous user identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Anonymous-Id", required = true) String xAnonymousId,
         @NotNull @Parameter(name = "X-Generation-Id", description = "Travel generation identifier", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Generation-Id", required = true) String xGenerationId,
         @NotNull @Min(1) @Parameter(name = "X-Pack-Revision", description = "Current pack revision number", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "X-Pack-Revision", required = true) Integer xPackRevision,

@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-pack-revisions-table.sql
+  - include:
+      file: db/changelog/changes/002-create-kafka-processed-events-table.sql

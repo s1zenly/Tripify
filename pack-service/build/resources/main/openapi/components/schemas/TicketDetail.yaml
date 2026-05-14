@@ -1,0 +1,11 @@
+allOf:
+  - $ref: './TicketCard.yaml'
+  - type: object
+    properties:
+      journeys:
+        type: array
+        minItems: 1
+        items:
+          $ref: './TicketJourneyDetail.yaml'
+      fare:
+        $ref: './TicketDetailFare.yaml'

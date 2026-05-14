@@ -6,39 +6,79 @@ tripify:
           name: Россия
           local-currency: RUB
           source-url: https://www.tutu.ru/geo/strana/rossiya/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/RU/MOW/09e646c4c5a7d9fa8b7121f0bbc273f140c0cbb0.PNG.jpeg
+            - https://storage.yandexcloud.net/test-hotels-images/RU/MOW/1b21454a152edec0c795699ee22fabf212fb4b67.jpeg
+            - https://storage.yandexcloud.net/test-hotels-images/RU/MOW/263729b8-32e1-40c7-8a49-0fc4aefd4079.jpg
         - alpha2: CN
           name: Китай
           local-currency: CNY
           source-url: https://www.tutu.ru/geo/strana/china/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/CN/BJS/141179565.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/CN/BJS/211490340.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/CN/BJS/315645407.jpg
         - alpha2: AE
           name: ОАЭ
           local-currency: AED
           source-url: https://www.tutu.ru/geo/strana/united_arab_emirates/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/225865058.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/234548985.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/428594127.jpg
         - alpha2: TR
           name: Турция
           local-currency: TRY
           source-url: https://www.tutu.ru/geo/strana/turkey/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/TR/IST/274762139.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/TR/IST/327286985.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/TR/IST/384731980.jpg
         - alpha2: TH
           name: Таиланд
           local-currency: THB
           source-url: https://www.tutu.ru/geo/strana/thailand/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/TH/BKK/146454388.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/TH/BKK/146454910.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/TH/BKK/170837527.jpg
         - alpha2: ES
           name: Испания
           local-currency: EUR
           source-url: https://www.tutu.ru/geo/strana/spain/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/ES/MAD/150789287.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/ES/MAD/159811053.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/ES/MAD/388874667.jpg
         - alpha2: IT
           name: Италия
           local-currency: EUR
           source-url: https://www.tutu.ru/geo/strana/italy/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/IT/ROM/307413718.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/IT/ROM/307429420.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/IT/ROM/440948954.jpg
         - alpha2: FR
           name: Франция
           local-currency: EUR
           source-url: https://www.tutu.ru/geo/strana/france/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/FR/PAR/221859707.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/FR/PAR/26579181.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/FR/PAR/279672282.jpg
         - alpha2: JP
           name: Япония
           local-currency: JPY
           source-url: https://www.tutu.ru/geo/strana/japan/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/JP/TYO/164527493.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/JP/TYO/179341044.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/JP/TYO/209005690.jpg
         - alpha2: EG
           name: Египет
           local-currency: EGP
           source-url: https://www.tutu.ru/geo/strana/egypt/
+          photos:
+            - https://storage.yandexcloud.net/test-hotels-images/EG/CAI/13575978.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/EG/CAI/140729698.jpg
+            - https://storage.yandexcloud.net/test-hotels-images/EG/CAI/233725714.jpg

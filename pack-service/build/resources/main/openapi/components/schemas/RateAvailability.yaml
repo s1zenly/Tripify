@@ -1,0 +1,9 @@
+type: object
+properties:
+  roomsLeft:
+    type: integer
+    example: 5
+
+  soldOut:
+    type: boolean
+    example: false

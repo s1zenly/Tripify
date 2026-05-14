@@ -1,0 +1,61 @@
+tripify:
+  jwt:
+    secret: ${TRIPIFY_JWT_SECRET:da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc}
+  kafka:
+    topics:
+      hotels-pack-viewed: hotels.pack.viewed
+      tickets-pack-viewed: tickets.pack.viewed
+  pack:
+    waiting-timeout: 30m
+    expired-revisions-check-delay: PT5M
+
+server:
+  port: 8088
+
+spring:
+  application:
+    name: pack-service
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  mongodb:
+    uri: ${SPRING_MONGODB_URI:mongodb://localhost:27017/tripify_pack}
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: pack-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/pack_db}
+    username: ${SPRING_DATASOURCE_USERNAME:pack_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:pack_password}
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 2000
+      max-lifetime: 1800000
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
+  swagger-ui:
+    path: /v3/swagger-ui.html
+    disable-swagger-default-url: true
+    try-it-out-enabled: true
+    display-request-duration: true
+    operations-sorter: alpha
+    tags-sorter: alpha

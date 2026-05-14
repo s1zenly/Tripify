@@ -1,0 +1,9 @@
+type: object
+required:
+  - filters
+properties:
+  filters:
+    type: array
+    items:
+      $ref: './HotelFilterOption.yaml'
+    description: Общий каталог фильтров для поиска отелей (не зависит от маршрута)

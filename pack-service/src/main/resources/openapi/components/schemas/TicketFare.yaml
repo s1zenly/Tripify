@@ -1,0 +1,11 @@
+type: object
+required:
+  - refundable
+  - exchangeable
+properties:
+  refundable:
+    type: boolean
+    example: false
+  exchangeable:
+    type: boolean
+    example: true

@@ -1,0 +1,22 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+  kafka:
+    listener:
+      auto-startup: false
+
+  task:
+    scheduling:
+      enabled: false
+
+  liquibase:
+    enabled: true
+
+tripify:
+  jwt:
+    secret: test-secret-test-secret-test-secret-test-secret-test-secret12
+  pack:
+    waiting-timeout: 30m
+    expired-revisions-check-delay: PT24H

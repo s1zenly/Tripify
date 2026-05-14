@@ -1,0 +1,54 @@
+get:
+  tags:
+    - tickets
+  summary: Get ticket details by id
+  operationId: getTicketById
+  description: >
+    Единые query-параметры search context, что и в GET /tickets.
+    Фронт повторяет их при открытии карточки для PackService и аналитики.
+    JWT в Authorization опционален: при валидном токене в Kafka уходит user_type=AUTH и user_id.
+
+  security:
+    - bearerAuth: []
+
+  parameters:
+    - $ref: '../components/parameters.yaml#/XAnonymousId'
+    - $ref: '../components/parameters.yaml#/XGenerationId'
+    - $ref: '../components/parameters.yaml#/XPackRevision'
+    - $ref: '../components/parameters.yaml#/XGenerationMode'
+    - $ref: '../components/parameters.yaml#/XRequestId'
+    - $ref: '../components/parameters.yaml#/XTicketsRevision'
+
+    - name: id
+      in: path
+      required: true
+      description: Tripify ticket identifier (tid)
+      schema:
+        type: string
+      example: ticket_8f3a1c2d
+
+    - $ref: '../components/parameters.yaml#/SearchOriginCountry'
+    - $ref: '../components/parameters.yaml#/SearchOriginCity'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCountry'
+    - $ref: '../components/parameters.yaml#/SearchDestinationCity'
+    - $ref: '../components/parameters.yaml#/SearchDateFrom'
+    - $ref: '../components/parameters.yaml#/SearchDateTo'
+    - $ref: '../components/parameters.yaml#/SearchCurrency'
+    - $ref: '../components/parameters.yaml#/SearchAdults'
+    - $ref: '../components/parameters.yaml#/SearchChildren'
+    - $ref: '../components/parameters.yaml#/SearchBudget'
+    - $ref: '../components/parameters.yaml#/SearchFilters'
+
+  responses:
+    '200':
+      description: Ticket details fetched successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/TicketDetailResponse.yaml'
+
+    '404':
+      $ref: '../components/responses.yaml#/NotFound'
+
+    '500':
+      $ref: '../components/responses.yaml#/InternalServerError'

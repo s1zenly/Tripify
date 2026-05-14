@@ -1,0 +1,125 @@
+XAnonymousId:
+  name: X-Anonymous-Id
+  in: header
+  required: true
+  description: Anonymous user identifier
+  schema:
+    type: string
+  example: anona8f91d_f445g4d3_rev1
+
+XRequestId:
+  name: X-Request-Id
+  in: header
+  required: true
+  description: Request tracing identifier
+  schema:
+    type: string
+  example: req-123
+
+PackId:
+  name: pack_id
+  in: path
+  required: true
+  description: Pack revision identifier (UUID)
+  schema:
+    type: string
+    format: uuid
+  example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d
+
+SearchOriginCountry:
+  name: origin_country
+  in: query
+  required: true
+  description: Origin country ISO Alpha-2
+  schema:
+    type: string
+    minLength: 2
+    maxLength: 2
+  example: RU
+
+SearchOriginCity:
+  name: origin_city
+  in: query
+  required: true
+  description: Origin city IATA code
+  schema:
+    type: string
+    minLength: 3
+    maxLength: 3
+  example: MOW
+
+SearchDestinationCountry:
+  name: destination_country
+  in: query
+  required: true
+  description: Destination country ISO Alpha-2
+  schema:
+    type: string
+    minLength: 2
+    maxLength: 2
+  example: TH
+
+SearchDestinationCity:
+  name: destination_city
+  in: query
+  required: true
+  description: Destination city IATA code
+  schema:
+    type: string
+    minLength: 3
+    maxLength: 3
+  example: KBV
+
+SearchDateFrom:
+  name: date_from
+  in: query
+  required: true
+  description: Trip start date
+  schema:
+    type: string
+    format: date
+  example: '2026-06-04'
+
+SearchDateTo:
+  name: date_to
+  in: query
+  required: true
+  description: Trip end date
+  schema:
+    type: string
+    format: date
+  example: '2026-06-26'
+
+SearchAdults:
+  name: adults
+  in: query
+  required: true
+  description: Number of adult travelers
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 9
+  example: 2
+
+SearchChildren:
+  name: children
+  in: query
+  required: false
+  description: Number of child travelers
+  schema:
+    type: integer
+    minimum: 0
+    maximum: 9
+    default: 0
+  example: 0
+
+SearchBudget:
+  name: budget
+  in: query
+  required: false
+  description: Optional trip budget in currency
+  schema:
+    type: integer
+    format: int64
+    minimum: 1
+  example: 50000

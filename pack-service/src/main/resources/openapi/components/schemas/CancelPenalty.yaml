@@ -1,0 +1,12 @@
+type: object
+properties:
+  type:
+    type: string
+    example: FIRST_NIGHT
+
+  amount:
+    type: number
+    format: double
+
+  percent:
+    type: integer

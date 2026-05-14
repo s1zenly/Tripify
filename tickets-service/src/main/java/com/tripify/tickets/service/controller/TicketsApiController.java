@@ -21,19 +21,26 @@ import com.tripify.tickets.service.service.TicketFilterQueryService;
 import com.tripify.tickets.service.service.TicketPackViewPublisher;
 import com.tripify.tickets.service.service.TicketsSearchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class TicketsApiController implements TicketsApi {
+
+    private static final double SEARCH_BUDGET_RATIO = 0.40;
 
     private final TicketsSearchService ticketsSearchService;
     private final TicketFilterQueryService ticketFilterQueryService;
@@ -275,7 +282,7 @@ public class TicketsApiController implements TicketsApi {
                 .destinationCityCode(destination.city().iataCode())
                 .departureDate(dateFrom)
                 .returnDate(dateTo)
-                .budgetMaxAmount(budget)
+                .budgetMaxAmount(searchBudget(budget))
                 .currency(com.tripify.tickets.service.model.unified.Currency.fromCode(currency.getValue()))
                 .passengers(Passengers.builder()
                         .adults(adults)
@@ -285,11 +292,33 @@ public class TicketsApiController implements TicketsApi {
                 .build();
     }
 
+    private static Long searchBudget(Long budget) {
+        if (budget == null) {
+            return null;
+        }
+        return Math.round(budget * SEARCH_BUDGET_RATIO);
+    }
+
     private static String extractUserIdOrNull() {
+        String gatewayUserId = requestHeader("X-User-Id");
+        if (gatewayUserId != null && !gatewayUserId.isBlank()) {
+            log.info("X-User-Id propagated by gateway: {}", gatewayUserId.trim());
+            return gatewayUserId.trim();
+        }
+        log.debug("X-User-Id header is absent; falling back to JWT/anonymous");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !(auth.getPrincipal() instanceof Jwt jwt)) {
             return null;
         }
         return jwt.getSubject();
+    }
+
+    private static String requestHeader(String name) {
+        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (!(attributes instanceof ServletRequestAttributes servletAttributes)) {
+            return null;
+        }
+        return servletAttributes.getRequest().getHeader(name);
     }
 }

@@ -1,0 +1,91 @@
+type: object
+required:
+  - hotelId
+  - title
+  - city
+  - country
+  - currency
+  - price
+  - hotelClass
+  - reviews
+  - facilities
+  - tags
+  - photos
+properties:
+  hotelId:
+    type: string
+    format: uuid
+    example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d
+
+  title:
+    type: string
+    example: Florida Radison 5*
+
+  link:
+    type: string
+    format: uri
+    example: https://example.com/hotels/7467355
+
+  description:
+    type: string
+    example: Contemporary hotel with a restaurant, business center and fitness room.
+
+  address:
+    type: string
+    example: Fool Street, New York City
+
+  gpsCoordinates:
+    $ref: './GpsCoordinates.yaml'
+
+  city:
+    type: string
+    minLength: 3
+    maxLength: 3
+    description: Destination city IATA code
+    example: DXB
+
+  country:
+    type: string
+    minLength: 2
+    maxLength: 2
+    description: Destination country ISO Alpha-2
+    example: AE
+
+  currency:
+    type: string
+    example: USD
+
+  price:
+    type: integer
+    format: int64
+    example: 1408
+    description: Минимальная цена за весь период проживания (min_price_per_night × кол-во ночей)
+
+  hotelClass:
+    type: integer
+    minimum: 1
+    maximum: 5
+    example: 3
+
+  reviews:
+    $ref: './HotelReviewsShort.yaml'
+
+  facilities:
+    type: array
+    items:
+      $ref: './Facility.yaml'
+
+  tags:
+    type: array
+    items:
+      type: string
+    example:
+      - family
+      - city-center
+      - breakfast
+
+  photos:
+    type: array
+    items:
+      $ref: './Photo.yaml'
+    description: Публичные ссылки на фото отеля (пустой массив, если фото нет)

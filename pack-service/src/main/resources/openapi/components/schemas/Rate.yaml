@@ -1,0 +1,48 @@
+type: object
+required:
+  - rateId
+  - title
+  - pricing
+properties:
+  rateId:
+    type: string
+    example: f2089925-333e-4e6b-a6cb-d6d61363ba43
+
+  title:
+    type: string
+    example: Flexible Rate
+
+  tags:
+    type: array
+    items:
+      type: string
+    example:
+      - FREE_CANCELLATION
+      - BESTSELLER
+
+  pricing:
+    $ref: './RatePricing.yaml'
+
+  payment:
+    $ref: './RatePayment.yaml'
+
+  mealPlan:
+    $ref: './MealPlan.yaml'
+
+  cancellationPolicy:
+    $ref: './CancellationPolicy.yaml'
+
+  availability:
+    $ref: './RateAvailability.yaml'
+
+  instantConfirmation:
+    type: boolean
+    example: true
+
+  perks:
+    type: array
+    items:
+      type: string
+    example:
+      - SPA_ACCESS
+      - FREE_WIFI

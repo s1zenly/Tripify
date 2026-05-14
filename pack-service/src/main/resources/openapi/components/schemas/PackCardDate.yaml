@@ -1,0 +1,13 @@
+type: object
+required:
+  - from
+  - to
+properties:
+  from:
+    type: string
+    format: date
+    example: '2026-12-12'
+  to:
+    type: string
+    format: date
+    example: '2026-12-31'

@@ -1,0 +1,39 @@
+type: object
+required:
+  - segment_id
+  - from
+  - to
+  - departure
+  - arrival
+  - duration
+  - airline
+  - operated_by
+  - flight_number
+  - aircraft
+  - cabin_class
+properties:
+  segment_id:
+    type: string
+    example: '1'
+  from:
+    $ref: './LocationDetail.yaml'
+  to:
+    $ref: './LocationDetail.yaml'
+  departure:
+    $ref: './SchedulePoint.yaml'
+  arrival:
+    $ref: './SchedulePoint.yaml'
+  duration:
+    $ref: './Duration.yaml'
+  airline:
+    $ref: './AirlineSummary.yaml'
+  operated_by:
+    $ref: './AirlineSummary.yaml'
+  flight_number:
+    type: string
+    example: EK132
+  aircraft:
+    type: string
+    example: Boeing 777
+  cabin_class:
+    $ref: './enums/CabinClass.yaml'

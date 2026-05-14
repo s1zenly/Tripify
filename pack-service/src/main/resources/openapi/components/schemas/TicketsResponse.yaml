@@ -1,0 +1,8 @@
+type: object
+required:
+  - tickets
+properties:
+  tickets:
+    type: array
+    items:
+      $ref: './TicketCard.yaml'

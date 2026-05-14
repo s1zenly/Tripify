@@ -29,8 +29,12 @@ public record CountryInfoProperties(
             String alpha2,
             String name,
             String sourceUrl,
-            String localCurrency
+            String localCurrency,
+            List<String> photos
     ) {
+        public CountryConfig {
+            photos = photos == null ? List.of() : List.copyOf(photos);
+        }
     }
 
     public record Weather(

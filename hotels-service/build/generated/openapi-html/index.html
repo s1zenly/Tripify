@@ -1749,8 +1749,8 @@ ul.nav-tabs {
                     <li data-group="Hotels" data-name="getHotels" class="">
                       <a href="#api-Hotels-getHotels">getHotels</a>
                     </li>
-                    <li data-group="Hotels" data-name="searchHotels" class="">
-                      <a href="#api-Hotels-searchHotels">searchHotels</a>
+                    <li data-group="Hotels" data-name="searchHotel" class="">
+                      <a href="#api-Hotels-searchHotel">searchHotel</a>
                     </li>
           </ul>
         </nav>
@@ -4406,16 +4406,16 @@ hotelId последнего отеля на предыдущей страниц
                         </article>
                       </div>
                       <hr>
-                    <div id="api-Hotels-searchHotels">
-                      <article id="api-Hotels-searchHotels-0" data-group="User" data-name="searchHotels" data-version="0">
+                    <div id="api-Hotels-searchHotel">
+                      <article id="api-Hotels-searchHotel-0" data-group="User" data-name="searchHotel" data-version="0">
                         <div class="pull-left">
-                          <h1>searchHotels</h1>
-                          <p>Search hotels with pack context</p>
+                          <h1>searchHotel</h1>
+                          <p>Search hotel</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Те же headers и query-параметры search context, что и GET /hotels/{hotelId}, но без id. Используется фронтом при инициации поиска с полным pack-контекстом.
+                        <p class="marked">Те же headers и query-параметры, что и GET /hotels/{hotelId}, но без id. Возвращает первый подходящий отель как HotelDetails.
 </p>
                         <p></p>
                         <br />
@@ -4424,29 +4424,29 @@ hotelId последнего отеля на предыдущей страниц
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Hotels-searchHotels-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-dart">Dart</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Hotels-searchHotels-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Hotels-searchHotels-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-python">Python</a></li>
-                          <li class=""><a href="#examples-Hotels-searchHotels-0-rust">Rust</a></li>
+                          <li class="active"><a href="#examples-Hotels-searchHotel-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Hotels-searchHotel-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Hotels-searchHotel-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Hotels-searchHotel-0-rust">Rust</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Hotels-searchHotels-0-curl">
+                          <div class="tab-pane active" id="examples-Hotels-searchHotel-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
  -H "Accept: application/json" \
  "http://localhost:8084/hotels/search?origin_country=RU&origin_city=MOW&destination_country=AE&destination_city=DXB&date_from=2026-06-01&date_to=2026-06-10&currency=RUB&adults=2&children=0&budget=150000&filters=[pool, beachfront]"
 </code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-Hotels-searchHotels-0-java">
+                          <div class="tab-pane" id="examples-Hotels-searchHotel-0-java">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
@@ -4479,10 +4479,10 @@ public class HotelsApiExample {
         array[String] filters = [pool, beachfront]; // array[String] | Filters from GET /hotels/filters catalog
 
         try {
-            HotelDetails result = apiInstance.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
+            HotelDetails result = apiInstance.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling HotelsApi#searchHotels");
+            System.err.println("Exception when calling HotelsApi#searchHotel");
             e.printStackTrace();
         }
     }
@@ -4490,7 +4490,7 @@ public class HotelsApiExample {
 </code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Hotels-searchHotels-0-dart">
+                          <div class="tab-pane" id="examples-Hotels-searchHotel-0-dart">
                             <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
 
 final api_instance = DefaultApi();
@@ -4514,16 +4514,16 @@ final Long budget = new Long(); // Long | Optional trip budget in currency
 final array[String] filters = new array[String](); // array[String] | Filters from GET /hotels/filters catalog
 
 try {
-    final result = await api_instance.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
+    final result = await api_instance.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
     print(result);
 } catch (e) {
-    print('Exception when calling DefaultApi->searchHotels: $e\n');
+    print('Exception when calling DefaultApi->searchHotel: $e\n');
 }
 
 </code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Hotels-searchHotels-0-android">
+                          <div class="tab-pane" id="examples-Hotels-searchHotel-0-android">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.HotelsApi;
 
 public class HotelsApiExample {
@@ -4548,20 +4548,20 @@ public class HotelsApiExample {
         array[String] filters = [pool, beachfront]; // array[String] | Filters from GET /hotels/filters catalog
 
         try {
-            HotelDetails result = apiInstance.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
+            HotelDetails result = apiInstance.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling HotelsApi#searchHotels");
+            System.err.println("Exception when calling HotelsApi#searchHotel");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-Hotels-searchHotels-0-groovy">
+  <div class="tab-pane" id="examples-Hotels-searchHotel-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-objc">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-objc">
                               <pre class="prettyprint"><code class="language-cpp">
 
 // Create an instance of the API class
@@ -4584,8 +4584,8 @@ Integer *children = 0; // Number of child travelers (optional) (default to 0)
 Long *budget = 150000; // Optional trip budget in currency (optional) (default to null)
 array[String] *filters = [pool, beachfront]; // Filters from GET /hotels/filters catalog (optional) (default to null)
 
-// Search hotels with pack context
-[apiInstance searchHotelsWith:xAnonymousId
+// Search hotel
+[apiInstance searchHotelWith:xAnonymousId
     xGenerationId:xGenerationId
     xPackRevision:xPackRevision
     xGenerationMode:xGenerationMode
@@ -4613,7 +4613,7 @@ array[String] *filters = [pool, beachfront]; // Filters from GET /hotels/filters
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-javascript">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var TripifyHotelsServiceApi = require('tripify_hotels_service_api');
 
 // Create an instance of the API class
@@ -4645,14 +4645,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, opts, callback);
+api.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, opts, callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-Hotels-searchHotels-0-angular">
+                            <!--<div class="tab-pane" id="examples-Hotels-searchHotel-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-csharp">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using Org.OpenAPITools.Api;
@@ -4661,7 +4661,7 @@ using Org.OpenAPITools.Model;
 
 namespace Example
 {
-    public class searchHotelsExample
+    public class searchHotelExample
     {
         public void main()
         {
@@ -4687,11 +4687,11 @@ namespace Example
             var filters = new array[String](); // array[String] | Filters from GET /hotels/filters catalog (optional)  (default to null)
 
             try {
-                // Search hotels with pack context
-                HotelDetails result = apiInstance.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
+                // Search hotel
+                HotelDetails result = apiInstance.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters);
                 Debug.WriteLine(result);
             } catch (Exception e) {
-                Debug.Print("Exception when calling HotelsApi.searchHotels: " + e.Message );
+                Debug.Print("Exception when calling HotelsApi.searchHotel: " + e.Message );
             }
         }
     }
@@ -4699,7 +4699,7 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-php">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -4724,15 +4724,15 @@ $budget = 150000; // Long | Optional trip budget in currency
 $filters = [pool, beachfront]; // array[String] | Filters from GET /hotels/filters catalog
 
 try {
-    $result = $api_instance->searchHotels($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $originCountry, $originCity, $destinationCountry, $destinationCity, $dateFrom, $dateTo, $currency, $adults, $xHotelsRevision, $children, $budget, $filters);
+    $result = $api_instance->searchHotel($xAnonymousId, $xGenerationId, $xPackRevision, $xGenerationMode, $xRequestId, $originCountry, $originCity, $destinationCountry, $destinationCity, $dateFrom, $dateTo, $currency, $adults, $xHotelsRevision, $children, $budget, $filters);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling HotelsApi->searchHotels: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling HotelsApi->searchHotel: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-perl">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::HotelsApi;
@@ -4758,15 +4758,15 @@ my $budget = 150000; # Long | Optional trip budget in currency
 my $filters = [[pool, beachfront]]; # array[String] | Filters from GET /hotels/filters catalog
 
 eval {
-    my $result = $api_instance->searchHotels(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, originCountry => $originCountry, originCity => $originCity, destinationCountry => $destinationCountry, destinationCity => $destinationCity, dateFrom => $dateFrom, dateTo => $dateTo, currency => $currency, adults => $adults, xHotelsRevision => $xHotelsRevision, children => $children, budget => $budget, filters => $filters);
+    my $result = $api_instance->searchHotel(xAnonymousId => $xAnonymousId, xGenerationId => $xGenerationId, xPackRevision => $xPackRevision, xGenerationMode => $xGenerationMode, xRequestId => $xRequestId, originCountry => $originCountry, originCity => $originCity, destinationCountry => $destinationCountry, destinationCity => $destinationCity, dateFrom => $dateFrom, dateTo => $dateTo, currency => $currency, adults => $adults, xHotelsRevision => $xHotelsRevision, children => $children, budget => $budget, filters => $filters);
     print Dumper($result);
 };
 if ($@) {
-    warn "Exception when calling HotelsApi->searchHotels: $@\n";
+    warn "Exception when calling HotelsApi->searchHotel: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-python">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import openapi_client
@@ -4794,14 +4794,14 @@ budget = 150000 # Long | Optional trip budget in currency (optional) (default to
 filters = [pool, beachfront] # array[String] | Filters from GET /hotels/filters catalog (optional) (default to null)
 
 try:
-    # Search hotels with pack context
-    api_response = api_instance.search_hotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision=xHotelsRevision, children=children, budget=budget, filters=filters)
+    # Search hotel
+    api_response = api_instance.search_hotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision=xHotelsRevision, children=children, budget=budget, filters=filters)
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling HotelsApi->searchHotels: %s\n" % e)</code></pre>
+    print("Exception when calling HotelsApi->searchHotel: %s\n" % e)</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Hotels-searchHotels-0-rust">
+                            <div class="tab-pane" id="examples-Hotels-searchHotel-0-rust">
                               <pre class="prettyprint"><code class="language-rust">extern crate HotelsApi;
 
 pub fn main() {
@@ -4824,7 +4824,7 @@ pub fn main() {
     let filters = [pool, beachfront]; // array[String]
 
     let mut context = HotelsApi::Context::default();
-    let result = client.searchHotels(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters, &context).wait();
+    let result = client.searchHotel(xAnonymousId, xGenerationId, xPackRevision, xGenerationMode, xRequestId, originCountry, originCity, destinationCountry, destinationCity, dateFrom, dateTo, currency, adults, xHotelsRevision, children, budget, filters, &context).wait();
 
     println!("{:?}", result);
 }
@@ -4850,7 +4850,7 @@ pub fn main() {
 <td>
 
 
-    <div id="d2e199_searchHotels_xAnonymousId">
+    <div id="d2e199_searchHotel_xAnonymousId">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4873,7 +4873,7 @@ Anonymous user identifier
 <td>
 
 
-    <div id="d2e199_searchHotels_xGenerationId">
+    <div id="d2e199_searchHotel_xGenerationId">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4896,7 +4896,7 @@ Travel generation identifier
 <td>
 
 
-    <div id="d2e199_searchHotels_xPackRevision">
+    <div id="d2e199_searchHotel_xPackRevision">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4919,7 +4919,7 @@ Current pack revision number
 <td>
 
 
-    <div id="d2e199_searchHotels_xGenerationMode">
+    <div id="d2e199_searchHotel_xGenerationMode">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4942,7 +4942,7 @@ Generation mode
 <td>
 
 
-    <div id="d2e199_searchHotels_xRequestId">
+    <div id="d2e199_searchHotel_xRequestId">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4965,7 +4965,7 @@ Request tracing identifier
 <td>
 
 
-    <div id="d2e199_searchHotels_xHotelsRevision">
+    <div id="d2e199_searchHotel_xHotelsRevision">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -4995,7 +4995,7 @@ Hotels revision number
 <td>
 
 
-    <div id="d2e199_searchHotels_originCountry">
+    <div id="d2e199_searchHotel_originCountry">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5018,7 +5018,7 @@ Origin country ISO Alpha-2
 <td>
 
 
-    <div id="d2e199_searchHotels_originCity">
+    <div id="d2e199_searchHotel_originCity">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5041,7 +5041,7 @@ Origin city IATA code
 <td>
 
 
-    <div id="d2e199_searchHotels_destinationCountry">
+    <div id="d2e199_searchHotel_destinationCountry">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5064,7 +5064,7 @@ Destination country ISO Alpha-2
 <td>
 
 
-    <div id="d2e199_searchHotels_destinationCity">
+    <div id="d2e199_searchHotel_destinationCity">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5087,7 +5087,7 @@ Destination city IATA code
 <td>
 
 
-    <div id="d2e199_searchHotels_dateFrom">
+    <div id="d2e199_searchHotel_dateFrom">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5113,7 +5113,7 @@ Trip start date (check-in / outbound departure)
 <td>
 
 
-    <div id="d2e199_searchHotels_dateTo">
+    <div id="d2e199_searchHotel_dateTo">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5139,7 +5139,7 @@ Trip end date (check-out / return departure)
 <td>
 
 
-    <div id="d2e199_searchHotels_currency">
+    <div id="d2e199_searchHotel_currency">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5162,7 +5162,7 @@ Response currency for the frontend
 <td>
 
 
-    <div id="d2e199_searchHotels_adults">
+    <div id="d2e199_searchHotel_adults">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5185,7 +5185,7 @@ Number of adult travelers
 <td>
 
 
-    <div id="d2e199_searchHotels_children">
+    <div id="d2e199_searchHotel_children">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5205,7 +5205,7 @@ Number of child travelers
 <td>
 
 
-    <div id="d2e199_searchHotels_budget">
+    <div id="d2e199_searchHotel_budget">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5228,7 +5228,7 @@ Optional trip budget in currency
 <td>
 
 
-    <div id="d2e199_searchHotels_filters">
+    <div id="d2e199_searchHotel_filters">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -5247,23 +5247,23 @@ Filters from GET /hotels/filters catalog
                             </table>
 
                           <h2>Responses</h2>
-                            <h3 id="examples-Hotels-searchHotels-title-200"></h3>
-                            <p id="examples-Hotels-searchHotels-description-200" class="marked"></p>
+                            <h3 id="examples-Hotels-searchHotel-title-200"></h3>
+                            <p id="examples-Hotels-searchHotel-description-200" class="marked"></p>
                             <script>
                               var responseHotels200_description = `First matching hotel details fetched successfully`;
                               var responseHotels200_description_break = responseHotels200_description.indexOf('\n');
                               if (responseHotels200_description_break == -1) {
-                                $("#examples-Hotels-searchHotels-title-200").text("Status: 200 - " + responseHotels200_description);
+                                $("#examples-Hotels-searchHotel-title-200").text("Status: 200 - " + responseHotels200_description);
                               } else {
-                                $("#examples-Hotels-searchHotels-title-200").text("Status: 200 - " + responseHotels200_description.substring(0, responseHotels200_description_break));
-                                $("#examples-Hotels-searchHotels-description-200").html(responseHotels200_description.substring(responseHotels200_description_break));
+                                $("#examples-Hotels-searchHotel-title-200").text("Status: 200 - " + responseHotels200_description.substring(0, responseHotels200_description_break));
+                                $("#examples-Hotels-searchHotel-description-200").html(responseHotels200_description.substring(responseHotels200_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-Hotels-searchHotels-200" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-Hotels-searchHotel-200" class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-Hotels-searchHotels-200-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-Hotels-searchHotel-200-schema">Schema</a>
                                 </li>
 
 
@@ -5272,9 +5272,9 @@ Filters from GET /hotels/filters catalog
                             </ul>
 
 
-                            <div class="tab-content" id="responses-Hotels-searchHotels-200-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Hotels-searchHotels-200-schema">
-                                <div id="responses-Hotels-searchHotels-schema-200" class="exampleStyle">
+                            <div class="tab-content" id="responses-Hotels-searchHotel-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-searchHotel-200-schema">
+                                <div id="responses-Hotels-searchHotel-schema-200" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
@@ -5313,33 +5313,33 @@ Filters from GET /hotels/filters catalog
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Hotels-searchHotels-200-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Hotels-searchHotels-schema-200');
+                                      $('#responses-Hotels-searchHotel-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-searchHotel-schema-200');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-Hotels-searchHotels-200-schema-data' type='hidden' value=''></input>
+                                <input id='responses-Hotels-searchHotel-200-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
-                            <h3 id="examples-Hotels-searchHotels-title-400"></h3>
-                            <p id="examples-Hotels-searchHotels-description-400" class="marked"></p>
+                            <h3 id="examples-Hotels-searchHotel-title-400"></h3>
+                            <p id="examples-Hotels-searchHotel-description-400" class="marked"></p>
                             <script>
                               var responseHotels400_description = `Bad request`;
                               var responseHotels400_description_break = responseHotels400_description.indexOf('\n');
                               if (responseHotels400_description_break == -1) {
-                                $("#examples-Hotels-searchHotels-title-400").text("Status: 400 - " + responseHotels400_description);
+                                $("#examples-Hotels-searchHotel-title-400").text("Status: 400 - " + responseHotels400_description);
                               } else {
-                                $("#examples-Hotels-searchHotels-title-400").text("Status: 400 - " + responseHotels400_description.substring(0, responseHotels400_description_break));
-                                $("#examples-Hotels-searchHotels-description-400").html(responseHotels400_description.substring(responseHotels400_description_break));
+                                $("#examples-Hotels-searchHotel-title-400").text("Status: 400 - " + responseHotels400_description.substring(0, responseHotels400_description_break));
+                                $("#examples-Hotels-searchHotel-description-400").html(responseHotels400_description.substring(responseHotels400_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-Hotels-searchHotels-400" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-Hotels-searchHotel-400" class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-Hotels-searchHotels-400-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-Hotels-searchHotel-400-schema">Schema</a>
                                 </li>
 
 
@@ -5348,9 +5348,9 @@ Filters from GET /hotels/filters catalog
                             </ul>
 
 
-                            <div class="tab-content" id="responses-Hotels-searchHotels-400-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Hotels-searchHotels-400-schema">
-                                <div id="responses-Hotels-searchHotels-schema-400" class="exampleStyle">
+                            <div class="tab-content" id="responses-Hotels-searchHotel-400-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-searchHotel-400-schema">
+                                <div id="responses-Hotels-searchHotel-schema-400" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
@@ -5389,33 +5389,33 @@ Filters from GET /hotels/filters catalog
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Hotels-searchHotels-400-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Hotels-searchHotels-schema-400');
+                                      $('#responses-Hotels-searchHotel-400-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-searchHotel-schema-400');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-Hotels-searchHotels-400-schema-data' type='hidden' value=''></input>
+                                <input id='responses-Hotels-searchHotel-400-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
-                            <h3 id="examples-Hotels-searchHotels-title-404"></h3>
-                            <p id="examples-Hotels-searchHotels-description-404" class="marked"></p>
+                            <h3 id="examples-Hotels-searchHotel-title-404"></h3>
+                            <p id="examples-Hotels-searchHotel-description-404" class="marked"></p>
                             <script>
                               var responseHotels404_description = `Not found`;
                               var responseHotels404_description_break = responseHotels404_description.indexOf('\n');
                               if (responseHotels404_description_break == -1) {
-                                $("#examples-Hotels-searchHotels-title-404").text("Status: 404 - " + responseHotels404_description);
+                                $("#examples-Hotels-searchHotel-title-404").text("Status: 404 - " + responseHotels404_description);
                               } else {
-                                $("#examples-Hotels-searchHotels-title-404").text("Status: 404 - " + responseHotels404_description.substring(0, responseHotels404_description_break));
-                                $("#examples-Hotels-searchHotels-description-404").html(responseHotels404_description.substring(responseHotels404_description_break));
+                                $("#examples-Hotels-searchHotel-title-404").text("Status: 404 - " + responseHotels404_description.substring(0, responseHotels404_description_break));
+                                $("#examples-Hotels-searchHotel-description-404").html(responseHotels404_description.substring(responseHotels404_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-Hotels-searchHotels-404" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-Hotels-searchHotel-404" class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-Hotels-searchHotels-404-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-Hotels-searchHotel-404-schema">Schema</a>
                                 </li>
 
 
@@ -5424,9 +5424,9 @@ Filters from GET /hotels/filters catalog
                             </ul>
 
 
-                            <div class="tab-content" id="responses-Hotels-searchHotels-404-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Hotels-searchHotels-404-schema">
-                                <div id="responses-Hotels-searchHotels-schema-404" class="exampleStyle">
+                            <div class="tab-content" id="responses-Hotels-searchHotel-404-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-searchHotel-404-schema">
+                                <div id="responses-Hotels-searchHotel-schema-404" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
@@ -5465,33 +5465,33 @@ Filters from GET /hotels/filters catalog
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Hotels-searchHotels-404-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Hotels-searchHotels-schema-404');
+                                      $('#responses-Hotels-searchHotel-404-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-searchHotel-schema-404');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-Hotels-searchHotels-404-schema-data' type='hidden' value=''></input>
+                                <input id='responses-Hotels-searchHotel-404-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
-                            <h3 id="examples-Hotels-searchHotels-title-500"></h3>
-                            <p id="examples-Hotels-searchHotels-description-500" class="marked"></p>
+                            <h3 id="examples-Hotels-searchHotel-title-500"></h3>
+                            <p id="examples-Hotels-searchHotel-description-500" class="marked"></p>
                             <script>
                               var responseHotels500_description = `Internal server error`;
                               var responseHotels500_description_break = responseHotels500_description.indexOf('\n');
                               if (responseHotels500_description_break == -1) {
-                                $("#examples-Hotels-searchHotels-title-500").text("Status: 500 - " + responseHotels500_description);
+                                $("#examples-Hotels-searchHotel-title-500").text("Status: 500 - " + responseHotels500_description);
                               } else {
-                                $("#examples-Hotels-searchHotels-title-500").text("Status: 500 - " + responseHotels500_description.substring(0, responseHotels500_description_break));
-                                $("#examples-Hotels-searchHotels-description-500").html(responseHotels500_description.substring(responseHotels500_description_break));
+                                $("#examples-Hotels-searchHotel-title-500").text("Status: 500 - " + responseHotels500_description.substring(0, responseHotels500_description_break));
+                                $("#examples-Hotels-searchHotel-description-500").html(responseHotels500_description.substring(responseHotels500_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-Hotels-searchHotels-500" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-Hotels-searchHotel-500" class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-Hotels-searchHotels-500-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-Hotels-searchHotel-500-schema">Schema</a>
                                 </li>
 
 
@@ -5500,9 +5500,9 @@ Filters from GET /hotels/filters catalog
                             </ul>
 
 
-                            <div class="tab-content" id="responses-Hotels-searchHotels-500-wrapper" style='margin-bottom: 10px;'>
-                              <div class="tab-pane active" id="responses-Hotels-searchHotels-500-schema">
-                                <div id="responses-Hotels-searchHotels-schema-500" class="exampleStyle">
+                            <div class="tab-content" id="responses-Hotels-searchHotel-500-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Hotels-searchHotel-500-schema">
+                                <div id="responses-Hotels-searchHotel-schema-500" class="exampleStyle">
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
@@ -5541,14 +5541,14 @@ Filters from GET /hotels/filters catalog
                                       }
 
                                       var view = new JSONSchemaView(schema, 3);
-                                      $('#responses-Hotels-searchHotels-500-schema-data').val(JSON.stringify(schema));
-                                      var result = $('#responses-Hotels-searchHotels-schema-500');
+                                      $('#responses-Hotels-searchHotel-500-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Hotels-searchHotel-schema-500');
                                       result.empty();
                                       result.append(view.render());
                                     });
                                   </script>
                                 </div>
-                                <input id='responses-Hotels-searchHotels-500-schema-data' type='hidden' value=''></input>
+                                <input id='responses-Hotels-searchHotel-500-schema-data' type='hidden' value=''></input>
                               </div>
                             </div>
                         </article>

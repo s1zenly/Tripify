@@ -1,4 +1,58 @@
 services:
+  kong:
+    image: kong:3.9
+    container_name: tripify-kong
+    depends_on:
+      - auth-service
+      - hotels-service
+      - tickets-service
+      - users-service
+      - info-service
+      - pack-service
+    environment:
+      KONG_DATABASE: "off"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      TRIPIFY_JWT_SECRET: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+      TRIPIFY_JWT_ISSUER: tripify-auth
+      TRIPIFY_ACCESS_COOKIE_NAME: access_token
+    volumes:
+      - ../kong/kong.template.yaml:/kong/kong.template.yaml:ro
+      - ../kong/prepare-auth.lua.tmpl:/kong/prepare-auth.lua.tmpl:ro
+      - ../kong/inject-user-id.lua.tmpl:/kong/inject-user-id.lua.tmpl:ro
+      - ../kong/docker-entrypoint.sh:/kong/docker-entrypoint.sh:ro
+    entrypoint: [ "/bin/sh", "/kong/docker-entrypoint.sh" ]
+    expose:
+      - "8000"
+    healthcheck:
+      test: [ "CMD", "kong", "health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - tripify
+
+  caddy:
+    image: caddy:2
+    container_name: tripify-caddy
+    depends_on:
+      - kong
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - tripify
+
   postgres:
     image: postgres:16
     container_name: tripify-postgres
@@ -45,6 +99,20 @@ services:
     networks:
       - tripify
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: tripify-kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: tripify-prod
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    networks:
+      - tripify
+
   redis:
     image: redis:8-alpine
     container_name: tripify-redis
@@ -77,7 +145,7 @@ services:
   auth-service:
     build:
       context: ../../auth-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-auth-service
     depends_on:
       postgres:
@@ -102,7 +170,7 @@ services:
   hotels-parser:
     build:
       context: ../../hotels-parser
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-hotels-parser
     depends_on:
       kafka:
@@ -118,7 +186,7 @@ services:
   notification-service:
     build:
       context: ../../notification-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-notification-service
     ports:
       - "8082:8080"
@@ -130,7 +198,7 @@ services:
   users-service:
     build:
       context: ../../users-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-users-service
     depends_on:
       postgres:
@@ -149,7 +217,7 @@ services:
   hotels-service:
     build:
       context: ../../hotels-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-hotels-service
     depends_on:
       postgres:
@@ -183,7 +251,7 @@ services:
   tickets-service:
     build:
       context: ../../tickets-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-tickets-service
     depends_on:
       redis:
@@ -203,7 +271,7 @@ services:
   info-service:
     build:
       context: ../../info-service
-      dockerfile: ../../docker/prod/Dockerfile
+      dockerfile: ../docker/prod/Dockerfile
     container_name: tripify-info-service
     depends_on:
       mongo:
@@ -217,9 +285,37 @@ services:
     networks:
       - tripify
 
+  pack-service:
+    build:
+      context: ../../pack-service
+      dockerfile: ../docker/prod/Dockerfile
+    container_name: tripify-pack-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tripify_db
+      SPRING_DATASOURCE_USERNAME: tripify
+      SPRING_DATASOURCE_PASSWORD: tripify
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:/db/changelog/db.changelog-master.yaml
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_MONGODB_URI: mongodb://mongo:27017/tripify_pack
+      TRIPIFY_JWT_SECRET: da422807dea6119e0752c14b58235a2e3f76dd88bbeac6be3ce9303481df04bc
+    ports:
+      - "8088:8080"
+    networks:
+      - tripify
+
 volumes:
   postgres_data:
   mongo_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   tripify:

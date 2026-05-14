@@ -1,0 +1,13 @@
+type: object
+properties:
+  afterTime:
+    type: string
+    example: "14:00"
+
+  beforeTime:
+    type: string
+    example: "00:00"
+
+  timezone:
+    type: string
+    example: UTC

@@ -1,0 +1,40 @@
+local ACCESS_COOKIE = "${TRIPIFY_ACCESS_COOKIE_NAME}"
+
+local function parse_cookie(cookie_header, name)
+  if not cookie_header then
+    return nil
+  end
+
+  for part in cookie_header:gmatch("[^;]+") do
+    local key, value = part:match("^%s*([^=]+)=(.*)$")
+    if key and key:gsub("%s", "") == name then
+      return value:gsub("^%s+", ""):gsub("%s+$", "")
+    end
+  end
+
+  return nil
+end
+
+local function extract_token()
+  local token = parse_cookie(kong.request.get_header("cookie"), ACCESS_COOKIE)
+  if token and token ~= "" then
+    return token
+  end
+
+  local auth = kong.request.get_header("authorization")
+  if auth then
+    local bearer = auth:match("^[Bb]earer%s+(.+)$")
+    if bearer and bearer ~= "" then
+      return bearer
+    end
+  end
+
+  return nil
+end
+
+kong.service.request.clear_header("X-User-Id")
+
+local token = extract_token()
+if token and not kong.request.get_header("authorization") then
+  kong.service.request.set_header("Authorization", "Bearer " .. token)
+end

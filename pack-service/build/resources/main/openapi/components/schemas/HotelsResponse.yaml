@@ -1,0 +1,17 @@
+type: object
+required:
+  - hotels
+properties:
+  hotels:
+    type: array
+    items:
+      $ref: './HotelCard.yaml'
+
+  nextCursor:
+    type: string
+    format: uuid
+    nullable: true
+    description: >
+      hotelId последнего отеля на странице (id > nextCursor).
+      Есть только если отелей больше, чем limit.
+    example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d

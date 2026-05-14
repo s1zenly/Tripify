@@ -1,0 +1,35 @@
+-- authenticated_jwt_token is the raw JWT string, set by the jwt plugin ONLY after
+-- the signature has been verified. Decoding it here to read `sub` is therefore safe.
+local token = kong.ctx.shared.authenticated_jwt_token
+
+local function user_id_from_token(jwt)
+  if type(jwt) ~= "string" or jwt == "" then
+    return nil
+  end
+
+  local payload = jwt:match("^[^.]+%.([^.]+)%.")
+  if not payload then
+    return nil
+  end
+
+  payload = payload:gsub("-", "+"):gsub("_", "/")
+  local pad = #payload % 4
+  if pad > 0 then
+    payload = payload .. string.rep("=", 4 - pad)
+  end
+
+  local decoded = ngx.decode_base64(payload)
+  if not decoded then
+    return nil
+  end
+
+  return decoded:match('"sub"%s*:%s*"([^"]+)"')
+end
+
+local user_id = user_id_from_token(token)
+if user_id and user_id ~= "" then
+  kong.service.request.set_header("X-User-Id", user_id)
+  kong.log.notice("X-User-Id injected for sub=", user_id)
+else
+  kong.log.notice("X-User-Id not injected (anonymous or no sub claim)")
+end

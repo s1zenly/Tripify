@@ -1,0 +1,26 @@
+type: object
+required:
+  - id
+  - type
+  - label
+properties:
+  id:
+    type: string
+    description: Идентификатор для query-параметра filters
+    example: beachfront
+
+  type:
+    type: string
+    enum:
+      - facet
+      - terms
+      - attribute
+    description: |
+      facet — поисковый фасет (hotel_search_facets),
+      terms — условие размещения,
+      attribute — рейтинг/звёзды (колонки hotels)
+
+  label:
+    type: string
+    description: Подпись для UI
+    example: У моря

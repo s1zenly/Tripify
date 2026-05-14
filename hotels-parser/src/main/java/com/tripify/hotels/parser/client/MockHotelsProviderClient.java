@@ -189,7 +189,7 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
                 .lng(round(lng, 6))
                 .photos(hotelPhotos)
                 .amenities(facilities)
-                .reviewSummary(buildReviews(3 + RND.nextInt(4)))
+                .reviewSummary(buildReviews(city, 3 + RND.nextInt(4)))
                 .rooms(rooms)
                 .build();
     }
@@ -230,13 +230,15 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
         List<String> amenities = pickSublist(AMENITY_CODES, 5, 9);
         int floor = 1 + RND.nextInt(hotelStars * 3);
 
-        List<String> roomPhotoPool = MockHotelPhotos.getRoomPhotos();
-        int photoCount = 2 + RND.nextInt(4);
-        int photoOffset = ((hotelIdx * 6) + (roomIdx * 3)) % roomPhotoPool.size();
+        List<String> roomPhotoPool = MockHotelPhotos.getPhotosForCity(city);
         List<MockPhoto> roomPhotos = new ArrayList<>();
-        for (int p = 0; p < photoCount; p++) {
-            String url = roomPhotoPool.get((photoOffset + p) % roomPhotoPool.size());
-            roomPhotos.add(MockPhoto.builder().url(url).order(p).build());
+        if (!roomPhotoPool.isEmpty()) {
+            int photoCount = 2 + RND.nextInt(4);
+            int photoOffset = ((hotelIdx * 6) + (roomIdx * 3)) % roomPhotoPool.size();
+            for (int p = 0; p < photoCount; p++) {
+                String url = roomPhotoPool.get((photoOffset + p) % roomPhotoPool.size());
+                roomPhotos.add(MockPhoto.builder().url(url).order(p).build());
+            }
         }
 
         int rateCount = 1 + RND.nextInt(3);
@@ -368,7 +370,7 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
     //  Reviews generation
     // ────────────────────────────────────────────────────────────
 
-    private MockReviews buildReviews(int commentCount) {
+    private MockReviews buildReviews(City city, int commentCount) {
         double score = 3.5 + RND.nextDouble() * 1.5;
         int total = 20 + RND.nextInt(300);
 
@@ -393,7 +395,7 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
                     .text(pick(REVIEW_TEXTS))
                     .date(LocalDate.now().minusDays(1 + RND.nextInt(180)))
                     .images(RND.nextInt(3) == 0
-                            ? buildReviewPhotos()
+                            ? buildReviewPhotos(city)
                             : List.of())
                     .build());
         }
@@ -424,8 +426,9 @@ public class MockHotelsProviderClient implements HotelsProviderClient<MockProvid
         return result;
     }
 
-    private List<MockPhoto> buildReviewPhotos() {
-        List<String> pool = MockHotelPhotos.getReviewPhotos();
+    private List<MockPhoto> buildReviewPhotos(City city) {
+        List<String> pool = MockHotelPhotos.getPhotosForCity(city);
+        if (pool.isEmpty()) return List.of();
         int count = 1 + RND.nextInt(3);
         int offset = RND.nextInt(pool.size());
         List<MockPhoto> photos = new ArrayList<>();

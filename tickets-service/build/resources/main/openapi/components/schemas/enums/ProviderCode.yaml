@@ -1,0 +1,6 @@
+type: string
+enum:
+  - EMULATION
+  - AVIASALES
+  - TRIP
+example: AVIASALES

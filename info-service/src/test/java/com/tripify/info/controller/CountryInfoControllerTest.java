@@ -87,6 +87,11 @@ class CountryInfoControllerTest {
                 List.of(
                         new CountryInfoTab(CountryInfoTabCode.OVERVIEW, "Основное про страну", List.of()),
                         new CountryInfoTab(CountryInfoTabCode.WEATHER, "Погода", List.of())
+                ),
+                List.of(
+                        "https://storage.yandexcloud.net/test-hotels-images/AE/DXB/225865058.jpg",
+                        "https://storage.yandexcloud.net/test-hotels-images/AE/DXB/234548985.jpg",
+                        "https://storage.yandexcloud.net/test-hotels-images/AE/DXB/428594127.jpg"
                 )
         );
 
@@ -105,7 +110,8 @@ class CountryInfoControllerTest {
                 .andExpect(jsonPath("$.country_name").value("ОАЭ"))
                 .andExpect(jsonPath("$.local_currency").value("AED"))
                 .andExpect(jsonPath("$.tabs[?(@.code=='weather')]").exists())
-                .andExpect(jsonPath("$.tabs[0].code").value("overview"));
+                .andExpect(jsonPath("$.tabs[0].code").value("overview"))
+                .andExpect(jsonPath("$.photos.length()").value(3));
 
         verify(countryInfoService).getCountryInfo(eq("AE"), eq(dateFrom), eq(dateTo));
     }

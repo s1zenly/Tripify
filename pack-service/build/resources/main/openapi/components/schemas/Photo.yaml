@@ -1,0 +1,6 @@
+type: object
+properties:
+  link:
+    type: string
+    format: uri
+    example: https://example.com/photo.jpg

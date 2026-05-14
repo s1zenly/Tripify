@@ -18,16 +18,23 @@ import com.tripify.hotels.service.service.HotelFilterQueryService;
 import com.tripify.hotels.service.service.HotelPackViewPublisher;
 import com.tripify.hotels.service.service.HotelQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class HotelsController implements HotelsApi {
+
+    private static final double SEARCH_BUDGET_RATIO = 0.60;
 
     private final HotelQueryService hotelQueryService;
     private final HotelFilterQueryService hotelFilterQueryService;
@@ -63,7 +70,7 @@ public class HotelsController implements HotelsApi {
                 currency,
                 adults,
                 children,
-                budget,
+                searchBudget(budget),
                 limit,
                 cursor,
                 filters
@@ -101,7 +108,7 @@ public class HotelsController implements HotelsApi {
                 currency,
                 adults,
                 children,
-                budget,
+                searchBudget(budget),
                 filters
         );
 
@@ -234,11 +241,33 @@ public class HotelsController implements HotelsApi {
         hotelPackViewPublisher.publishHotelDetailView(headers, searchContext, response);
     }
 
+    private static Long searchBudget(Long budget) {
+        if (budget == null) {
+            return null;
+        }
+        return Math.round(budget * SEARCH_BUDGET_RATIO);
+    }
+
     private static String extractUserIdOrNull() {
+        String gatewayUserId = requestHeader("X-User-Id");
+        if (gatewayUserId != null && !gatewayUserId.isBlank()) {
+            log.info("X-User-Id propagated by gateway: {}", gatewayUserId.trim());
+            return gatewayUserId.trim();
+        }
+        log.debug("X-User-Id header is absent; falling back to JWT/anonymous");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !(auth.getPrincipal() instanceof Jwt jwt)) {
             return null;
         }
         return jwt.getSubject();
+    }
+
+    private static String requestHeader(String name) {
+        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (!(attributes instanceof ServletRequestAttributes servletAttributes)) {
+            return null;
+        }
+        return servletAttributes.getRequest().getHeader(name);
     }
 }

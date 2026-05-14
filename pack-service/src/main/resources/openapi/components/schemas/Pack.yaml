@@ -1,0 +1,59 @@
+type: object
+required:
+  - id
+  - generation_id
+  - pack_revision_id
+  - generation_mode
+  - hotel_revision_id
+  - ticket_revision_id
+  - hotel
+  - ticket
+  - search_context
+  - created_at
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Pack revision identifier
+    example: 8f4e3c2d-1b0a-5f6e-7c8d-9e0f1a2b3c4d
+
+  generation_id:
+    type: string
+    example: gen_a8f91d_ab91ff23
+
+  pack_revision_id:
+    type: integer
+    minimum: 1
+    example: 1
+
+  generation_mode:
+    $ref: './enums/GenerationMode.yaml'
+
+  hotel_revision_id:
+    type: integer
+    minimum: 1
+    example: 1
+
+  ticket_revision_id:
+    type: integer
+    minimum: 1
+    example: 1
+
+  hotel:
+    $ref: './HotelDetails.yaml'
+
+  ticket:
+    $ref: './TicketDetail.yaml'
+
+  search_context:
+    $ref: './PackSearchContext.yaml'
+
+  created_at:
+    type: string
+    format: date-time
+    example: '2026-05-31T20:20:25.090Z'
+
+  updated_at:
+    type: string
+    format: date-time
+    example: '2026-05-31T20:20:25.090Z'

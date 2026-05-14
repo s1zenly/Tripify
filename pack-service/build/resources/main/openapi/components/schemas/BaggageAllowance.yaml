@@ -1,0 +1,15 @@
+type: object
+required:
+  - included
+properties:
+  included:
+    type: boolean
+    example: true
+  pieces:
+    type: integer
+    minimum: 0
+    example: 1
+  weight_kg:
+    type: integer
+    minimum: 0
+    example: 23

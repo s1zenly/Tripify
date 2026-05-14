@@ -1,0 +1,10 @@
+type: object
+properties:
+  amount:
+    type: number
+    format: double
+    example: 205.00
+
+  currency:
+    type: string
+    example: USD

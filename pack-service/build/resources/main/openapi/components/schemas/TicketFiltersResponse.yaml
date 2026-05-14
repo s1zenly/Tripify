@@ -1,0 +1,9 @@
+type: object
+required:
+  - filters
+properties:
+  filters:
+    type: array
+    items:
+      $ref: './TicketFilterOption.yaml'
+    description: Общий каталог фильтров для поиска билетов (не зависит от маршрута)

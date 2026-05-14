@@ -53,6 +53,7 @@ redis:
 security:
   cors:
     allowed-origins:
+      - https://tripify.tech
       - http://tripifysite-pavelt1.amvera.io
   cookies:
     access-token-name: access_token

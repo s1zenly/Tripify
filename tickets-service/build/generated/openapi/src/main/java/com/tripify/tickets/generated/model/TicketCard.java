@@ -28,7 +28,7 @@ import jakarta.annotation.Generated;
  * TicketCard
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-30T21:33:13.369032554Z[Etc/UTC]", comments = "Generator version: 7.16.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-01T01:47:04.875924+03:00[Europe/Moscow]", comments = "Generator version: 7.16.0")
 public class TicketCard {
 
   private String tid;

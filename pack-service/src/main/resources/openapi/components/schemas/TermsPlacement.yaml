@@ -1,0 +1,23 @@
+type: object
+properties:
+  checkIn:
+    $ref: './CheckInOut.yaml'
+
+  checkOut:
+    $ref: './CheckInOut.yaml'
+
+  petFriendly:
+    type: boolean
+    example: true
+
+  partyFriendly:
+    type: boolean
+    example: false
+
+  ageRestriction:
+    type: string
+    example: 18+
+
+  additionalInfo:
+    type: string
+    example: Check-in starts at 14:00.

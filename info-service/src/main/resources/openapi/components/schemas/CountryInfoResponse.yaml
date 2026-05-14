@@ -5,6 +5,7 @@ required:
   - local_currency
   - rates
   - tabs
+  - photos
 properties:
   country_id:
     $ref: './IsoCountryAlpha2.yaml'
@@ -28,3 +29,14 @@ properties:
     type: array
     items:
       $ref: './CountryInfoTab.yaml'
+  photos:
+    type: array
+    description: |
+      Representative photo URLs for the country (object storage links).
+      Up to 3 images, intended for display alongside the country guide.
+    items:
+      type: string
+    example:
+      - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/225865058.jpg
+      - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/234548985.jpg
+      - https://storage.yandexcloud.net/test-hotels-images/AE/DXB/428594127.jpg
