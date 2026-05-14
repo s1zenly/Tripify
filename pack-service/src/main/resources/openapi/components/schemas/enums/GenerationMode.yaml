@@ -1,5 +1,6 @@
 type: string
 enum:
   - FULL
+  - HOTELS
   - TICKETS
 example: FULL

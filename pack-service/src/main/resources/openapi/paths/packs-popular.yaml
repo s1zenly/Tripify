@@ -8,9 +8,6 @@ get:
   operationId: getPopularPacks
   parameters:
     - $ref: '../components/parameters.yaml#/XRequestId'
-  security:
-    - bearerAuth: []
-    - {}
   responses:
     '200':
       description: Popular packs fetched successfully
